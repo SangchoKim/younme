@@ -1,0 +1,130 @@
+h1 {
+  color:rgb(20, 209, 209);
+}
+
+h2{
+ margin-bottom: 10%;
+}
+
+
+._mainImage{
+  width: 500px;
+  height: auto;
+}
+
+._logo{
+background-color: white;
+display: flex;
+flex-direction: row;
+justify-content: center;
+}
+
+._logoImage{
+width: 130px;
+padding: 1%;
+}
+
+.flex-container{
+background-color:whitesmoke;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+height: 70%;
+}
+
+._SignupButton{
+  background-color:rgb(20, 209, 209);
+  color:white;
+  font-weight:bold;
+  height: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+}
+
+/* GENERAL BUTTON STYLING */
+._button,
+._button::after {
+  -webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+._button {
+  background: none;
+  border: 3px solid #fff;
+  border-radius: 20px;
+  color: #fff;
+  margin-top:10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+._button::before,
+._button::after {
+  background: #fff;
+  content: '';
+  position: absolute;
+  z-index: -1;
+}
+
+._button:hover {
+  color: #2ecc71;
+}
+
+/* BUTTON 1 */
+._button-1::after {
+  height: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+
+._button-1:hover:after {
+  height: 100%;
+}
+
+button{
+  background:white;
+  color:#fff;
+  border:none;
+  position:relative;
+  height:60px;
+  font-size:1.6em;
+  padding:0 2em;
+  cursor:pointer;
+  transition:800ms ease all;
+  outline:none;
+}
+button:hover{
+  background:#fff;
+  color:#1AAB8A;
+}
+button:before,button:after{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:2px;
+  width:0;
+  background: #1AAB8A;
+  transition:400ms ease all;
+}
+button:after{
+  right:inherit;
+  top:inherit;
+  left:0;
+  bottom:0;
+}
+button:hover:before,button:hover:after{
+  width:100%;
+  transition:800ms ease all;
+}
+
+
+
+
