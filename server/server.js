@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 
 app.get("/api/customers", (req,res) =>{
-    const customers = [{id:1, firstName: "John"},{id:2, firstName:"santos"}];
+    const customers = {id:1, firstName: "John"};
     res.json(customers);
 });
 

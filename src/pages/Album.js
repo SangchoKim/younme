@@ -6,12 +6,16 @@ import { connect } from 'react-redux';
 
 class Album extends Component{
 
+  state = {
+    id:'',
+    firstName : ''
+  }
 
   componentDidMount(){
 
     fetch("/api/customers")
-    .then(res => console.log(res.text()))
-    .then(customers=> this.setState({customers}, () =>console.log('Customers fet',customers)))
+    .then(res => res.json())
+    .then(customers => console.log('Customers fet',customers.id))
   
   };
   
