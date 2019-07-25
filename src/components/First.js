@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{Component} from 'react';
 import { Link  } from'react-router-dom';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader} from 'mdbreact';
 import'./App.css';
@@ -11,9 +11,53 @@ import'./App.css';
       fontFamily:"a다정다감"
     }
 
+    // const myHeaders = new Headers();
+
+    // const onSubmit = (e) =>{
+    //   e.preventDefault();
+    //   const email = e.target.type;
+    //   console.log(email);
+    //   fetch("/api/first",
+    //   {method: 'POST', headers:myHeaders, body:JSON.stringify({email:e.target.email, passsword:e.target.passsword})})
+    //   .then(res => res.json())
+    //   .then(user => console.log(user));
+    // }
 
 
-  const First =() =>{
+  class First extends Component{ 
+
+    constructor() {
+      super();
+      this.state = {
+        email: '',
+        password: ''
+      };
+    }
+
+    onChange = (e) => {
+      this.setState({[e.target.name]:e.target.value});
+    }
+
+    getdata = (e) => {
+      e.preventDefault();
+      const { password, email } = this.state;
+      // 쿠키 구현 필요 
+      fetch("/api/first",{method: "POST",
+                          headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({'password':password,'email':email})})
+      .then(res => res.json())
+      .then(res => console.log(res));
+    }
+
+    
+    
+  render(){
+
+    const { password, email } = this.state;
+
     return(
       <React.Fragment>  
       <MDBContainer>
@@ -33,22 +77,33 @@ import'./App.css';
                       <h4 className="font-weight-bold white-text">E-mail과 Password를 입력해주세요</h4>
                   </MDBCardHeader>
                   <MDBCardBody>
+                      <form onSubmit={this.getdata}> 
                       <MDBInput
+                        name="email"
                         label="Type your email"
                         group
                         type="email"
                         validate
                         error="wrong"
                         success="right"
+                        value={email}
+                        onChange={this.onChange}
                       />
                       <MDBInput
+                        name="password"
                         label="Type your password"
                         group
                         type="password"
                         validate
+                        value={password}
+                        onChange={this.onChange}
                       />
+                      
                       <Link to="/"><MDBBtn color="danger">Back</MDBBtn></Link>
-                      <Link to="/second"><MDBBtn color="primary">Next-Step</MDBBtn></Link>
+                      <MDBBtn type="submit" color="primary">Next-Step</MDBBtn>
+                      </form>
+                      {/* <Link to="/second"><MDBBtn type="submit" color="primary">Next-Step</MDBBtn></Link> */}
+                      
                     </MDBCardBody>
                     <MDBFooter>
                       <p className="pink-text">
@@ -65,5 +120,5 @@ import'./App.css';
       </React.Fragment>
     );
   }
-
+}
 export default First;  

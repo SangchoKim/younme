@@ -15,7 +15,7 @@ class Album extends Component{
 
     fetch("/api/customers")
     .then(res => res.json())
-    .then(customers => console.log('Customers fet',customers.id))
+    .then(customers => console.log('Customers fet',customers))
   
   };
   
