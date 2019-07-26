@@ -1,7 +1,10 @@
 import React,{Component} from 'react';
 import { Link  } from'react-router-dom';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader} from 'mdbreact';
+
 import'./App.css';
+
+
 
     const font = {
       color:"black",
@@ -11,17 +14,6 @@ import'./App.css';
       fontFamily:"a다정다감"
     }
 
-    // const myHeaders = new Headers();
-
-    // const onSubmit = (e) =>{
-    //   e.preventDefault();
-    //   const email = e.target.type;
-    //   console.log(email);
-    //   fetch("/api/first",
-    //   {method: 'POST', headers:myHeaders, body:JSON.stringify({email:e.target.email, passsword:e.target.passsword})})
-    //   .then(res => res.json())
-    //   .then(user => console.log(user));
-    // }
 
 
   class First extends Component{ 
@@ -31,6 +23,7 @@ import'./App.css';
       this.state = {
         email: '',
         password: ''
+        
       };
     }
 
@@ -41,7 +34,6 @@ import'./App.css';
     getdata = (e) => {
       e.preventDefault();
       const { password, email } = this.state;
-      // 쿠키 구현 필요 
       fetch("/api/first",{method: "POST",
                           headers: {
                             'Accept': 'application/json',
@@ -49,15 +41,42 @@ import'./App.css';
                           },
                           body: JSON.stringify({'password':password,'email':email})})
       .then(res => res.json())
-      .then(res => console.log(res));
+      .then((res) =>{
+        console.log(res);
+        if(res.result===1){
+        console.log('move to second')
+        this.props.history.push('/second');
+
+        }else{
+          console.log(res.error);
+        }
+       });
     }
 
-    
-    
+    backTohome = () =>{
+      const url = '/';
+      fetch("/api/first",{method: "GET",
+                          headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({'order':'deleteSession'})})
+      .then(res => res.json())
+      .then((res) =>{
+        console.log(res);
+        if(res.result===1){
+        console.log('delete to session')
+        this.props.history.push(url);
+        }else{
+          console.log(res.error);
+        }
+       });
+      
+    }
+
   render(){
 
     const { password, email } = this.state;
-
     return(
       <React.Fragment>  
       <MDBContainer>
@@ -99,10 +118,10 @@ import'./App.css';
                         onChange={this.onChange}
                       />
                       
-                      <Link to="/"><MDBBtn color="danger">Back</MDBBtn></Link>
+                      <MDBBtn color="danger" onClick={this.backTohome}>Back</MDBBtn>
                       <MDBBtn type="submit" color="primary">Next-Step</MDBBtn>
                       </form>
-                      {/* <Link to="/second"><MDBBtn type="submit" color="primary">Next-Step</MDBBtn></Link> */}
+                      
                       
                     </MDBCardBody>
                     <MDBFooter>

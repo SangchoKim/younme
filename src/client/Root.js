@@ -4,10 +4,11 @@ import { Provider } from 'react-redux';
 import App from '../shared/App';
 import store from '../store';
 
+
 // const store = createStore();
 
 const Root = () => (
-    <BrowserRouter> 
+    <BrowserRouter > 
         <Provider store={store}>
             <App/>
         </Provider>

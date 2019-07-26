@@ -2,12 +2,19 @@ const express = require('express');
 const db = require('./db.js');
 const router = require('./routes/router')
 const session = require('express-session'); // 세션 설정
+const FileStore = require('session-file-store')(session); 
 const passport = require('passport');
 const passportConfig = require('./passport'); 
 const app = express();
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 
+app.use(session({
+  secret:'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  store: new FileStore()
+}));
 app.use(methodOverride()); // PUT, DELETE를 지원 안 하는 클라이언트를 위해
 app.use(bodyParser.urlencoded({ extended: true })); // qs모듈로 쿼리스트링 파싱
 app.use(bodyParser.json()); // body의 데이터를 json형식으로 받음

@@ -6,15 +6,17 @@ class First extends Component{
   constructor(){
     super();
     this.state = {
-
+      
     }
   }
 
   render(){
     return(
       <React.Fragment>  
-        <FirstPage 
+        <FirstPage
+          history={this.props.history} 
         />
+        
       </React.Fragment>
     );
   }

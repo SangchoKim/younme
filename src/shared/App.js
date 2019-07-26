@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Switch,Route } from 'react-router-dom';
 import { Add } from '../pages';
 import { First } from '../pages';
 import { Second } from '../pages';
@@ -15,22 +15,24 @@ import { Calendar } from '../pages';
 
 
 
+
 class App extends React.Component {
     render() {
         return (
-            <div>
-                <Route exact path="/" component={Add}/>
-                <Route path="/first" component={First}/>
-                <Route path="/second" component={Second}/>
-                <Route path="/third" component={Third}/>
-                <Route path="/main" component={Main}/>
-                <Route path="/memorialday" component={MemorialDay}/>
-                <Route path="/talk" component={Talk}/>
-                <Route path="/alert" component={Alert}/>
-                <Route path="/album" component={Album}/>
-                <Route path="/mypage" component={Mypage}/>
-                <Route path="/calendar" component={Calendar}/>
-            </div>
+                <Switch>>
+                    <Route exact path="/" component={Add}/>
+                    <Route path="/first" component={First}/>
+                    <Route path="/second" component={Second}/>
+                    <Route path="/third" component={Third}/>
+                    <Route path="/main" component={Main}/>
+                    <Route path="/memorialday" component={MemorialDay}/>
+                    <Route path="/talk" component={Talk}/>
+                    <Route path="/alert" component={Alert}/>
+                    <Route path="/album" component={Album}/>
+                    <Route path="/mypage" component={Mypage}/>
+                    <Route path="/calendar" component={Calendar}/>
+                </Switch>
+            
         );
     }
 }
