@@ -55,7 +55,7 @@ import'./App.css';
 
     backTohome = () =>{
       const url = '/';
-      fetch("/api/first",{method: "GET",
+      fetch("/api/home",{method: "GET",
                           headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
