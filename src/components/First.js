@@ -1,5 +1,4 @@
 import React,{Component} from 'react';
-import { Link  } from'react-router-dom';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader} from 'mdbreact';
 
 import'./App.css';
@@ -28,12 +27,24 @@ import'./App.css';
     }
 
     onChange = (e) => {
+      console.log(e.target.name);
+      console.log(e.target.value);
       this.setState({[e.target.name]:e.target.value});
     }
 
     getdata = (e) => {
       e.preventDefault();
+      const url = '/second';
       const { password, email } = this.state;
+      console.log("email:",email,"password:",password);
+      if(!email){
+        alert('이메일을 입력해주세요');
+        return;
+      }
+      if(!password){
+        alert('패스워드를 입력해주세요');
+        return;
+      }
       fetch("/api/first",{method: "POST",
                           headers: {
                             'Accept': 'application/json',
@@ -45,8 +56,16 @@ import'./App.css';
         console.log(res);
         if(res.result===1){
         console.log('move to second')
-        this.props.history.push('/second');
-
+        const _mycode = res.mycode;
+          if(_mycode)
+            this.props.history.push({
+              pathname: url,
+              state: { mycode: _mycode}
+            });
+          else
+            this.props.history.push({
+              pathname: url
+            });
         }else{
           console.log(res.error);
         }
@@ -55,7 +74,7 @@ import'./App.css';
 
     backTohome = () =>{
       const url = '/';
-      fetch("/api/home",{method: "GET",
+      fetch("/api/home",{method: "POST",
                           headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
@@ -70,12 +89,20 @@ import'./App.css';
         }else{
           console.log(res.error);
         }
-       });
-      
+       }); 
+    }
+
+    componentWillMount (){
+      console.log("props.location:",this.props.location);
+      if(this.props.location.state){
+        // this.setState({email:this.props.location.state.email});
+        const _email = this.props.location.state.email;
+        this.setState({email:_email});
+        console.log("reloadEmail:",_email);
+      }
     }
 
   render(){
-
     const { password, email } = this.state;
     return(
       <React.Fragment>  

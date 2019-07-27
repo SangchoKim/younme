@@ -14,7 +14,8 @@ class First extends Component{
     return(
       <React.Fragment>  
         <FirstPage
-          history={this.props.history} 
+          history={this.props.history}
+          location={this.props.location}  
         />
         
       </React.Fragment>

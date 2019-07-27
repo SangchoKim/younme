@@ -1,5 +1,4 @@
 import React,{Component} from 'react';
-import { Link  } from'react-router-dom';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader} from 'mdbreact';
 import'./App.css';
 
@@ -11,28 +10,37 @@ const font = {
     fontFamily:"a다정다감"
   }
 
-  class Second extends Component{ 
+class Second extends Component{ 
 
     constructor() {
       super();
       this.state = {
-        invecode: ''
+        invecode: '',
+        mycode:''
       };
     }
 
     onChange = (e) => {
-      this.setState({invecode: e.target.value});
+      console.log(e.target.name);
+      console.log(e.target.value);
+      this.setState({[e.target.name]: e.target.value});
     }
 
     getdata = (e) => {
       e.preventDefault();
-      const { invecode } = this.state;
+      const { invecode, mycode } = this.state;
+      console.log("mycode:",mycode);
+      console.log("invecode:",invecode);
+      if(!invecode){
+        alert('전달받은 초대코드를 먼저 입력해주세요');
+        return;
+      }
       fetch("/api/second",{method: "POST",
                           headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                           },
-                          body: JSON.stringify({'invecode':invecode})})
+                          body: JSON.stringify({'invecode':invecode,'mycode':mycode})})
       .then(res => res.json())
       .then((res) =>{
         console.log(res.result);
@@ -45,8 +53,44 @@ const font = {
        });
     }
 
+    backTofirst = () =>{
+      const url = '/first';
+      fetch("/api/backtofirst",{method: "POST",
+                          headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({'order':'readEmail'})})
+      .then(res => res.json())
+      .then((res) =>{
+        console.log(res);
+        if(res.result===1){
+        console.log('read email');
+        const email = res.email;
+        console.log(email);
+        this.props.history.push({
+          pathname: url,
+          state: { email: email}
+          });
+        }else{
+          console.log(res.error);
+        }
+       }); 
+    }
+
+    componentWillMount (){
+      console.log("props.location:",this.props.location);
+      if(this.props.location.state){
+        const _mycode = this.props.location.state.mycode;
+        this.setState({mycode:_mycode});
+        console.log("reloadMycode:",_mycode);
+      }else{
+        this.setState({mycode: this.props.code});
+      }
+    }
+
     render(){
-      const { invecode } = this.state;
+      const { invecode, mycode} = this.state;
       return(
         <React.Fragment>  
         <MDBContainer>
@@ -68,16 +112,18 @@ const font = {
                     <MDBCardBody>
                       <form onSubmit={this.getdata}>
                         <MDBInput
+                          name="mycode"
                           label="내 초대코드"
                           group
                           type="text"
                           validate
                           error="wrong"
                           success="right"
-                          value={this.props.code}
+                          value={mycode}
                           readOnly
                         />
                         <MDBInput
+                          name="invecode"
                           label="전달받은 초대코드 입력"
                           group
                           type="text"
@@ -88,7 +134,7 @@ const font = {
                           onChange={this.onChange}
                         />
                         
-                        <Link to="/first"><MDBBtn color="danger">Back</MDBBtn></Link>
+                        <MDBBtn color="danger" onClick={this.backTofirst}>Back</MDBBtn>
                         <MDBBtn type="submit" color="primary">Next-Step</MDBBtn>
                       </form>
                       </MDBCardBody>

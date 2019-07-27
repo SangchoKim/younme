@@ -11,7 +11,10 @@ class Add extends Component{
         return(
             <React.Fragment>
                 <Main />
-                <SignUp />
+                <SignUp 
+                    history={this.props.history}
+                    location={this.props.location} 
+                />
             </React.Fragment>
         )
 

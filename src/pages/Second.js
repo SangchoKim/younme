@@ -22,6 +22,7 @@ class Second extends Component{
         <SecondPage 
           history={this.props.history} 
           code = {this.state.code}
+          location={this.props.location} 
         />
       </React.Fragment>
     );
