@@ -59,7 +59,7 @@ class Third extends Component{
 
   getdata = (e) => {
     e.preventDefault();
-    const url = '/main';
+    const url = '/';
     const { man, women, name, birthday, relday } = this.state;
     console.log("man:",man);
     console.log("women:",women);
@@ -101,7 +101,8 @@ class Third extends Component{
     .then((res) =>{
       console.log(res.result);
       if(res.result===1){
-      console.log('move to main')
+      console.log('move to main');
+      alert('회원가입이 완료되었습니다. 로그인을 해주세요');
       this.props.history.push({
         pathname: url,
         state: { DonotBacktoPage: true}

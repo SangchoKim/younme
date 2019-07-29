@@ -37,6 +37,41 @@ class M_nav extends Component{
     });
   }
 
+  getdata = (e) => {
+    e.preventDefault();
+    const url = '/mypage';
+    fetch("/api/mypage",{method: "get",
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json'
+                        }
+                        })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res.result);
+      console.log(res.user_info);
+      if(res.result===1){
+      console.log('move to mypage');
+      const _name = res.user_info.name;
+      const _email = res.user_info.email;
+      const _birthday = res.user_info.birthday;
+      const _gender = res.user_info.gender;
+      this.props.onMoveToPage(_email,_name,_birthday,_gender);
+      this.props.history.push({
+        pathname: url,
+        state:{
+          name:res.user_info.name,
+          email:res.user_info.email,
+          birthday:res.user_info.birthday,
+          gender:res.user_info.gender
+        }
+      });
+      }else{
+        console.log(res.error);
+      }
+     });
+  }
+
   render(){
     return(
       <React.Fragment>  
@@ -61,7 +96,7 @@ class M_nav extends Component{
                         <Link to="/alert"><MDBIcon icon="bell fa-2x" /><br></br>알림</Link><MDBBadge pill color="danger">5</MDBBadge>
                       </MDBNavItem>
                       <MDBNavItem>
-                        <Link to="/mypage"><MDBIcon icon="address-card fa-2x" /><br></br>마이페이지</Link>
+                        <Link to="#" onClick={this.getdata}><MDBIcon icon="address-card fa-2x" /><br></br>마이페이지</Link>
                       </MDBNavItem>
                     </MDBNavbarNav>
                   </MDBCollapse>

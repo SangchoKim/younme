@@ -79,6 +79,31 @@ class P_img extends Component{
     
   }
 
+  logout = (e) => {
+    console.log("logout");
+    const url = '/';
+    e.preventDefault();
+      window.confirm('정말로 로그아웃 하시겠습니까?')&&
+      fetch("/api/logout",{method: "get",
+                          headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          },
+                          })
+      .then(res => res.json())
+      .then((res) =>{
+        console.log(res);
+        if(res.result===1){
+        console.log('move to home')
+        this.props.history.push({
+              pathname: url,
+        });
+        }else{
+          console.log(res.error);
+        }
+       })
+  }
+
   render(){
 
     let _modes = null;  
@@ -183,7 +208,7 @@ class P_img extends Component{
                     <img src={mypageName} alt="img" width="100%" height="auto"></img>
                   </div>
                   <div className="pl-4 p-3" >
-                    <h5 className="m-0">김상초</h5>
+                    <h5 className="m-0">{this.props.name}</h5>
                   </div>
                   <div>
                     <img src={mypageState} alt="img" width="100%" height="auto"></img>
@@ -198,11 +223,11 @@ class P_img extends Component{
                     <MDBListGroup>
                       <MDBListGroupItem style={list1}>
                         <div className="ml-2"><MDBIcon icon="birthday-cake fa-2x" className="mr-2"/>생일</div>
-                        <button className="btn-link btn-white" onClick={this.toggle} ><div className="ml-2" id='birthday'>1990.09.06</div></button>
+                        <button className="btn-link btn-white" onClick={this.toggle} ><div className="ml-2" id='birthday'>{this.props.birthday}</div></button>
                       </MDBListGroupItem>
                       <MDBListGroupItem style={list1}>
                         <div className="ml-2"><MDBIcon icon="mars fa-2x" className="mr-2"/>성별</div>
-                        <button className="btn-link btn-white" onClick={this.toggle} ><div className="ml-2" id='gender'>남자</div></button>
+                        <button className="btn-link btn-white" onClick={this.toggle} ><div className="ml-2" id='gender'>{this.props.gender}</div></button>
                       </MDBListGroupItem>
                     </MDBListGroup>
                   </div>
@@ -211,7 +236,7 @@ class P_img extends Component{
                   </div>
                   <div>
                     <div className="pl-4 p-3" >
-                      <h5 className="m-0">wjdrms1919@gmail.com</h5>
+                      <h5 className="m-0">{this.props.email}</h5>
                     </div>
                   </div>
                   <div>
@@ -226,7 +251,7 @@ class P_img extends Component{
                   <div>
                     <MDBListGroup>
                       <MDBListGroupItem>
-                        <div className="ml-2">로그아웃</div>
+                      <button className="btn-link btn-white" onClick={this.logout}><div className="ml-2">로그아웃</div></button>
                       </MDBListGroupItem>
                       <MDBListGroupItem >
                         <div className="ml-2">비밀번호 변경하기</div>

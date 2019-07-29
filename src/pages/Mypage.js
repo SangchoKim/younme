@@ -4,6 +4,11 @@ import Pmain from '../components/P_img'
 import { connect } from 'react-redux';
 import * as MypageAction from '../store/modules/Mypage';
 
+
+let _email = '';
+let _name = '';
+let _birthday = '';
+let _gender = '';
 class Mypage extends Component{
   constructor(props){
     super(props);
@@ -11,14 +16,32 @@ class Mypage extends Component{
       modalHeder:{title1:'상태 메시지',title2:'생일',title3:'성별'},
       modalBody:{comment1:'상태메시지를 입력해주세요',comment2:'상태메시지를 입력해주세요!' },
       modalFooter:{confirm:'확인'},
+      user_info:{email:this.props.location.state.email
+                ,name:this.props.location.state.name
+                ,birthday:this.props.location.state.birthday
+                ,gender:this.props.location.state.gender},
       modes:'stateMessage'   
     };
   }
 
+  componentWillMount = () => {
+    console.log("props.location:",this.props.location);
+    if(this.props.location.state){
+      _email = this.props.location.state.email;
+      _name = this.props.location.state.name;
+      _birthday = this.props.location.state.birthday;
+      _gender = this.props.location.state.gender;
+      console.log("email:", _email);
+      console.log("name:",_name);
+      console.log("birthday:",_birthday);
+      console.log("gender:",_gender);
+    }
+  }
+
+
   render(){
 
     let _title , _comment = null;
-
     if(this.props.modes ==='stateMessage'){
       _title = this.props.title1;
       _comment = this.props.comment1;
@@ -42,6 +65,8 @@ class Mypage extends Component{
           mode={this.props.mode}
         />
         <Pmain
+          history={this.props.history}
+          location={this.props.location}
           title={_title}
           comment = {_comment}
           confirm = {this.props.confirm}
@@ -54,6 +79,10 @@ class Mypage extends Component{
             else if(word === 'birthday')
             this.props.birthday();
           }.bind(this)}
+          email = {this.state.user_info.email}
+          name = {this.state.user_info.name}
+          gender = {this.state.user_info.gender}
+          birthday = {this.state.user_info.birthday}
         />
       </React.Fragment>
     )
@@ -62,6 +91,7 @@ class Mypage extends Component{
     
 // props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
+  
   title: state.Mypage.Title.title,
   back: state.Mypage.Title.back,
   update: state.Mypage.Title.update,  
@@ -77,15 +107,22 @@ const mapStateToProps = (state) => ({
   title3: state.Mypage.modalHeder.title3,
   comment1: state.Mypage.modalBody.comment1,
   confirm: state.Mypage.modalFooter.confirm,
-  modes: state.Mypage.mode
+  modes: state.Mypage.mode,
+  email: state.Mypage.user_info.email,
+  name: state.Mypage.user_info.name,
+  birthday:state.Mypage.user_info.birthday,
+  gender:state.Mypage.user_info.gender
+  
 });
+
 
 // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
-  stateMessage: () => dispatch(MypageAction.popUpstateMessage()),
-  gender: () => dispatch(MypageAction.popUpGender()),
-  birthday: () => dispatch(MypageAction.popUpBirthday())
+  stateMessage: () => dispatch(MypageAction.popUpstateMessage(_email,_name,_birthday,_gender)),
+  gender: () => dispatch(MypageAction.popUpGender(_email,_name,_birthday,_gender)),
+  birthday: () => dispatch(MypageAction.popUpBirthday(_email,_name,_birthday,_gender))
 })
+
     
 export default connect(mapStateToProps, mapDispatchToProps) (Mypage);
 

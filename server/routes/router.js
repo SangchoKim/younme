@@ -96,9 +96,9 @@ router.post("/api/third", (req,res) => {
     user.birth =_birthday;
     user.relday = _relday;
     if(_man)
-    user.gender = "man";
+    user.gender = "남성";
     else if(_women)
-    user.gender = "women";
+    user.gender = "여성";
     user.code = req.session.invecode+req.session.mycode+_relday;
     user.save((err)=>{
       if(err){
@@ -106,7 +106,8 @@ router.post("/api/third", (req,res) => {
         res.json({result: 0});
         return;
       }else{
-        console.log('회원가입 성공')
+        console.log('회원가입 성공');
+        req.session.destroy(()=>{return req.session;}); 
         res.json({result: 1}); 
       }
     })
@@ -135,6 +136,32 @@ router.post('/api/login', passport.authenticate('local', {
     console.log('성공');
     res.json({result:1});
   });
+
+  router.get("/api/mypage", (req,res) => {
+    const order = req.user._id;
+    if(order){
+      console.log("_id:",order);
+      const _name = req.user.name;
+      const _birthday = req.user.birth;
+      const _email = req.user.id;
+      const _gender = req.user.gender;
+      res.json({result:1,
+              user_info:
+              {name:_name,
+               birthday:_birthday,
+               email:_email,
+               gender:_gender
+              }});
+    }else{
+      res.json({result:0});
+    }
+  })
+
+  router.get("/api/logout", (req,res) =>{ 
+  req.logOut();
+  req.session.destroy(()=>{return req.session;}); 
+  res.json({result:1});
+})
 
 router.get("/api/customers", (req,res) =>{ // app 대신 router에 연결
     const customers = {id:1, firstName: "John"};
