@@ -17,7 +17,7 @@ import'./App.css';
 
   class First extends Component{ 
 
-    componentWillMount (){
+    componentDidMount (){
       console.log("props.location:",this.props.location);
       if(this.props.location.state){
         const _email = this.props.location.state.email;

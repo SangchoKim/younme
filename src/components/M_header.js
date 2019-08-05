@@ -29,8 +29,8 @@ class M_header extends Component{
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
                       <div className="text-center">
                         <h5>처음 만난 날</h5>
-                        <h3 className="red-text"><strong>1110일</strong></h3>
-                        <span>김철수</span><MDBIcon icon="heart" /><span>이영희</span>
+                        <h3 className="red-text"><strong>{this.props.relDay}일</strong></h3>
+                        <span>{this.props.userName}</span><MDBIcon icon="heart" /><span>{this.props.oppenetName}</span>
                       </div>
                     <MDBIcon far icon="kiss-wink-heart fa-5x fa-spin" />
                   </MDBCard>
@@ -38,7 +38,6 @@ class M_header extends Component{
               </MDBRow> 
         </MDBContainer>
       </React.Fragment>
-
     )
   }
 }

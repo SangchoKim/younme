@@ -12,85 +12,18 @@ const font = {
 
 class Second extends Component{ 
 
-    constructor() {
-      super();
-      this.state = {
-        invecode: '',
-        mycode:''
-      };
-    }
-
-    onChange = (e) => {
-      console.log(e.target.name);
-      console.log(e.target.value);
-      this.setState({[e.target.name]: e.target.value});
-    }
-
-    getdata = (e) => {
-      e.preventDefault();
-      const { invecode, mycode } = this.state;
-      console.log("mycode:",mycode);
-      console.log("invecode:",invecode);
-      if(!invecode){
-        alert('전달받은 초대코드를 먼저 입력해주세요');
-        return;
-      }
-      fetch("/api/second",{method: "POST",
-                          headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({'invecode':invecode,'mycode':mycode})})
-      .then(res => res.json())
-      .then((res) =>{
-        console.log(res.result);
-        if(res.result===1){
-        console.log('move to thired')
-        this.props.history.push('/third');
-        }else{
-          console.log(res.error);
-        }
-       });
-    }
-
-    backTofirst = () =>{
-      const url = '/first';
-      fetch("/api/backtofirst",{method: "POST",
-                          headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({'order':'readEmail'})})
-      .then(res => res.json())
-      .then((res) =>{
-        console.log(res);
-        if(res.result===1){
-        console.log('read email');
-        const email = res.email;
-        console.log(email);
-        this.props.history.push({
-          pathname: url,
-          state: { email: email}
-          });
-        }else{
-          console.log(res.error);
-        }
-       }); 
-    }
-
-    componentWillMount (){
+  componentDidMount (){
       console.log("props.location:",this.props.location);
       if(this.props.location.state){
         const _mycode = this.props.location.state.mycode;
-        this.setState({mycode:_mycode});
+        this.props._setState(_mycode,true);
         console.log("reloadMycode:",_mycode);
       }else{
-        this.setState({mycode: this.props.code});
+        this.props._setState(this.props.code,false);
       }
     }
 
     render(){
-      const { invecode, mycode} = this.state;
       return(
         <React.Fragment>  
         <MDBContainer>
@@ -110,7 +43,7 @@ class Second extends Component{
                         <h4 className="font-weight-bold white-text">서로의 초대코드를 입력하여 연결해 주세요.</h4>
                     </MDBCardHeader>
                     <MDBCardBody>
-                      <form onSubmit={this.getdata}>
+                      <form onSubmit={this.props.getData}>
                         <MDBInput
                           name="mycode"
                           label="내 초대코드"
@@ -119,7 +52,7 @@ class Second extends Component{
                           validate
                           error="wrong"
                           success="right"
-                          value={mycode}
+                          value={this.props.code}
                           readOnly
                         />
                         <MDBInput
@@ -130,11 +63,11 @@ class Second extends Component{
                           validate
                           error="wrong"
                           success="right"
-                          value={invecode}
-                          onChange={this.onChange}
+                          value={this.props.invecode}
+                          onChange={this.props.onChange}
                         />
                         
-                        <MDBBtn color="danger" onClick={this.backTofirst}>Back</MDBBtn>
+                        <MDBBtn color="danger" onClick={this.props.backTofirst}>Back</MDBBtn>
                         <MDBBtn type="submit" color="primary">Next-Step</MDBBtn>
                       </form>
                       </MDBCardBody>

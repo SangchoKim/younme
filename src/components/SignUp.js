@@ -50,7 +50,7 @@ class SignUp extends React.Component {
 
    getdata = (e) => {
     e.preventDefault();
-    const url = '/main';
+    const url = '/loading';
     const { email, password } = this.state;
     console.log("email:",email);
     console.log("password:",password);
@@ -77,8 +77,10 @@ class SignUp extends React.Component {
         pathname: url,
         state: { mycode: email}
       });
+      }else if(res.result===2){
+        alert(res.fMsg.error[0]);
       }else{
-        console.log(res.error);
+        console.log('에러발생');
       }
      });
   }

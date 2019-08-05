@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
+
 module.exports = () => {
   function connect() {
-    mongoose.connect('mongodb://localhost:27017', function(err) {
+    mongoose.Promise = global.Promise
+    mongoose.connect('mongodb://localhost:27017/admin',
+        {'useNewUrlParser': true,'useCreateIndex': true},
+      function(err) {
       if (err) {
         console.error('mongodb connection error', err);
       }else{
@@ -11,5 +15,4 @@ module.exports = () => {
   }
   connect();
   mongoose.connection.on('disconnected', connect);
-  // require('./user.js'); // user.js는 나중에 만듭니다.
 };

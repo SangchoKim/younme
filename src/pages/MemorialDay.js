@@ -4,9 +4,54 @@ import MemorialHeader from '../components/M_header'
 import MemoryfirstBody from '../components/Memory_firstBody'
 import MemorysecondBody from '../components/Memory_secondBody'
 import { connect } from 'react-redux';
-
+import * as MemorialDayAction from '../store/modules/MemorialDay';
+import * as M_headerAction from '../store/modules/M_header';
 
 class MemorialDay extends Component{
+
+ componentDidMount = () => {
+    fetch(`/api/main?momorial=${1}`,{method: "get",
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json'
+                        }
+                        })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+      if(res.result===1){
+      const _name = res.user_info.name;
+      const _oppenetName = res.user_info.name;
+      const _birthday = res.user_info.birth;
+      const _relDay = res.user_info.relDay;
+      const _first = res.user_info.calDay.first;
+      const _second = res.user_info.calDay.second;
+      const _third = res.user_info.calDay.third;
+      const _forth = res.user_info.calDay.forth;
+      const firstSection = {first:_first,second:_second,third:_third,forth:_forth,
+                            birthday:_birthday,name:_name,oppenetName:_oppenetName,relDay:_relDay};
+      const { setUserInfo } = this.props;
+      setUserInfo(firstSection);
+      const userBasicInfo = {name:_name,oppenetName:_oppenetName,relDay:_relDay};
+      const { _setUserHeadInfo } = this.props;
+      _setUserHeadInfo(userBasicInfo);
+      this.setState({
+        User_info:{
+          userName:_name,
+          oppenetName:_oppenetName,
+          relDay:_relDay
+        }
+      })
+     
+      console.log("name:",_name);
+      console.log("oppenetName:",_oppenetName);
+      console.log("relDay:",_relDay);
+    }else{
+        console.log(res.error);
+      }
+     });
+  }
+
   render(){
    
     return(
@@ -21,7 +66,11 @@ class MemorialDay extends Component{
           rightIcon={this.props.rightIcon}
           backIcon={this.props.backIcon}
         />
-        <MemorialHeader />
+        <MemorialHeader 
+          userName={this.props.name}
+          oppenetName={this.props.oppenetName}
+          relDay={this.props.relDay}
+        />
         <MemoryfirstBody 
           firstSpaceDay={this.props.firstSpaceDay}
           secondSpaceDay={this.props.secondSpaceDay}
@@ -69,12 +118,17 @@ const mapStateToProps = (state) => ({
   guyName : state.MemorialDay.MemorialBody.guy.name, 
   guyBirthday : state.MemorialDay.MemorialBody.guy.birthday,  
   girlName : state.MemorialDay.MemorialBody.girl.name,  
-  girlBirthday : state.MemorialDay.MemorialBody.girl.birthday,  
+  girlBirthday : state.MemorialDay.MemorialBody.girl.birthday,
+  name: state.Mheader.User_info.userName,
+  oppenetName: state.Mheader.User_info.oppenetName,
+  relDay: state.Mheader.User_info.relDay  
 });
 
 // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
-
+  setUserInfo: (firstSection) => dispatch(MemorialDayAction.setUserInfo(firstSection)),
+  _setUserHeadInfo: (userBasicInfo) => dispatch(M_headerAction.setUserHeadInfo(userBasicInfo))
+  
 })
     
 export default connect(mapStateToProps, mapDispatchToProps) (MemorialDay);

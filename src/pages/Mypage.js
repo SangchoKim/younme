@@ -16,28 +16,114 @@ class Mypage extends Component{
       modalHeder:{title1:'상태 메시지',title2:'생일',title3:'성별'},
       modalBody:{comment1:'상태메시지를 입력해주세요',comment2:'상태메시지를 입력해주세요!' },
       modalFooter:{confirm:'확인'},
-      user_info:{email:this.props.location.state.email
-                ,name:this.props.location.state.name
-                ,birthday:this.props.location.state.birthday
-                ,gender:this.props.location.state.gender},
+      user_info:{email:''
+                ,name:''
+                ,birthday:''
+                ,gender:''
+                ,intro:''},
       modes:'stateMessage'   
     };
   }
 
-  componentWillMount = () => {
-    console.log("props.location:",this.props.location);
-    if(this.props.location.state){
-      _email = this.props.location.state.email;
-      _name = this.props.location.state.name;
-      _birthday = this.props.location.state.birthday;
-      _gender = this.props.location.state.gender;
+  componentDidMount = () => {
+    fetch("/api/mypage",{method: "get",
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json'
+                        }
+                        })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res.result);
+      console.log(res.user_info);
+      if(res.result===1){
+      console.log('move to mypage');
+      const _name = res.user_info.name;
+      const _email = res.user_info.email;
+      const _birthday = res.user_info.birthday;
+      const _gender = res.user_info.gender;
+      const _intro = res.user_info.intro;
+      this.setState({
+        user_info:{
+          email:_email,
+          name:_name,
+          birthday:_birthday,
+          gender:_gender,
+          intro:_intro,
+        }
+      })
       console.log("email:", _email);
       console.log("name:",_name);
       console.log("birthday:",_birthday);
       console.log("gender:",_gender);
-    }
+    }else{
+        console.log(res.error);
+      }
+     });
   }
 
+  _onChangePage = (word) => {
+    console.log(word);
+    if(word === 'stateMessage')
+    this.props.stateMessage();
+    else if(word === 'gender')
+    this.props.gender();
+    else if(word === 'birthday')
+    this.props.birthday();
+  }
+
+  _onChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(name);
+    console.log(value);
+    this.setState(prevState => ({
+      user_info: {
+          ...prevState.user_info,
+          [name] : value
+       }
+     }));
+  }
+
+  _onChangebirth = (_day) => {
+    console.log(_day);
+    this.setState(prevState => ({
+      user_info: {
+          ...prevState.user_info,
+          birthday : _day
+       }
+     }));
+  }
+
+  _onChangeinfo = (_ex_) => {
+    console.log("changedInfo:",_ex_)
+   this.setState(prevState => ({
+    user_info: {
+        ...prevState.user_info,
+        intro:_ex_
+     }
+   }))
+  }
+
+  _onChangeGender = (_gender_) => {
+    console.log("changedGender:",_gender_)
+   this.setState(prevState => ({
+    user_info: {
+        ...prevState.user_info,
+        gender:_gender_
+     }
+   }))
+  }
+
+  _onChangebirth1 =  (_birthday_) => {
+    console.log("changedBirth:",_birthday_)
+   this.setState(prevState => ({
+    user_info: {
+        ...prevState.user_info,
+        birthday:_birthday_
+     }
+   }))
+  }
 
   render(){
 
@@ -70,18 +156,16 @@ class Mypage extends Component{
           title={_title}
           comment = {_comment}
           confirm = {this.props.confirm}
-          onChangePage={function(word){
-            console.log(word);
-            if(word === 'stateMessage')
-            this.props.stateMessage();
-            else if(word === 'gender')
-            this.props.gender();
-            else if(word === 'birthday')
-            this.props.birthday();
-          }.bind(this)}
+          onChangePage={this._onChangePage}
           email = {this.state.user_info.email}
           name = {this.state.user_info.name}
           gender = {this.state.user_info.gender}
+          intro = {this.state.user_info.intro}
+          _onChangeGender = {this._onChangeGender}
+          _onChangeinfo = {this._onChangeinfo}
+          _onChangebirth = {this._onChangebirth1}
+          onChange ={this._onChange}
+          changeB ={this._onChangebirth}
           birthday = {this.state.user_info.birthday}
         />
       </React.Fragment>

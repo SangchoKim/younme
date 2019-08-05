@@ -9,4 +9,5 @@ export { default as Alert } from './Alert';
 export { default as Album } from './Album';
 export { default as Mypage } from './Mypage';
 export { default as Calendar } from './Calendar';
+export { default as Loading } from './Loading';
 

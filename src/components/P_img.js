@@ -6,9 +6,9 @@ import mypageState from '../img/mypage_state.png'
 import mypageEmpty from '../img/mypage_empty.png'
 import mypageMyaccount from '../img/mypage_myaccount.png'
 import mypageOppnentaccount from '../img/mypage_oppnentaccount.png'
-import { Link  } from'react-router-dom';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
+import moment from 'moment'
 
 const font = {
     color:"black",
@@ -50,22 +50,23 @@ const font = {
 
 class P_img extends Component{
 
-
   constructor(props) {
     super(props);
     this.handleDayClick = this.handleDayClick.bind(this);
     this.state = {
       selectedDay: undefined,
+      ex: '',
+      birthday:'',
+      modal: false,
+      mode: ''
     };
   }
 
   handleDayClick(day) {
     this.setState({ selectedDay: day });
-  }
-
-  state = {
-    modal: false,
-    mode: ''
+    let _day = moment(day);
+    const d =_day.format('YYYY-MM-DD');
+    this.props.changeB(d);
   }
   
   toggle = (e) => {
@@ -78,6 +79,79 @@ class P_img extends Component{
     });
     
   }
+
+  onChangeGender = (e) => {
+    e.preventDefault();
+    const _gender = e.target.name;
+    console.log("gender",_gender);
+    fetch(`/api/changeGender?gender=${_gender}`,{method: "get", 
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                              }
+                            })
+  .then(res => res.json())
+  .then(res => {
+    console.log(res.result);
+    if(res.result===1){
+      console.log('changed gender');
+      this.props._onChangeGender(res.gender);
+      this.setState({modal:!this.state.modal});
+    }else{
+      console.log('err');
+    }
+  })
+  }
+
+  onChangeinfo = (e) => {
+    e.preventDefault();
+    const ex = this.props.intro;
+    console.log("자기소개",ex);
+    fetch("/api/changeinfo",{method: "post", 
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({'info': ex})
+                            })
+  .then(res => res.json())
+  .then(res => {
+    console.log(res.result);
+    if(res.result===1){
+      console.log('changed info:',res.intro);
+      this.props._onChangeinfo(ex);
+      this.setState({modal:!this.state.modal});
+    }else{
+      console.log('err');
+    }
+  })
+  }
+
+  onChangebirth = (e) => {
+    e.preventDefault();
+    const birthday = this.props.birthday;
+    console.log("생일:", birthday);
+    fetch("/api/changebirth",{method: "post", 
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({'birth': birthday})
+                            })
+  .then(res => res.json())
+  .then(res => {
+    console.log(res.result);
+    if(res.result===1){
+      console.log('changed birth:',res.birthday);
+      this.props._onChangebirth(birthday);
+      this.setState({modal:!this.state.modal});
+    }else{
+      console.log('err');
+    }
+  })
+  }
+
+  
 
   logout = (e) => {
     console.log("logout");
@@ -111,29 +185,30 @@ class P_img extends Component{
         _modes = 
         <React.Fragment >
         <MDBModal isOpen={this.state.modal} toggle={this.toggle} >
+        <form onSubmit={this.onChangeinfo}> 
         <MDBModalHeader style={font} toggle={this.toggle}>{this.props.title}</MDBModalHeader>
         <MDBModalBody style={font}>
         <MDBRow>
-            <MDBCol md="12">
-              <form>                 
-                <div>
+            <MDBCol md="12">               
                   <MDBInput
+                    name="intro"
                     label="상태 메시지를 입력 해주세요"
                     type="textarea"
                     validate
                     error="wrong"
                     success="right"
                     maxLength="200"
+                    value={this.props.intro}
+                    onChange={this.props.onChange}  
                   />
-                </div> 
-              </form>
             </MDBCol>
           </MDBRow>
         </MDBModalBody>
         <MDBModalFooter>
           <MDBBtn color="secondary" onClick={this.toggle}>닫기</MDBBtn>
-          <Link to="#"><MDBBtn color="primary">{this.props.confirm}</MDBBtn></Link>
+          <MDBBtn type="submit" color="primary">{this.props.confirm}</MDBBtn>
         </MDBModalFooter>
+        </form>
         </MDBModal>
         </React.Fragment>
     }else if(this.state.mode ==='gender'){
@@ -146,10 +221,10 @@ class P_img extends Component{
           <MDBCol md="12">
             <form>                 
               <div>
-                <MDBBtn outline color="info" style={{width:"100%"}}>남성</MDBBtn>
+                <MDBBtn onClick={this.onChangeGender} name="남성" outline color="info" style={{width:"100%"}}>남성</MDBBtn>
               </div> 
               <div>
-                <MDBBtn outline color="info" style={{width:"100%"}}>여성</MDBBtn>               
+                <MDBBtn onClick={this.onChangeGender} name="여성" outline color="info" style={{width:"100%"}}>여성</MDBBtn>               
               </div> 
             </form>
           </MDBCol>
@@ -164,27 +239,28 @@ class P_img extends Component{
       _modes = 
       <React.Fragment >
        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+      <form onSubmit={this.onChangebirth}>
       <MDBModalHeader toggle={this.toggle} style={font}>{this.props.title}</MDBModalHeader>
       <MDBModalBody style={font}>
       <MDBRow>
           <MDBCol md="12">
-            <form>                 
+                             
               <div className="blackt text-center">
                 <DayPicker onDayClick={this.handleDayClick} />
-                {this.state.selectedDay ? (
-                  <p className="yellow">{this.state.selectedDay.toLocaleDateString()}</p>
+                {this.state.selectedDay ? (                                
+                    <p className="yellow" name="birthday">{this.state.selectedDay.toLocaleDateString()}</p>                 
                 ) : (
                   <p>Please select a day.</p>
                 )}
               </div> 
-            </form>
           </MDBCol>
         </MDBRow>
       </MDBModalBody>
       <MDBModalFooter>
         <MDBBtn color="secondary" onClick={this.toggle}>닫기</MDBBtn>
-        <Link to="#"><MDBBtn color="primary">{this.props.confirm}</MDBBtn></Link>
+        <MDBBtn type="submit" color="primary">{this.props.confirm}</MDBBtn>
       </MDBModalFooter>
+      </form>
       </MDBModal>  
       </React.Fragment>
     }
@@ -214,7 +290,7 @@ class P_img extends Component{
                     <img src={mypageState} alt="img" width="100%" height="auto"></img>
                   </div>
                   <div className="p-2" >
-                    <button className="btn-link btn-white" onClick={this.toggle} ><div className="ml-2" id='stateMessage'>상태메시지를 입력해주세요</div></button>
+                    <button className="btn-link btn-white" onClick={this.toggle} ><div className="ml-2" id='stateMessage'>{this.props.intro}</div></button>
                   </div>
                   <div>
                     <img src={mypageEmpty} alt="img" width="100%" height="auto"></img>
@@ -281,4 +357,11 @@ class P_img extends Component{
     )
   }
 }
+
+P_img.defaultProps  = {
+  intro : '상태메시지를 입력해주세요'
+
+};
+
+
 export default P_img;  

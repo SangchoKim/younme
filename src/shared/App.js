@@ -11,6 +11,7 @@ import { Alert } from '../pages';
 import { Album } from '../pages';
 import { Mypage } from '../pages';
 import { Calendar } from '../pages';
+import { Loading } from '../pages';
 
 
 
@@ -24,6 +25,7 @@ class App extends React.Component {
                     <Route path="/first" component={First}/>
                     <Route path="/second" component={Second}/>
                     <Route path="/third" component={Third}/>
+                    <Route path="/loading" component={Loading}/>
                     <Route path="/main" component={Main}/>
                     <Route path="/memorialday" component={MemorialDay}/>
                     <Route path="/talk" component={Talk}/>
