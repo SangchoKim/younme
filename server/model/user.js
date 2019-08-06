@@ -2,14 +2,22 @@ const mongoose = require('mongoose');
 
 const crypto = require('crypto');
 
+
+
 const imageSchema = new mongoose.Schema({
   size: {type: Number, required:true, trim:true},
   originalname: {type: String, required:true, trim:true},
   src:{type: String, required:true, trim:true}
 });
 
+const tempcode = new mongoose.Schema({
+  codes: {type: Number, lowercase:true},
+  userMail1: {type: String, lowercase:true},
+  oppentEmail: {type: String, lowercase:true}
+});
+
 const userSchema = new mongoose.Schema({
-  id: {type: String, required:true, unique:true, lowercase:true},
+  id: {type: String, required:true, lowercase:true},
   password: {type: String, required:true, trim:true},
   _salt: {type: String, required:true, trim:true},
   name: { type: String, required:true},
@@ -18,7 +26,7 @@ const userSchema = new mongoose.Schema({
   gender: { type: String, required:true},
   image: imageSchema,
   intro: { type: String, default: 0, max: 100},
-  code:{ type: String, required:true},
+  _code: tempcode,
   time : { type : Date, default: Date.now }
 });
 

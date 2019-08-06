@@ -42,7 +42,10 @@ class Mypage extends Component{
       const _email = res.user_info.email;
       const _birthday = res.user_info.birthday;
       const _gender = res.user_info.gender;
-      const _intro = res.user_info.intro;
+      let _intro = res.user_info.intro;
+      if(_intro==='0'){
+        _intro = '상태메시지를 입력해주세요';
+      }
       this.setState({
         user_info:{
           email:_email,

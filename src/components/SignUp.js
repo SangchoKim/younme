@@ -72,13 +72,17 @@ class SignUp extends React.Component {
     .then((res) =>{
       console.log(res.result);
       if(res.result===1){
-      console.log('move to main')
+      console.log('move to main');
+      alert('You&ME에 접속합니다.');
       this.props.history.push({
         pathname: url,
         state: { mycode: email}
       });
       }else if(res.result===2){
         alert(res.fMsg.error[0]);
+      }else if(res.result===5){
+        console.log('상대방이 가입하기 전입니다.');
+        alert('상대방이 가입하기 전입니다.');
       }else{
         console.log('에러발생');
       }

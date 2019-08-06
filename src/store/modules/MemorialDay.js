@@ -27,7 +27,7 @@ const initialState = {
       }
   };
 
-const _setUserInfo = (_first,_second,_third,_forth,_name,_birthday,_oppenetName,_relDay) => {
+const _setUserInfo = (_first,_second,_third,_forth,_name,_birthday,_oppenetbirthday,_oppenetName,_relDay) => {
   return{
     Title:{
       title:"기념일",
@@ -44,7 +44,7 @@ const _setUserInfo = (_first,_second,_third,_forth,_name,_birthday,_oppenetName,
       forthSpace:{forthSpaceDay:"4년",forthSpaceLeftDay:`${_forth}일 남음`},
       firstDay:{firstDay:"처음 만난날",SeeingDay:`${_relDay}일 째`},
       guy:{name:`${_name} 생일`, birthday:`${_birthday}일`},
-      girl:{name:`${_oppenetName} 생일`, birthday:`${_birthday}일`,}
+      girl:{name:`${_oppenetName} 생일`, birthday:`${_oppenetbirthday}일`,}
     }
 };
 }
@@ -61,10 +61,11 @@ export default function reducer(state = initialState, action) {
         const _forth = action.payload.forth;
         const _name = action.payload.name;
         const _birthday = action.payload.birthday;
+        const _oppenetbirthday = action.payload.oppenetbirthday;
         const _oppenetName = action.payload.oppenetName;
         const _relDay = action.payload.relDay;
         console.log("result:",action.payload);
-        return _setUserInfo(_first,_second,_third,_forth,_name,_birthday,_oppenetName,_relDay);
+        return _setUserInfo(_first,_second,_third,_forth,_name,_birthday,_oppenetbirthday,_oppenetName,_relDay);
       case DECREMENT:
         return { number: state.number - 1 };
       default:

@@ -5,7 +5,7 @@ import MainBody from '../components/M_body'
 import { connect } from 'react-redux';
 import * as MainAction from '../store/modules/M_header';
 import defautImge from '../img/main_default.jpg';
-import base64Img  from 'base64-img';
+
 class Main extends Component{
   constructor(props){
     super(props);
@@ -44,7 +44,7 @@ class Main extends Component{
       console.log(res);
       if(res.result===1){
       const _name = res.user_info.name;
-      const _oppenetName = res.user_info.birthday;
+      const _oppenetName = res.user_info.oppentname;
       const _relDay = res.user_info.relDay;
       const userBasicInfo = {name:_name,oppenetName:_oppenetName,relDay:_relDay};
       const { _setUserHeadInfo } = this.props;

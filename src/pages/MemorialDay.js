@@ -21,28 +21,22 @@ class MemorialDay extends Component{
       console.log(res);
       if(res.result===1){
       const _name = res.user_info.name;
-      const _oppenetName = res.user_info.name;
+      const _oppenetName = res.user_info.oppentname;
       const _birthday = res.user_info.birth;
+      const _oppenetbirthday = res.user_info.oppenetbirthday;
       const _relDay = res.user_info.relDay;
       const _first = res.user_info.calDay.first;
       const _second = res.user_info.calDay.second;
       const _third = res.user_info.calDay.third;
       const _forth = res.user_info.calDay.forth;
       const firstSection = {first:_first,second:_second,third:_third,forth:_forth,
-                            birthday:_birthday,name:_name,oppenetName:_oppenetName,relDay:_relDay};
+                            birthday:_birthday,oppenetbirthday:_oppenetbirthday,name:_name,oppenetName:_oppenetName,relDay:_relDay};
       const { setUserInfo } = this.props;
       setUserInfo(firstSection);
       const userBasicInfo = {name:_name,oppenetName:_oppenetName,relDay:_relDay};
       const { _setUserHeadInfo } = this.props;
       _setUserHeadInfo(userBasicInfo);
-      this.setState({
-        User_info:{
-          userName:_name,
-          oppenetName:_oppenetName,
-          relDay:_relDay
-        }
-      })
-     
+  
       console.log("name:",_name);
       console.log("oppenetName:",_oppenetName);
       console.log("relDay:",_relDay);

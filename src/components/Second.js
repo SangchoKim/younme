@@ -12,15 +12,39 @@ const font = {
 
 class Second extends Component{ 
 
+
+
   componentDidMount (){
-      console.log("props.location:",this.props.location);
-      if(this.props.location.state){
-        const _mycode = this.props.location.state.mycode;
-        this.props._setState(_mycode,true);
-        console.log("reloadMycode:",_mycode);
-      }else{
+      
+      console.log("mycode:",this.props.code);
+      fetch("/api/secondCodeSave",{method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'mycode':this.props.code})})
+      .then(res => res.json())
+      .then((res)=>{
+      console.log(res);
+      if(res.result===1){
+        if(res.code)
+        this.props._setState(res.code,true);
+        else
         this.props._setState(this.props.code,false);
-      }
+        }else{
+          console.log("code 아직 저장 안됨");
+          this.props._setState(this.props.code,false);
+        } 
+      })
+
+      // console.log("props.location:",this.props.location);
+      // if(this.props.location.state){
+      //   const _mycode = this.props.location.state.mycode;
+      //   this.props._setState(_mycode,true);
+      //   console.log("reloadMycode:",_mycode);
+      // }else{
+      //   this.props._setState(this.props.code,false);
+      // }
     }
 
     render(){
@@ -64,6 +88,18 @@ class Second extends Component{
                           error="wrong"
                           success="right"
                           value={this.props.invecode}
+                          onChange={this.props.onChange}
+                        />
+
+                        <MDBInput
+                          name="oppentEmail"
+                          label="상대방이 등록한 이메일 입력"
+                          group
+                          type="text"
+                          validate
+                          error="wrong"
+                          success="right"
+                          value={this.props.oppentEmail}
                           onChange={this.props.onChange}
                         />
                         

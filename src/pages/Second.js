@@ -7,7 +7,8 @@ class Second extends Component{
     super();
     this.state = {
       mycode: '',
-      invecode: ''
+      invecode: '',
+      oppentEmail:''
     }
   }
 
@@ -19,11 +20,15 @@ class Second extends Component{
 
   getdata = (e) => {
     e.preventDefault();
-    const { invecode, mycode } = this.state;
+    const { invecode, mycode, oppentEmail } = this.state;
     console.log("mycode:",mycode);
     console.log("invecode:",invecode);
     if(!invecode){
       alert('전달받은 초대코드를 먼저 입력해주세요');
+      return;
+    }
+    if(!oppentEmail){
+      alert('상대방이 등록한 이메일을 입력해주세요');
       return;
     }
     fetch("/api/second",{method: "POST",
@@ -31,20 +36,24 @@ class Second extends Component{
                           'Accept': 'application/json',
                           'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({'invecode':invecode,'mycode':mycode})})
+                        body: JSON.stringify({'invecode':invecode,'mycode':mycode,'oppentEmail':oppentEmail})})
     .then(res => res.json())
     .then((res) =>{
       console.log(res.result);
       if(res.result===1){
       console.log('move to thired')
       this.props.history.push('/third');
+      }else if(res.result===10){
+        alert('전달받은 초대코드를 다시 한번 확인해주세요.');
+      }else if(res.result===5){
+        alert('상대방이 아직 등록 하지 않았습니다.');
       }else{
-        alert('상대방이 아직 초대코대를 입력하기 전입니다.');
+        alert('오류발생');
       }
      });
   }
 
-  _setState = (_mycode,check) => {
+  _setState = async(_mycode,check) => {
     if(check)
     this.setState({mycode:_mycode});
     else
@@ -77,9 +86,16 @@ class Second extends Component{
   }
 
   ran = () => {
-    return Math.floor(Math.random() * 1001)+
-    Math.floor(Math.random() * 1001)+
-    Math.floor(Math.random() * 1001);
+    return Math.floor(Math.random() * 1000001)+
+    Math.floor(Math.random() * 1000001)+
+    Math.floor(Math.random() * 1000001);
+  }
+
+  _changeCode = (code) =>{
+    console.log("_changeCode:",code);
+    this.setState({
+      mycode:code
+    })
   }
 
   render(){
@@ -94,6 +110,8 @@ class Second extends Component{
           backTofirst={this.backTofirst}
           _setState={this._setState}
           invecode={this.state.invecode} 
+          oppentEmail={this.state.oppentEmail}
+          changeCode={this.state._changeCode}  
         />
       </React.Fragment>
     );
