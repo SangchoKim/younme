@@ -11,7 +11,9 @@ const backtofirst = require('../etc/method/eachPage').backtofirst;
 const third_signUp = require('../etc/method/eachPage').third_signUp;
 const backtosecond = require('../etc/method/eachPage').backtosecond;
 const upload = require('../etc/method/eachPage').upload;
+const uploadAlbum = require('../etc/method/eachPage').uploadAlbum;
 const setbackground = require('../etc/method/eachPage').setbackground;
+const setalbum = require('../etc/method/eachPage').setalbum;
 const mypage = require('../etc/method/mypage').mypage;
 const changeGender = require('../etc/method/mypage').changeGender;
 const changeinfo = require('../etc/method/mypage').changeinfo;
@@ -19,6 +21,7 @@ const changebirth = require('../etc/method/mypage').changebirth;
 const logout = require('../etc/method/mypage').logout;
 const secondCodeSave = require('../etc/method/eachPage').secondCodeSave;
 const checkLogin = require('../etc/method/eachPage').checkLogin;
+const albumRead = require('../etc/method/album').albumRead;
 // const upload = multer({
 //   storage: multer.diskStorage({
 //     destination: function (req, file, cb) {
@@ -104,6 +107,10 @@ router.post('/api/login', passport.authenticate('local', {
     setbackground(req,res);
   })
 
+  router.post("/api/setalbum", uploadAlbum.single("myImages") , (req,res) => {
+    setalbum(req,res);
+  })
+
   router.get("/api/mypage", (req,res) => {
     mypage(req,res);
   });
@@ -123,6 +130,10 @@ router.post('/api/login', passport.authenticate('local', {
 
   router.get("/api/logout", (req,res) =>{ 
     logout(req,res);
+});
+
+router.get("/api/album", (req,res) =>{ 
+  albumRead(req,res);
 });
 
 router.get('/api/facebook', passport.authenticate('facebook', {

@@ -20,7 +20,8 @@ class Mypage extends Component{
                 ,name:''
                 ,birthday:''
                 ,gender:''
-                ,intro:''},
+                ,intro:''
+                ,oppentEmail:''},
       modes:'stateMessage'   
     };
   }
@@ -42,6 +43,7 @@ class Mypage extends Component{
       const _email = res.user_info.email;
       const _birthday = res.user_info.birthday;
       const _gender = res.user_info.gender;
+      const _oppentEmail = res.user_info.oppentEmail;
       let _intro = res.user_info.intro;
       if(_intro==='0'){
         _intro = '상태메시지를 입력해주세요';
@@ -53,6 +55,7 @@ class Mypage extends Component{
           birthday:_birthday,
           gender:_gender,
           intro:_intro,
+          oppentEmail:_oppentEmail
         }
       })
       console.log("email:", _email);
@@ -163,6 +166,7 @@ class Mypage extends Component{
           email = {this.state.user_info.email}
           name = {this.state.user_info.name}
           gender = {this.state.user_info.gender}
+          oppentEmail = {this.state.user_info.oppentEmail}
           intro = {this.state.user_info.intro}
           _onChangeGender = {this._onChangeGender}
           _onChangeinfo = {this._onChangeinfo}

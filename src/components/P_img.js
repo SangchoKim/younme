@@ -319,7 +319,7 @@ class P_img extends Component{
                     <img src={mypageOppnentaccount} alt="img" width="100%" height="auto"></img>
                   </div>
                   <div className="pl-4 p-3" >
-                      <h5 className="m-0">shelley514@hotmail.com</h5>
+                      <h5 className="m-0">{this.props.oppentEmail}</h5>
                   </div>
                   <div>
                     <img src={mypageEmpty} alt="img" width="100%" height="auto"></img>

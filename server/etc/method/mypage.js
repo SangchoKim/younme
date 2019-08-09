@@ -12,13 +12,15 @@ const _mypage =(req,res) => {
         const _email = result.id;
         const _gender = result.gender;
         const _intro = result.intro;
+        const _oppentEmail = result._code.oppentEmail;
         res.json({result:1,
                 user_info:
                 {name:_name,
                 birthday:_birthday,
                 email:_email,
                 gender:_gender,
-                intro:_intro
+                intro:_intro,
+                oppentEmail:_oppentEmail
               }});
       })
       .catch((err) => {
@@ -88,13 +90,14 @@ const _mypage =(req,res) => {
   }
 
   const _logout =(req,res) => {
-    const _birth = req.body.birth;
     const order = req.user._id;
     if(order){
-      User.findAndModify({ _id: order },[], { $set: { birth: _birth } }, {},(err,user)=>{
+      User.findOne({ _id: order },(err,user)=>{
         if(err) console.log(err);
-        else console.log("changedBirth", user);
-        res.json({result:1, birthday:user.value.birth});
+        else 
+        console.log('로그아웃 성공');
+        req.session.destroy(()=>{return req.session;}); 
+        res.json({result: 1});
       });
     }else{
       res.json({result:0});

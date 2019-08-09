@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import {MDBContainer ,MDBRow,MDBCol,MDBIcon,MDBCard,MDBBtn, MDBInput, MDBModal, MDBModalBody,MDBModalFooter,MDBModalHeader } from 'mdbreact';
+import {MDBContainer ,MDBRow,MDBCol,MDBIcon,MDBCard,MDBBtn, MDBInput, MDBModal, MDBModalBody,MDBModalFooter,MDBModalHeader,MDBView} from 'mdbreact';
 import { Link  } from'react-router-dom';
 import Webcam from "react-webcam";
-
-
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 
 const font = {
     color:"black",
@@ -42,13 +42,18 @@ const list1 = {
   height:'250px'
  }
 
+
+
 class M_body extends Component{
 
   state = {
     modal6: false,
     modal7: false,
-    modal: false
-  };
+    modal: false,
+    photoIndex: 0,
+    isOpen: false,
+    images: []
+  }
 
   toggle = nr => () => {
     let modalNumber = 'modal' + nr
@@ -59,36 +64,82 @@ class M_body extends Component{
 
   
 
+  m = () => {
+    this.props.check && this.setState({images:this.props.imgUrls});
+  }
 
   render(){
-
+   
+    const { photoIndex, isOpen } = this.state;
     const videoConstraints = {
       width: 1280,
       height: 720,
       facingMode: "user"
     };
-
     return(
       <React.Fragment >
-       
       <MDBContainer>
-            <MDBRow>
-            <MDBCol md="1" >
-            </MDBCol> 
-              <MDBCol md="10">
-                <MDBCard>
-                   <img src={this.props.imgUrl} alt="Logo" width="100%" height=""></img >
-                </MDBCard>
-              </MDBCol>
-            </MDBRow>
-            
-    
-            {this.props.mode==="album"?
-              <MDBRow>
-                
+      {this.props.mode==="main"&&
+          <MDBRow style={font}>
+              <MDBCol md="1" >
+              </MDBCol> 
+                <MDBCol md="10">
+                  <MDBCard>
+                    <img src={this.props.imgUrl} alt="Logo" width="100%" height="" />
+                  </MDBCard>
+                </MDBCol>
               </MDBRow>
-            :
-            this.props.mode==="talk"?
+         }
+            {this.props.mode==="album"&&!this.props.defautImgeHave&&
+              <MDBRow style={font}>
+              <MDBCol md="1" >
+              </MDBCol> 
+                <MDBCol md="10" >
+                  
+                  <MDBCard className="p-2">
+                    {this.props.check&& 
+                      <div>
+                      {this.props.imgUrls.map((image,index) => {
+                      console.log("_imgUrls:",image);
+                      return <img key={index} src={`/uploadsAlbum/${image}`} onClick={() => this.setState({ isOpen: true })} alt="Logo" width="33.3%" height="" className="img-fluid z-depth-1 p-2"/>
+                      })}
+                      </div> 
+                    }
+                  </MDBCard>
+                </MDBCol>
+                {isOpen && 
+                (
+                <Lightbox
+                  mainSrc={"/uploadsAlbum/"+ this.props.imgUrls[photoIndex]}
+                  nextSrc={this.props.imgUrls[(photoIndex + 1) % this.props.image.length]}
+                  prevSrc={this.props.imgUrls[(photoIndex + this.props.image.length - 1) % this.props.image.length]}
+                  onCloseRequest={() => this.setState({ isOpen: false })}
+                  onMovePrevRequest={() =>
+                    this.setState({
+                      photoIndex: (photoIndex + this.props.image.length - 1) % this.props.image.length,
+                    })
+                  }
+                  onMoveNextRequest={() =>
+                    this.setState({
+                      photoIndex: (photoIndex + 1) % this.props.image.length,
+                    })
+                  }
+                />
+              )}
+              </MDBRow>
+            }
+            {this.props.mode==="album"&&this.props.defautImgeHave&&
+              <MDBRow style={font}>
+              <MDBCol md="1" >
+              </MDBCol> 
+                <MDBCol md="10">
+                  <MDBCard>
+                    <img src={this.props.defautImge} alt="Logo" width="100%" height="" />
+                  </MDBCard>
+                </MDBCol>
+              </MDBRow>
+            }
+            {this.props.mode==="talk"&&
             // Talk body 부분 
             <MDBRow style={font}>
               <MDBCol md="1" >
@@ -124,7 +175,8 @@ class M_body extends Component{
                 <MDBBtn outline color="light-blue">전송</MDBBtn>
               </MDBCol>
             </MDBRow>
-            :
+            }
+            {this.props.mode==="main"&&
             // Main body 부분 
             <MDBRow style={font}>
                 <MDBCol md="1" >

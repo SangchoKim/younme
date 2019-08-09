@@ -13,6 +13,7 @@ class Main extends Component{
       MainBody:{
         imgUrl:defautImge
       },
+      mode:"main",
       file: null,
       check: false,
       realfile: null,
@@ -25,6 +26,8 @@ class Main extends Component{
       }
     } 
   }
+
+  
 
   toggle = () => {
     this.setState({
@@ -127,7 +130,7 @@ class Main extends Component{
       console.log("file:",file);
       const config = {
         headers: {
-            'content-type': 'multipart/form-data'
+            'content-type': 'multipart/form-data'    
         }
       }; 
       if(!file){
@@ -136,7 +139,8 @@ class Main extends Component{
       }
       fetch("/api/setbackground", {method: "POST",
                           config,
-                          body: formData 
+                          body: formData
+                          
                           })
       .then(res => res.json())
       .then((res) =>{
@@ -249,7 +253,7 @@ class Main extends Component{
         imageData={this.state.camera.imageData}
         saveImage={this.state.camera.saveImage}
         capture={this._capture}
-        
+        mode={this.state.mode}
       />
     </React.Fragment>
     )

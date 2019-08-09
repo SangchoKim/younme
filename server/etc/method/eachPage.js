@@ -1,6 +1,7 @@
 const datediff = require('../../../src/lib/moment').datediff;
 const User = require('../../model/user');
 const tempCode = require('../../model/code');
+const Album = require('../../model/album');
 const dateCal = require('../../../src/lib/moment').dateCal;
 const crypto = require('crypto');
 const multer = require('multer');
@@ -28,23 +29,57 @@ const _checkLogin = (req, res) => {
   }
 }
 
-const _main = (req,res) =>{
+ const init = async (result) => {
+  let check = null;
+  check = result._code.codes;
+  return new Promise((resolve,reject)=>{
+    resolve(Album.findOne({_code:check})
+    .then(result=>{
+      if(!result){
+        const album = new Album({
+          '_code': check,
+          'sharedSchema':null,
+          'wallpaperSchema': null
+        });
+          album.save((err)=>{
+          if(err){
+          console.error(err);
+          }else{
+          console.log('Albums 생성');
+          }
+          })
+      }
+    }));
+    reject("에러발생");
+  })  
+}
+
+const _main = (req,res,next) =>{
     const order = req.user._id;
     if(order){
       User.findOne({ _id: order })
       .then((result) =>{
+        init(result).then((r) => {console.log("r:",r);
         let _img = null;
         let _oppentname = '';
+        let _oppentEmail = '';
         let _name = null; 
         let _relDay = null;
-        if(result.image){
-          _img = result.image.src;
-        }
+        let _code = null;
+        _oppentEmail =  result._code.oppentEmail;
+        _code =  result._code.codes;
+        console.log("codes:",_oppentEmail);
         _name = result.name;
         _relDay = result.relday;
         _relDay = datediff(_relDay);
-        console.log("codes:",result._code.codes);
-        User.findOne({ '_code.codes' : result._code.codes })
+        Album.findOne({ '_code' : _code })
+        .then((result)=>{
+          if(result){
+            _img = result.wallpaperSchema.src;
+          }
+          next();
+        })
+        User.findOne({ 'id' : _oppentEmail })
         .then((r)=>{
           if(r){
             console.log('oppent찾기 성공:',r);
@@ -61,7 +96,10 @@ const _main = (req,res) =>{
             console.log('oppent찾기 실패');
             res.json({result:0});
           }
-        }) 
+        }).catch((err) => {
+          console.log(err);
+        });
+      }) 
       })
     }else{
       res.json({result:0});
@@ -81,8 +119,8 @@ const _main = (req,res) =>{
         let _relDay = result.relday;
         _relDay = datediff(_relDay);
         _calDay = dateCal(_relDay);
-        console.log("codes:",result._code.codes);
-        User.findOne({ '_code.codes' : result._code.codes })
+        console.log("codes:",result._code.oppentEmail);
+        User.findOne({ 'id' : result._code.oppentEmail })
         .then((r)=>{
           if(r){
             console.log('oppent찾기 성공:',r);
@@ -336,29 +374,184 @@ const _setbackground =(req,res) => {
       const _filename = req.file.filename;
       const _originalname = req.file.originalname;
       const _size = req.file.size;
+      let _code = null;
       if(order){
         User.findOne({ _id: order })
         .then((result)=>{
           console.log(result);
-          const query = {_id:order};
-          User.updateOne(query,{$set:{image: {size:_size, 
-                                originalname:_originalname, 
-                                src:_filename
-                              }}},(err,result)=>{
-            if(err) throw new Error();
-            else {
-              if(result.ok===1){
-                User.findOne({_id:order})
+          _code =  result._code.codes; 
+          Album.findOne({ '_code' : _code })
+          .then((result)=>{
+            console.log("albumSkima유뮤존재",result);
+            // if(result.wallpaperSchema===null){
+                // 값이 있으므로 WALLPAPER Update
+              console.log('wallpaperSchema 값이 있음',result.wallpaperSchema);
+              const query = {'_code':result._code};
+              Album.updateOne(query,{$set:{wallpaperSchema: {size:_size, 
+                                    originalname:_originalname, 
+                                    src:_filename
+                                  }}},(err,result)=>{
+                if(err) throw new Error();
+                else {
+                  if(result.ok===1){
+                Album.findOne({'_code':_code})
                 .then((result)=>{
-                  console.log(result.image.src);
-                  res.json({result:1, img:result.image.src});
+                  console.log(result.wallpaperSchema.src);
+                  res.json({result:1, img:result.wallpaperSchema.src});
                 })
               }
             }
           })
-      .catch((err) => {
-        console.log(err);
-      });
+        .catch((err) => {
+          console.log(err);
+        });   
+        // }else{
+        //      // 값이 없으므로 WALLPAPER Insert
+        //      console.log('wallpaperSchema 값이 없음');
+        //      const album = new Album({
+        //        '_code': _code,
+        //        'wallpaperSchema.size': _size,
+        //        'wallpaperSchema.originalname': _originalname,
+        //        'wallpaperSchema.src': _filename,
+        //        'sharedSchema': null,
+        //      });
+        //        console.log(album);
+        //        album.save((err)=>{
+        //        if(err){
+        //        console.error(err);
+        //        res.json({result: 0});
+        //        return;
+        //        }else{
+        //        console.log('wallpaperSchema 생성');
+        //        Album.findOne({'_code':_code})
+        //        .then((result)=>{
+        //          console.log(result.wallpaperSchema.src);
+        //          res.json({result:1, img:result.wallpaperSchema.src});
+        //        })    
+        //        }
+        //        })
+        //   }
+          })
+        })
+      }
+    }else{
+      res.json({result:0});
+    }
+}
+
+const storages = multer.diskStorage({
+  destination: "./public/uploadsAlbum/",
+  filename: function(req, file, cb){
+     cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+  }
+});
+const _uploadAlbum = multer({
+storage: storages,
+limits:{fileSize: 1000000},
+});
+
+const _setalbum =(req,res) => {
+  console.log("req.file:", req.file);
+    const file = req.file;
+    if(file){
+      const order = req.user._id;
+      const _filename = req.file.filename;
+      const _originalname = req.file.originalname;
+      const _size = req.file.size;
+      let _code = null;
+      if(order){
+        User.findOne({ _id: order })
+        .then((result)=>{
+          console.log(result);
+          _code =  result._code.codes; 
+          Album.findOne({ '_code' : _code })
+          .then((result)=>{
+            console.log("albumSkima유뮤존재",result);
+            if(result.sharedSchema!==null){
+              // 값이 있으므로 SHAREDALBUM Update
+              console.log('sharedSchema 값이 있음',result.sharedSchema);
+              const query = {'_code':result._code};
+              Album.updateOne(query,{$addToSet:{'sharedSchema': {'size':_size, 
+                                    'originalname':_originalname, 
+                                    'src':_filename
+                                  }}},{upsert:true,new: true},(err,result)=>{
+                if(err) throw new Error();
+                else {
+                  if(result.ok===1){
+                Album.findOne({'_code':_code})
+                .then((result)=>{
+                  if(result){
+                  let _img = null;
+                  console.log('공유앨범Read 완료',result.sharedSchema);
+                  _img = result.sharedSchema;
+                  res.json({result:1,img:_img});
+                  }else{
+                    console.log('공유앨범Read 실패'); 
+                    res.json({result:5});
+                  }
+                })
+              }
+              }
+              })
+              .catch((err) => {
+              console.log(err);
+              });   
+        }else{
+             // 값이 없으므로 SHAREDALBUM Insert
+            console.log('sharedSchema 값이 없음');
+            const query = {'_code':result._code};
+              Album.updateOne(query,{$set:{'sharedSchema': {'size':_size, 
+                                    'originalname':_originalname, 
+                                    'src':_filename
+                                  }}},{upsert:true,new: true},(err,result)=>{
+                if(err) throw new Error();
+                else {
+                  if(result.ok===1){
+                Album.findOne({'_code':_code})
+                .then((result)=>{
+                  if(result){
+                    let _img = null;
+                    console.log('공유앨범Read 완료',result.sharedSchema);
+                    _img = result.sharedSchema;
+                    res.json({result:1,img:_img});
+                    }else{
+                      console.log('공유앨범Read 실패'); 
+                      res.json({result:5});
+                    }
+                })
+              }
+              }
+              })
+              .catch((err) => {
+              console.log(err);
+              });   
+
+            // const album = new Album({
+            //   '_code': _code,
+            //   sharedSchema:[{
+            //   'size': _size,
+            //   'originalname': _originalname,
+            //   'src': _filename
+            //   }],
+            //   'wallpaperSchema': null,
+            // });
+            //   console.log(album);
+            //   album.save((err)=>{
+            //   if(err){
+            //   console.error(err);
+            //   res.json({result: 0});
+            //   return;
+            //   }else{
+            //   console.log('sharedSchema 생성');
+            //   Album.findOne({'_code':_code})
+            //   .then((result)=>{
+            //     console.log(result.sharedSchema.src);
+            //     res.json({result:1, img:result.sharedSchema.src});
+            //   })    
+            //   }
+            //   })
+          }
+          })
         })
       }
     }else{
@@ -377,7 +570,9 @@ module.exports = {
     third_signUp:_third_signUp,
     backtosecond:_backtosecond,
     upload:_upload,
+    uploadAlbum:_uploadAlbum,
     setbackground:_setbackground,
+    setalbum:_setalbum,
     secondCodeSave:_secondCodeSave,
     checkLogin:_checkLogin
 }

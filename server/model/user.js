@@ -41,8 +41,21 @@ userSchema.methods.comparePassword = function(inputPassword, _salt, cb) {
     cb('error');
   }
 });
-
 };
+
+userSchema.method.mHeader = (codes) => {
+this.findOne({ '_code.codes' : codes })
+.then((r)=>{
+  if(r)
+  return r
+  else
+  return null
+})
+
+
+}
+
+
 
 
 userSchema.statics.findAndModify = function (query, sort, doc, options, callback) {
