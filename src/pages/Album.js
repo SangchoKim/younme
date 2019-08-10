@@ -4,8 +4,10 @@ import Body from '../components/M_body'
 import { connect } from 'react-redux';
 import defautImge from '../img/default_album.png'
 import * as AlbumAction from '../store/modules/Album'
-// import 'tui-image-editor/dist/tui-image-editor.css'
-// import ImageEditor from '@toast-ui/react-image-editor'
+import ImageEditor from '@toast-ui/react-image-editor'
+import { async } from 'q';
+
+
 
 
 
@@ -17,6 +19,10 @@ class Album extends Component{
         imgUrl:defautImge,
         defautImgeHave:false
       },
+      imageNameShow:false,
+      imageNameSet:null,
+      imageNameCheck:false,
+      imageName:null,
       image: null,
       collapse: false,
       isWideEnough: false,
@@ -39,8 +45,6 @@ class Album extends Component{
       }
     } 
   }
-
-
   toggle = nr => () => {
     let modalNumber = 'modal' + nr
     this.setState({
@@ -118,10 +122,41 @@ class Album extends Component{
             check:false
           })
           return console.log('back');
+      case 'update':
+        this._imageNameSet(e)
+        .then((r)=>{
+          return this._imageShow(r);
+        })
+          return console.log('update');
+      case 'delete':
+          this.setState({
+            imageName:e.target.id
+          })
+          return console.log('delete');
         default:
           console.log('디폴트')
     }
   }
+  _imageShow = async () => {
+    this.setState({
+      imageNameCheck: !this.state.imageNameCheck,
+    })
+  }
+  _imageNameSet = async ({target}) => {
+    console.log("targetID", target.id);
+    const id = target.id;
+    try{
+    let first = await this.setState({
+      imageName:id,
+      imageNameShow: !this.state.imageNameShow,
+    })
+    // first = await this._imageEditor();
+    return first;
+  }catch(err){
+    console.error("err:",err);
+  }
+  }
+
 
   _onChangePhoto = (e) => {
     this.setState({
@@ -268,6 +303,33 @@ class Album extends Component{
    }) 
   }
 
+  _imageEditor = async () => {
+    console.log(this.state.imageNameCheck);
+    if(this.state.imageNameCheck)
+    return <ImageEditor
+    includeUI={{
+      loadImage: {
+              path: this.state.imageName,
+              name: 'SampleImage'
+            },
+            menu: ['shape', 'filter'],
+            initMenu: 'filter',
+            uiSize: {
+              width: '1000px',
+              height: '700px'
+            },
+            menuBarPosition: 'bottom'
+          }}
+          cssMaxHeight={500}
+          cssMaxWidth={700}
+          selectionStyle={{
+            cornerSize: 20,
+            rotatingPointOffset: 70
+          }}
+          usageStatistics={true}
+  />
+  }
+
   
   render(){
     return(
@@ -307,30 +369,12 @@ class Album extends Component{
            defautImge={this.state.MainBody.imgUrl}
            defautImgeHave={this.state.MainBody.defautImgeHave}
            image={this.state.image}
+           onClick={this._onClick}
+           imageName={this.state.imageName}
+           imageNameSet={this.state.imageNameSet}
+           imageNameCheck={this.state.imageNameCheck}
+           imageNameShow ={this.state.imageNameShow}
         />
-        {/* <ImageEditor
-          includeUI={{
-            loadImage: {
-              path: 'img/sampleImage.jpg',
-              name: 'SampleImage'
-            },
-            menu: ['shape', 'filter'],
-            initMenu: 'filter',
-            uiSize: {
-              width: '1000px',
-              height: '700px'
-            },
-            menuBarPosition: 'bottom'
-          }}
-          cssMaxHeight={500}
-          cssMaxWidth={700}
-          selectionStyle={{
-            cornerSize: 20,
-            rotatingPointOffset: 70
-          }}
-          usageStatistics={true}
-        /> */}
-        
       </React.Fragment>
     )
   }

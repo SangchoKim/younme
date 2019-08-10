@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import {MDBContainer ,MDBRow,MDBCol,MDBIcon,MDBCard,MDBBtn, MDBInput, MDBModal, MDBModalBody,MDBModalFooter,MDBModalHeader,MDBView} from 'mdbreact';
+import {MDBContainer ,MDBRow,MDBCol,MDBIcon,MDBCard,MDBBtn, MDBInput, MDBModal, MDBModalBody,MDBModalFooter,MDBModalHeader,} from 'mdbreact';
 import { Link  } from'react-router-dom';
 import Webcam from "react-webcam";
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
+import ImageEditor from '@toast-ui/react-image-editor'
+import 'tui-image-editor/dist/tui-image-editor.css'
 
 const font = {
     color:"black",
@@ -55,6 +57,8 @@ class M_body extends Component{
     images: []
   }
 
+  
+
   toggle = nr => () => {
     let modalNumber = 'modal' + nr
     this.setState({
@@ -90,23 +94,36 @@ class M_body extends Component{
                 </MDBCol>
               </MDBRow>
          }
-            {this.props.mode==="album"&&!this.props.defautImgeHave&&
+            {this.props.mode==="album"&&!this.props.defautImgeHave&&!this.props.imageNameShow&&
               <MDBRow style={font}>
               <MDBCol md="1" >
               </MDBCol> 
                 <MDBCol md="10" >
-                  
                   <MDBCard className="p-2">
                     {this.props.check&& 
-                      <div>
+                      <React.Fragment>
+                      <MDBRow style={font}> 
                       {this.props.imgUrls.map((image,index) => {
                       console.log("_imgUrls:",image);
-                      return <img key={index} src={`/uploadsAlbum/${image}`} onClick={() => this.setState({ isOpen: true })} alt="Logo" width="33.3%" height="" className="img-fluid z-depth-1 p-2"/>
+                      return <MDBCol md="4" key={index}>
+                              <div className="view overlay">
+                              <img src={`/uploadsAlbum/${image}`}  onClick={() => this.setState({ isOpen: true })} 
+                              alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
+                              <div className="mask flex-center rgba-green-slight">
+                                <MDBBtn id={`/uploadsAlbum/${image}`} color="indigo" size="sm" className="" name="update" onClick={this.props.onClick }><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
+                                <MDBBtn id={`/uploadsAlbum/${image}`} color="danger" size="sm" className="" name="delete" onClick={this.props.onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
+                              </div>
+                            </div>
+                            
+                            </MDBCol>
                       })}
-                      </div> 
+                      </MDBRow> 
+                      </React.Fragment>
                     }
-                  </MDBCard>
+                  </MDBCard>              
                 </MDBCol>
+                
+                
                 {isOpen && 
                 (
                 <Lightbox
@@ -126,8 +143,43 @@ class M_body extends Component{
                   }
                 />
               )}
+              
               </MDBRow>
             }
+            {this.props.imageNameCheck&&
+                  (
+                <MDBRow style={font}>
+                 <MDBCol md="1" >
+                  </MDBCol> 
+                  <MDBCol md="10">
+                  <ImageEditor
+                    includeUI={{
+                    loadImage: {
+                            path: this.props.imageName,
+                            name: 'SampleImage'
+                          },
+                          menu: ['shape', 'filter','text','icon','crop','flip','mask'
+                          ],
+                          initMenu: 'filter',
+                          uiSize: {
+                            width: '1000px',
+                            height: '700px'
+                          },
+                          menuBarPosition: 'bottom'
+                        }}
+                        cssMaxHeight={500}
+                        cssMaxWidth={700}
+                        selectionStyle={{
+                          cornerSize: 20,
+                          rotatingPointOffset: 70
+                        }}
+                        usageStatistics={true}
+                  />
+                  <MDBBtn color="secondary" name="update" onClick={this.props.onClick}>닫기</MDBBtn>
+                  </MDBCol>
+              </MDBRow>
+                  )
+                }
             {this.props.mode==="album"&&this.props.defautImgeHave&&
               <MDBRow style={font}>
               <MDBCol md="1" >
