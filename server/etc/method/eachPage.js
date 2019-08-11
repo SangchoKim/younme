@@ -6,6 +6,7 @@ const dateCal = require('../../../src/lib/moment').dateCal;
 const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const _checkLogin = (req, res) => {
   const order = req.user._id;
@@ -383,10 +384,11 @@ const _setbackground =(req,res) => {
           Album.findOne({ '_code' : _code })
           .then((result)=>{
             console.log("albumSkima유뮤존재",result);
-            // if(result.wallpaperSchema===null){
-                // 값이 있으므로 WALLPAPER Update
               console.log('wallpaperSchema 값이 있음',result.wallpaperSchema);
               const query = {'_code':result._code};
+              if(result.wallpaperSchema!==null){
+                _fsRemove(result.wallpaperSchema.src);
+              }
               Album.updateOne(query,{$set:{wallpaperSchema: {size:_size, 
                                     originalname:_originalname, 
                                     src:_filename
@@ -405,38 +407,28 @@ const _setbackground =(req,res) => {
         .catch((err) => {
           console.log(err);
         });   
-        // }else{
-        //      // 값이 없으므로 WALLPAPER Insert
-        //      console.log('wallpaperSchema 값이 없음');
-        //      const album = new Album({
-        //        '_code': _code,
-        //        'wallpaperSchema.size': _size,
-        //        'wallpaperSchema.originalname': _originalname,
-        //        'wallpaperSchema.src': _filename,
-        //        'sharedSchema': null,
-        //      });
-        //        console.log(album);
-        //        album.save((err)=>{
-        //        if(err){
-        //        console.error(err);
-        //        res.json({result: 0});
-        //        return;
-        //        }else{
-        //        console.log('wallpaperSchema 생성');
-        //        Album.findOne({'_code':_code})
-        //        .then((result)=>{
-        //          console.log(result.wallpaperSchema.src);
-        //          res.json({result:1, img:result.wallpaperSchema.src});
-        //        })    
-        //        }
-        //        })
-        //   }
           })
         })
       }
     }else{
       res.json({result:0});
     }
+}
+
+const _fsRemove = (img) => {
+  const directory = path.join(process.cwd()+'/public/uploads/'); 
+  console.log("directory:",directory);
+  console.log("image:",img);
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+    for (const file of files) {
+      if(file===img)
+      fs.unlink(path.join(directory, file), err => {
+        if (err) throw err;
+        else console.log('FS_이미지 삭제 성공');
+      });
+    }
+  });
 }
 
 const storages = multer.diskStorage({
@@ -525,31 +517,6 @@ const _setalbum =(req,res) => {
               .catch((err) => {
               console.log(err);
               });   
-
-            // const album = new Album({
-            //   '_code': _code,
-            //   sharedSchema:[{
-            //   'size': _size,
-            //   'originalname': _originalname,
-            //   'src': _filename
-            //   }],
-            //   'wallpaperSchema': null,
-            // });
-            //   console.log(album);
-            //   album.save((err)=>{
-            //   if(err){
-            //   console.error(err);
-            //   res.json({result: 0});
-            //   return;
-            //   }else{
-            //   console.log('sharedSchema 생성');
-            //   Album.findOne({'_code':_code})
-            //   .then((result)=>{
-            //     console.log(result.sharedSchema.src);
-            //     res.json({result:1, img:result.sharedSchema.src});
-            //   })    
-            //   }
-            //   })
           }
           })
         })

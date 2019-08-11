@@ -7,6 +7,7 @@ import 'react-image-lightbox/style.css';
 import ImageEditor from '@toast-ui/react-image-editor'
 import 'tui-image-editor/dist/tui-image-editor.css'
 
+
 const font = {
     color:"black",
     fontWeight:"bold",
@@ -110,6 +111,7 @@ class M_body extends Component{
                               <img src={`/uploadsAlbum/${image}`}  onClick={() => this.setState({ isOpen: true })} 
                               alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
                               <div className="mask flex-center rgba-green-slight">
+                                <MDBBtn id={`/uploadsAlbum/${image}`} color="warning" size="sm" className="" name="sizeUp" onClick={() => this.setState({ isOpen: true })}><MDBIcon icon="search-plus fa-2x" /><br></br>확대</MDBBtn>
                                 <MDBBtn id={`/uploadsAlbum/${image}`} color="indigo" size="sm" className="" name="update" onClick={this.props.onClick }><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
                                 <MDBBtn id={`/uploadsAlbum/${image}`} color="danger" size="sm" className="" name="delete" onClick={this.props.onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
                               </div>
@@ -122,8 +124,6 @@ class M_body extends Component{
                     }
                   </MDBCard>              
                 </MDBCol>
-                
-                
                 {isOpen && 
                 (
                 <Lightbox
@@ -149,6 +149,7 @@ class M_body extends Component{
             {this.props.imageNameCheck&&
                   (
                 <MDBRow style={font}>
+                <form onSubmit={this.props.setData} >
                  <MDBCol md="1" >
                   </MDBCol> 
                   <MDBCol md="10">
@@ -175,8 +176,15 @@ class M_body extends Component{
                         }}
                         usageStatistics={true}
                   />
-                  <MDBBtn color="secondary" name="update" onClick={this.props.onClick}>닫기</MDBBtn>
                   </MDBCol>
+                  <MDBCol md="12" >
+                    {console.log(ImageEditor.toDataURL())}
+                  <div className="text-center">
+                    <MDBBtn type="submit" name="save" color="success">수정</MDBBtn>
+                    <MDBBtn color="secondary" name="update" onClick={this.props.onClick}>닫기</MDBBtn>                 
+                  </div>  
+                  </MDBCol>
+                  </form> 
               </MDBRow>
                   )
                 }

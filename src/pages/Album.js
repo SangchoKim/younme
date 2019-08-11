@@ -54,7 +54,14 @@ class Album extends Component{
   
 
   componentDidMount(){
-    fetch("/api/album",{method: "get",
+    this._approchServer();
+  };
+
+  _approchServer = async(img,order) =>{
+    const _img = img;
+    const _order = order;
+    console.log(_img,_order);
+    fetch(`/api/album?image=${_img}&order=${_order}`,{method: "get",
                         headers: {
                           'Accept': 'application/json',
                           'Content-Type': 'application/json'
@@ -92,16 +99,13 @@ class Album extends Component{
         alert('오류발생.');
       }
      });
-  };
+  }
 
   pre = async (setAlbumInfo) =>{
     return new Promise((resolve,reject)=>{
       resolve(this.props._setAlbum(setAlbumInfo));
     })
   }
-
-  
-  
 
   _onClick = (e) => {
     switch(e.target.name){
@@ -129,17 +133,31 @@ class Album extends Component{
         })
           return console.log('update');
       case 'delete':
-          this.setState({
-            imageName:e.target.id
-          })
+          this._imageDelete(e);
           return console.log('delete');
         default:
           console.log('디폴트')
     }
   }
+
+  _imageDelete = async ({target}) => {
+    console.log("targetID", target.id);
+    let id = target.id;
+    id = id.split('/');
+    const order = "DELETE"
+    try{
+      await window.confirm('정말로 삭제 하시겠습니까?')&&
+      await this._approchServer(id[2],order);
+     
+    }catch(err){
+      console.error("err:",err);
+    }
+  }
+
   _imageShow = async () => {
     this.setState({
       imageNameCheck: !this.state.imageNameCheck,
+      setting:'modify',
     })
   }
   _imageNameSet = async ({target}) => {
@@ -232,7 +250,7 @@ class Album extends Component{
           alert('공유앨범 에러 발생');
         }
       });
-    }else{
+    }else if(this.state.setting ==='camera'){
       console.log('Camera 구역입니다.');
       const _imageName = this.state.camera.myImage;
       const _imageData = this.state.camera.imageData;
@@ -269,6 +287,14 @@ class Album extends Component{
           console.log('set background err');
         }
       }); 
+    }else if(this.state.setting ==='modify'){
+      console.log('앨범 수정 구역입니다.');
+      console.log(e.target);
+      let id = this.state.imageName;
+      id = id.split('/');
+      console.log("targetID", id);
+      const order = "MODIFY"
+      // this._approchServer(id[2],order);
     }
   }
 
@@ -363,6 +389,7 @@ class Album extends Component{
           alt = {this.state.MainBody.imgUrl}
         />
         <Body
+          setData={this._setData}
           check={this.state.afters} 
            mode={this.props.mode}
            imgUrls={this.props.imgUrl}
