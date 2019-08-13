@@ -2,6 +2,7 @@ const User = require('../../model/user');
 const Album = require('../../model/album');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 
 const _albumRead = (req,res) =>{
     const order = req.user._id;
@@ -107,7 +108,104 @@ const _albumRead = (req,res) =>{
     })
   }
 
+  const storages = multer.diskStorage({
+    destination: "./public/uploadsAlbum/",
+    filename: function(req, file, cb){
+       cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+    }
+  });
+  const _uploadAlbum = multer({
+  storage: storages,
+  limits:{fileSize: 1000000},
+  });
+  
+  const _setalbum =(req,res) => {
+    console.log("req.file:", req.file);
+      const file = req.file;
+      if(file){
+        const order = req.user._id;
+        const _filename = req.file.filename;
+        const _originalname = req.file.originalname;
+        const _size = req.file.size;
+        let _code = null;
+        if(order){
+          User.findOne({ _id: order })
+          .then((result)=>{
+            console.log(result);
+            _code =  result._code.codes; 
+            Album.findOne({ '_code' : _code })
+            .then((result)=>{
+              console.log("albumSkima유뮤존재",result);
+              if(result.sharedSchema!==null){
+                // 값이 있으므로 SHAREDALBUM Update
+                console.log('sharedSchema 값이 있음',result.sharedSchema);
+                const query = {'_code':result._code};
+                Album.updateOne(query,{$addToSet:{'sharedSchema': {'size':_size, 
+                                      'originalname':_originalname, 
+                                      'src':_filename
+                                    }}},{upsert:true,new: true},(err,result)=>{
+                  if(err) throw new Error();
+                  else {
+                    if(result.ok===1){
+                  Album.findOne({'_code':_code})
+                  .then((result)=>{
+                    if(result){
+                    let _img = null;
+                    console.log('공유앨범Read 완료',result.sharedSchema);
+                    _img = result.sharedSchema;
+                    res.json({result:1,img:_img});
+                    }else{
+                      console.log('공유앨범Read 실패'); 
+                      res.json({result:5});
+                    }
+                  })
+                }
+                }
+                })
+                .catch((err) => {
+                console.log(err);
+                });   
+          }else{
+               // 값이 없으므로 SHAREDALBUM Insert
+              console.log('sharedSchema 값이 없음');
+              const query = {'_code':result._code};
+                Album.updateOne(query,{$set:{'sharedSchema': {'size':_size, 
+                                      'originalname':_originalname, 
+                                      'src':_filename
+                                    }}},{upsert:true,new: true},(err,result)=>{
+                  if(err) throw new Error();
+                  else {
+                    if(result.ok===1){
+                  Album.findOne({'_code':_code})
+                  .then((result)=>{
+                    if(result){
+                      let _img = null;
+                      console.log('공유앨범Read 완료',result.sharedSchema);
+                      _img = result.sharedSchema;
+                      res.json({result:1,img:_img});
+                      }else{
+                        console.log('공유앨범Read 실패'); 
+                        res.json({result:5});
+                      }
+                  })
+                }
+                }
+                })
+                .catch((err) => {
+                console.log(err);
+                });   
+            }
+            })
+          })
+        }
+      }else{
+        res.json({result:0});
+      }
+  }
+
   
 module.exports = {
-    albumRead: _albumRead
+    albumRead: _albumRead,
+    setalbum:_setalbum,
+    uploadAlbum:_uploadAlbum,
 }

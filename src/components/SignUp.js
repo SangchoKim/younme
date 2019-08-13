@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {MDBContainer,MDBBtn,MDBModal,MDBModalBody,MDBModalHeader,MDBModalFooter,MDBRow,MDBCol,MDBInput,MDBIcon} from 'mdbreact';
 import'./App.css';
@@ -13,7 +13,7 @@ const font = {
   fontFamily:"a다정다감"
 }
 
-class SignUp extends React.Component {
+class SignUp extends PureComponent {
   
   state = {
     modal: false,

@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import {_lottie} from '../lib/lottie'
 import LoadingPage from '../components/Loading'
 
-class Loading extends Component{
+class Loading extends PureComponent{
 
     constructor(props) {
         super(props);

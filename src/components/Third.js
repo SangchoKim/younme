@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader } from 'mdbreact';
 import'./App.css';
 
@@ -24,7 +24,7 @@ const sex ={
 }
 
 
-class Third extends Component{ 
+class Third extends PureComponent{ 
 
   render(){
     return(

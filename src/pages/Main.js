@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import MainNav from '../components/M_nav'  
 import MainHeader from '../components/M_header'
 import MainBody from '../components/M_body'
@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as MainAction from '../store/modules/M_header';
 import defautImge from '../img/main_default.jpg';
 
-class Main extends Component{
+class Main extends PureComponent{
   constructor(props){
     super(props);
     this.state = {

@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import {MDBContainer ,MDBRow,MDBCol,MDBIcon,MDBCard,MDBBtn, MDBInput, MDBModal, MDBModalBody,MDBModalFooter,MDBModalHeader,} from 'mdbreact';
-import { Link  } from'react-router-dom';
-import Webcam from "react-webcam";
-import Lightbox from 'react-image-lightbox';
+import React, { PureComponent } from 'react';
+import {MDBContainer} from 'mdbreact';
 import 'react-image-lightbox/style.css';
-import ImageEditor from '@toast-ui/react-image-editor'
 import 'tui-image-editor/dist/tui-image-editor.css'
+import Mainheader from './Main_header'
+import Albumbody from './Album_body'
+import Talkbody from './Talk_body'
+import Mainbody from './Main_body'
 
 
 const font = {
@@ -47,18 +47,14 @@ const list1 = {
 
 
 
-class M_body extends Component{
+class M_body extends PureComponent{
 
   state = {
     modal6: false,
     modal7: false,
     modal: false,
-    photoIndex: 0,
-    isOpen: false,
     images: []
   }
-
-  
 
   toggle = nr => () => {
     let modalNumber = 'modal' + nr
@@ -74,297 +70,56 @@ class M_body extends Component{
   }
 
   render(){
-   
-    const { photoIndex, isOpen } = this.state;
-    const videoConstraints = {
-      width: 1280,
-      height: 720,
-      facingMode: "user"
-    };
     return(
       <React.Fragment >
       <MDBContainer>
-      {this.props.mode==="main"&&
-          <MDBRow style={font}>
-              <MDBCol md="1" >
-              </MDBCol> 
-                <MDBCol md="10">
-                  <MDBCard>
-                    <img src={this.props.imgUrl} alt="Logo" width="100%" height="" />
-                  </MDBCard>
-                </MDBCol>
-              </MDBRow>
-         }
-            {this.props.mode==="album"&&!this.props.defautImgeHave&&!this.props.imageNameShow&&
-              <MDBRow style={font}>
-              <MDBCol md="1" >
-              </MDBCol> 
-                <MDBCol md="10" >
-                  <MDBCard className="p-2">
-                    {this.props.check&& 
-                      <React.Fragment>
-                      <MDBRow style={font}> 
-                      {this.props.imgUrls.map((image,index) => {
-                      console.log("_imgUrls:",image);
-                      return <MDBCol md="4" key={index}>
-                              <div className="view overlay">
-                              <img src={`/uploadsAlbum/${image}`}  onClick={() => this.setState({ isOpen: true })} 
-                              alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
-                              <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={`/uploadsAlbum/${image}`} color="warning" size="sm" className="" name="sizeUp" onClick={() => this.setState({ isOpen: true })}><MDBIcon icon="search-plus fa-2x" /><br></br>확대</MDBBtn>
-                                <MDBBtn id={`/uploadsAlbum/${image}`} color="indigo" size="sm" className="" name="update" onClick={this.props.onClick }><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
-                                <MDBBtn id={`/uploadsAlbum/${image}`} color="danger" size="sm" className="" name="delete" onClick={this.props.onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
-                              </div>
-                            </div>
-                            
-                            </MDBCol>
-                      })}
-                      </MDBRow> 
-                      </React.Fragment>
-                    }
-                  </MDBCard>              
-                </MDBCol>
-                {isOpen && 
-                (
-                <Lightbox
-                  mainSrc={"/uploadsAlbum/"+ this.props.imgUrls[photoIndex]}
-                  nextSrc={this.props.imgUrls[(photoIndex + 1) % this.props.image.length]}
-                  prevSrc={this.props.imgUrls[(photoIndex + this.props.image.length - 1) % this.props.image.length]}
-                  onCloseRequest={() => this.setState({ isOpen: false })}
-                  onMovePrevRequest={() =>
-                    this.setState({
-                      photoIndex: (photoIndex + this.props.image.length - 1) % this.props.image.length,
-                    })
-                  }
-                  onMoveNextRequest={() =>
-                    this.setState({
-                      photoIndex: (photoIndex + 1) % this.props.image.length,
-                    })
-                  }
-                />
-              )}
-              
-              </MDBRow>
-            }
-            {this.props.imageNameCheck&&
-                  (
-                <MDBRow style={font}>
-                <form onSubmit={this.props.setData} >
-                 <MDBCol md="1" >
-                  </MDBCol> 
-                  <MDBCol md="10">
-                  <ImageEditor
-                    includeUI={{
-                    loadImage: {
-                            path: this.props.imageName,
-                            name: 'SampleImage'
-                          },
-                          menu: ['shape', 'filter','text','icon','crop','flip','mask'
-                          ],
-                          initMenu: 'filter',
-                          uiSize: {
-                            width: '1000px',
-                            height: '700px'
-                          },
-                          menuBarPosition: 'bottom'
-                        }}
-                        cssMaxHeight={500}
-                        cssMaxWidth={700}
-                        selectionStyle={{
-                          cornerSize: 20,
-                          rotatingPointOffset: 70
-                        }}
-                        usageStatistics={true}
-                  />
-                  </MDBCol>
-                  <MDBCol md="12" >
-                    {console.log(ImageEditor.toDataURL())}
-                  <div className="text-center">
-                    <MDBBtn type="submit" name="save" color="success">수정</MDBBtn>
-                    <MDBBtn color="secondary" name="update" onClick={this.props.onClick}>닫기</MDBBtn>                 
-                  </div>  
-                  </MDBCol>
-                  </form> 
-              </MDBRow>
-                  )
-                }
-            {this.props.mode==="album"&&this.props.defautImgeHave&&
-              <MDBRow style={font}>
-              <MDBCol md="1" >
-              </MDBCol> 
-                <MDBCol md="10">
-                  <MDBCard>
-                    <img src={this.props.defautImge} alt="Logo" width="100%" height="" />
-                  </MDBCard>
-                </MDBCol>
-              </MDBRow>
-            }
-            {this.props.mode==="talk"&&
-            // Talk body 부분 
-            <MDBRow style={font}>
-              <MDBCol md="1" >
-              </MDBCol>
-              <MDBCol md="1" >
-                <MDBBtn outline color="danger" onClick={this.toggle(8)}><MDBIcon icon="plus-circle fa-lg" /></MDBBtn>
-                <MDBModal isOpen={this.state.modal8} toggle={this.toggle(8)} fullHeight position="bottom">            
-                        <MDBModalBody>
-                          <MDBCard style={modal} className="text-center">
-                            <MDBBtn color="cyan"><MDBIcon far icon="images fa-2x" /><br></br>사진</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="video fa-2x" /> <br></br>동영상</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="camera-retro fa-2x" /> <br></br>카메라</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="grin-beam fa-2x" /> <br></br>움짤</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="microphone fa-2x" /> <br></br>음성</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="envelope-open fa-2x" /> <br></br>러브레터</MDBBtn>
-                          </MDBCard>
-                        </MDBModalBody>
-                      </MDBModal>
-              </MDBCol>    
-              <MDBCol md="8">
-                <div className="ml-4">
-                  <MDBInput 
-                    input="text"
-                    label="메세지를 입력해주세요"
-                    group
-                    validate
-                    error="wrong"
-                    success="right"
-                  />
-                </div>
-              </MDBCol>
-              <MDBCol>
-                <MDBBtn outline color="light-blue">전송</MDBBtn>
-              </MDBCol>
-            </MDBRow>
-            }
-            {this.props.mode==="main"&&
-            // Main body 부분 
-            <MDBRow style={font}>
-                <MDBCol md="1" >
-                </MDBCol> 
-                <MDBCol md="10" >
-                  <div style={layout} className="#b3e5fc #ff80ab #e8eaf6#fce4ec #f8bbd0#90caf9 blue lighten-3 text-center" >
-                    <div className="p-1"><Link to="#"><button style={round} onClick={this.props.toggle}><MDBIcon icon="image fa-2x" /></button></Link><br></br>배경화면</div>
-                    <div className="p-1"><Link to="/memorialday"><button style={round}><MDBIcon icon="american-sign-language-interpreting fa-2x" /></button></Link><br></br>기념일</div>
-                    <div className="p-1"><Link to="/calendar"><button style={round}><MDBIcon icon="calendar-check fa-2x" /></button></Link><br></br>캘린더</div> 
-                  </div>
-                </MDBCol>
-                <div>
-                      <MDBModal isOpen={this.props.modal} toggle={this.props.toggle}>
-                      <form onSubmit={this.props.setData}>
-                      <MDBModalHeader toggle={this.props.toggle}>배경화면</MDBModalHeader>
-                      <MDBModalBody>
-                      <MDBRow>
-                          <MDBCol md="12">
-                          {!this.props.show &&
-                              <div className="grey-text" style={list1}>
-                                <MDBBtn color="unique" className="m-5" name="camera" onClick={this.props.onClick}><MDBIcon icon="camera-retro fa-2x" /><br></br>카메라</MDBBtn>
-                                <MDBBtn color="unique"className="m-5" name="album" onClick={this.props.onClick}><MDBIcon icon="camera-retro fa-2x" /><br></br>앨범</MDBBtn>
-                              </div>
-                            }
-                                <div>{(this.props.show && this.props.setting==='album') && <div className="custom-file">
-                                                              <input
-                                                                name="myImage"
-                                                                onChange = {this.props.onChangePhoto}
-                                                                type="file"
-                                                                className="custom-file-input"
-                                                                id="inputGroupFile01"
-                                                                aria-describedby="inputGroupFileAddon01"
-                                                              />
-                                                              <label className="custom-file-label" htmlFor="inputGroupFile01">
-                                                                Choose file
-                                                              </label>
-                                                              <MDBRow>
-                                                                <MDBCol md="2" >
-                                                                </MDBCol> 
-                                                                  <MDBCol md="8">
-                                                              <MDBCard className="text-center mt-3" >
-                                                                <img src={this.props.file} alt='' width="300" height="auto"></img>
-                                                              </MDBCard>
-                                                              </MDBCol>
-                                                            </MDBRow>
-                                                            </div>}
-                                                            {
-                                                              (this.props.show && this.props.setting==='camera') && !this.props.imageData &&
-                                                              <div>
-                                                                <MDBRow>
-                                                                <MDBCol md="1" >
-                                                                </MDBCol> 
-                                                                  <MDBCol md="10">
-                                                                  <MDBCard className="text-center">
-                                                                    
-                                                                    <Webcam 
-                                                                      height={385}
-                                                                      width={385}
-                                                                      style={{textAlign:"center"}}
-                                                                      ref={this.props.setRef}
-                                                                      screenshotFormat="image/jpeg"
-                                                                      videoConstraints={videoConstraints}
-                                                                    />
-                                                                </MDBCard>
-                                                                    <div>                                                                        
-                                                                      <MDBInput
-                                                                        label="이미지의 이름을 입력해주세요"
-                                                                        name="myImage"
-                                                                        value={this.props.imageName}
-                                                                        onChange = {this.props.onChangeCamera}
-                                                                        type="text"
-                                                                        width="100"
-                                                                      />                                           
-                                                                    </div>
-                                                                </MDBCol>
-                                                                <MDBCol md="1" >
-                                                                </MDBCol>
-                                                                
-                                                            </MDBRow>
-                                                            
-                                                              </div>
-                                                            }
-                                                            {this.props.imageData && this.props.show && this.props.setting==='camera' &&
-                                                              <div>
-                                                              <MDBRow>
-                                                                <MDBCol md="1" >
-                                                                </MDBCol> 
-                                                                <MDBCol md="10">
-                                                                <MDBCard className="text-center mt-3" >
-                                                                  <img src={this.props.imageData} alt='' width="385" height="auto"></img>
-                                                                </MDBCard>
-                                                                <div className="text-center mt-3">                                                                        
-                                                                  <h4>이미지 이름: {this.props.imageName}</h4>                                                                                                                      
-                                                                </div>
-                                                                </MDBCol>
-                                                             </MDBRow>
-                                                             </div>   
-                                                            }
-                                                            </div>
-                          </MDBCol>
-                        </MDBRow>
-                      </MDBModalBody>
-                      <MDBModalFooter>
-                        {this.props.show && this.props.setting==='album' &&
-                          <div>
-                            <MDBBtn name="back" color="danger" onClick={this.props.onClick}>뒤로</MDBBtn>
-                            <MDBBtn type="submit" name="submit" color="info" >변경</MDBBtn>
-                          </div>
-                        }
-                        {this.props.show && this.props.setting==='camera' && !this.props.imageData &&
-                          <div>
-                            <MDBBtn name="back" color="danger" onClick={this.props.onClick}>뒤로</MDBBtn>
-                            <MDBBtn name="capture" color="info" onClick={this.props.capture} >촬영</MDBBtn> 
-                          </div>
-                        }
-                        {this.props.imageData && this.props.show && this.props.setting==='camera' &&
-                            <div>
-                              <MDBBtn type="submit" name="save" color="success">저장</MDBBtn>
-                              <MDBBtn name="retake" color="warning" onClick={this.props.onClickRetake} >재촬영</MDBBtn>
-                            </div>
-                        }
-                        <MDBBtn color="secondary" onClick={this.props.toggle}>닫기</MDBBtn>
-                      </MDBModalFooter>
-                      </form>
-                  </MDBModal>
-                </div> 
-              </MDBRow>
-            }
+          <Mainheader
+            font = {font}
+            imgUrl = {this.props.imgUrl}
+            mode={this.props.mode}
+          /> 
+          <Albumbody
+            font = {font}
+            check = {this.props.check}
+            imgUrls = {this.props.imgUrls}
+            onClick = {this.props.onClick}
+            imageNameCheck = {this.props.imageNameCheck}
+            onSubmit = {this.props.setData}
+            imageName = {this.props.imageName}
+            defautImgeHave={this.props.defautImgeHave}
+            mode={this.props.mode}
+            defautImge={this.props.defautImge}
+            image={this.props.image}
+            imageNameShow={this.props.imageNameShow}
+          />
+           <Talkbody
+             font = {font}
+             mode={this.props.mode}
+             modal8 ={this.state.modal8}
+             toggle = {this.toggle(8)}
+             modal ={modal}
+           />
+           <Mainbody
+            font = {font}
+            mode={this.props.mode}
+            layout={layout}
+            round={round}
+            toggle={this.props.toggle}
+            modal={this.props.modal}
+            setData={this.props.setData}
+            show={this.props.show}
+            list1={list1}
+            onClick={this.props.onClick}
+            setting={this.props.setting}
+            onChangePhoto={this.props.onChangePhoto}
+            file={this.props.file}
+            imageData={this.props.imageData}
+            setRef={this.props.setRef}
+            imageName={this.props.imageName}
+            onChangeCamera={this.props.onChangeCamera}
+            capture={this.props.capture}
+            onClickRetake={this.props.onClickRetake}
+           /> 
         </MDBContainer>
       </React.Fragment>
 

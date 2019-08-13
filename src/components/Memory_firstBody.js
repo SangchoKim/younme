@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {MDBContainer ,MDBRow,MDBCol,MDBListGroup,MDBListGroupItem, MDBCard,MDBIcon} from 'mdbreact';
 
 const font = {
@@ -15,7 +15,7 @@ const font = {
  }
 
 
-class Memory_firstBody extends Component{
+class Memory_firstBody extends PureComponent{
   render(){
     return(
       <React.Fragment >

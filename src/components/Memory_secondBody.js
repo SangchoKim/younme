@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {MDBContainer ,MDBRow,MDBCol,MDBIcon,MDBListGroup,MDBListGroupItem, MDBCard} from 'mdbreact';
 import { Link  } from'react-router-dom';
 
@@ -17,7 +17,7 @@ const font = {
  }
 
 
-class Memory_secondBody extends Component{
+class Memory_secondBody extends PureComponent{
   render(){
     return(
       <React.Fragment >

@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import { connect } from 'react-redux';
 import InfiniteCalendar from 'react-infinite-calendar';
@@ -10,7 +10,7 @@ import 'react-infinite-calendar/styles.css';
 const today = new Date();
 // const lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
 
-class Calendar extends Component{
+class Calendar extends PureComponent{
   
   render(){
     console.log(this.props.mode);

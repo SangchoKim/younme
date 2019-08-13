@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBIcon} from 'mdbreact';
 
 const font = {
@@ -16,7 +16,7 @@ const font = {
   padding:'2em'
  } 
 
-class M_header extends Component{
+class M_header extends PureComponent{
   render(){
     return(
       <React.Fragment>  

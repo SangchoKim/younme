@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader} from 'mdbreact';
 
 import'./App.css';
@@ -15,7 +15,7 @@ import'./App.css';
 
 
 
-  class First extends Component{ 
+  class First extends PureComponent{ 
 
     componentDidMount (){
       console.log("props.location:",this.props.location);

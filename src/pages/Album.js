@@ -1,17 +1,16 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import Body from '../components/M_body'
 import { connect } from 'react-redux';
 import defautImge from '../img/default_album.png'
 import * as AlbumAction from '../store/modules/Album'
 import ImageEditor from '@toast-ui/react-image-editor'
-import { async } from 'q';
 
 
 
 
 
-class Album extends Component{
+class Album extends PureComponent{
   constructor(props){
     super(props);
     this.state = {
@@ -294,6 +293,7 @@ class Album extends Component{
       id = id.split('/');
       console.log("targetID", id);
       const order = "MODIFY"
+      // 여기서부터 시작
       // this._approchServer(id[2],order);
     }
   }

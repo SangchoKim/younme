@@ -1,7 +1,7 @@
-import React, {Component} from 'react'; 
+import React, {PureComponent} from 'react'; 
 import {MDBContainer ,MDBRow,MDBCol } from 'mdbreact';
   
-class Loading extends Component {
+class Loading extends PureComponent {
   
 
    render() {

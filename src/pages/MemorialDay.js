@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'  
 import MemorialHeader from '../components/M_header'
 import MemoryfirstBody from '../components/Memory_firstBody'
@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import * as MemorialDayAction from '../store/modules/MemorialDay';
 import * as M_headerAction from '../store/modules/M_header';
 
-class MemorialDay extends Component{
+class MemorialDay extends PureComponent{
 
  componentDidMount = () => {
     fetch(`/api/main?momorial=${1}`,{method: "get",

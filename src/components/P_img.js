@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {MDBContainer ,MDBRow,MDBCol,MDBBtn, MDBCard,MDBIcon, MDBInput,MDBListGroup, MDBListGroupItem, MDBModal, MDBModalHeader,MDBModalBody,MDBModalFooter } from 'mdbreact';
 import defaultImg from '../img/P_default.jpg'
 import mypageName from '../img/mypage_name.png'
@@ -48,7 +48,7 @@ const font = {
 
  
 
-class P_img extends Component{
+class P_img extends PureComponent{
 
   constructor(props) {
     super(props);

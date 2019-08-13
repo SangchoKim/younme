@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {MDBNavbar,MDBContainer,MDBNavbarToggler,MDBCollapse, MDBNavbarNav, MDBNavItem, MDBIcon,MDBBadge } from 'mdbreact';
 import { Link  } from'react-router-dom';
 
@@ -20,7 +20,7 @@ const layout ={
   fontSize:"15px"
 }
 
-class M_nav extends Component{
+class M_nav extends PureComponent{
 
   constructor(props) {
     super(props);

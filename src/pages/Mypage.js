@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import Pmain from '../components/P_img'
 import { connect } from 'react-redux';
@@ -9,7 +9,7 @@ let _email = '';
 let _name = '';
 let _birthday = '';
 let _gender = '';
-class Mypage extends Component{
+class Mypage extends PureComponent{
   constructor(props){
     super(props);
     this.state = {

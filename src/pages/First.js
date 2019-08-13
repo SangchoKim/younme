@@ -1,7 +1,7 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import FirstPage from '../components/First' 
 
-class First extends Component{
+class First extends PureComponent{
 
   constructor(){
     super();

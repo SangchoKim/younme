@@ -1,7 +1,7 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
  import ThirdPage from '../components/Third'  
  import moment from 'moment'
- class Third extends Component{
+ class Third extends PureComponent{
 
   constructor(){
     super();

@@ -1,9 +1,9 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import Body from '../components/M_body'   
 import { connect } from 'react-redux';
 
-class Talk extends Component{
+class Talk extends PureComponent{
   
   render(){
     return(

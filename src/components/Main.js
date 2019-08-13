@@ -1,7 +1,7 @@
-import React, {Component} from 'react'; 
+import React, {PureComponent} from 'react'; 
 import'./App.css';
   
-class MyComponent extends Component {
+class MyComponent extends PureComponent {
 
     state={
       first:"썸이 끝났다.",

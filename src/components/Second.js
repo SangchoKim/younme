@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{PureComponent} from 'react';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader} from 'mdbreact';
 import'./App.css';
 
@@ -10,7 +10,7 @@ const font = {
     fontFamily:"a다정다감"
   }
 
-class Second extends Component{ 
+class Second extends PureComponent{ 
 
 
 
