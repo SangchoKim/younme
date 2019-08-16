@@ -4,9 +4,8 @@ import Body from '../components/M_body'
 import { connect } from 'react-redux';
 import defautImge from '../img/default_album.png'
 import * as AlbumAction from '../store/modules/Album'
-import ImageEditor from '@toast-ui/react-image-editor'
-
-
+// import ImageEditor from '@toast-ui/react-image-editor'
+import {imageEncodeToBase64} from '../lib/imageEncoder'
 
 
 
@@ -128,13 +127,14 @@ class Album extends PureComponent{
       case 'update':
         this._imageNameSet(e)
         .then((r)=>{
-          return this._imageShow(r);
+          if(r===1)
+          return this._imageShow();
         })
           return console.log('update');
       case 'delete':
           this._imageDelete(e);
           return console.log('delete');
-        default:
+      default:
           console.log('디폴트')
     }
   }
@@ -154,10 +154,11 @@ class Album extends PureComponent{
   }
 
   _imageShow = async () => {
-    this.setState({
+    await this.setState({
       imageNameCheck: !this.state.imageNameCheck,
       setting:'modify',
-    })
+      
+    })  
   }
   _imageNameSet = async ({target}) => {
     console.log("targetID", target.id);
@@ -166,9 +167,10 @@ class Album extends PureComponent{
     let first = await this.setState({
       imageName:id,
       imageNameShow: !this.state.imageNameShow,
+      afters:true,
     })
     // first = await this._imageEditor();
-    return first;
+    return 1;
   }catch(err){
     console.error("err:",err);
   }
@@ -253,20 +255,17 @@ class Album extends PureComponent{
       console.log('Camera 구역입니다.');
       const _imageName = this.state.camera.myImage;
       const _imageData = this.state.camera.imageData;
-      const decodedData = atob(_imageData);
-      // base64Image를 decode 해야하는 과정 필요 
-      // const img = base64Img.imgSync(_imageData,'./server/etc',_imageName);
-      // const myBlob = new Blob([_imageData], {type : 'image/jpeg'});
-      const formData = new FormData();
+      const myBlob = imageEncodeToBase64(_imageData,'image/jpeg');
+      let formData = new FormData();
       console.log("myImage",_imageData);
       console.log("imageName",_imageName);
-      formData.append('myImage',decodedData);
+      formData.append('myImages',myBlob,_imageName);
       const config = {
         headers: {
             'content-type': 'multipart/form-data'
         }
       };
-      fetch("/api/setbackground", {method: "POST",
+      fetch("/api/setalbum", {method: "POST",
                           config,
                           body: formData 
                           })
@@ -288,13 +287,57 @@ class Album extends PureComponent{
       }); 
     }else if(this.state.setting ==='modify'){
       console.log('앨범 수정 구역입니다.');
-      console.log(e.target);
+      console.log('modifyImgVal',document.getElementById('data').value);
+      const _modifyImgVal = document.getElementById('data').value;
+      const myBlob = imageEncodeToBase64(_modifyImgVal,'image/jpeg');
       let id = this.state.imageName;
       id = id.split('/');
       console.log("targetID", id);
-      const order = "MODIFY"
-      // 여기서부터 시작
-      // this._approchServer(id[2],order);
+      let data = new FormData();
+      data.append('myImage', myBlob, id[2]);
+      const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+      };
+      fetch("/api/updatealbum", {method: "POST",
+                          config,
+                          body: data 
+                          })
+      .then(res => res.json())
+      .then((res) =>{                  
+        console.log(res);
+        if(res.result===1){
+        console.log('modifyied sharedAlbum');
+        let _img = res.img;
+          if(_img){
+            console.log("img:",_img);
+            const r = _img.map((_img)=>{return _img.src});
+            console.log("src:", r);
+            const setAlbumInfo = {image:r};
+            console.log("setAlbumInfo:",setAlbumInfo);
+            this.pre(setAlbumInfo)
+          .then((r)=>{
+            console.log("rL",r); 
+            this.setState({
+              afters:true,
+              defautImgeHave:false,
+              imageNameShow:false,
+              imageNameCheck:false
+            })
+          })
+          }else{
+            this.setState({
+              defautImgeHave:true
+            })
+          console.log("공유앨범 없음 -> default 이미지 출력");
+        }
+        }else if(res.result===5){
+          alert('공유앨범이 아직 없습니다.');
+        }else{
+          alert('공유앨범 에러 발생');
+        } 
+      })
     }
   }
 
@@ -331,29 +374,6 @@ class Album extends PureComponent{
 
   _imageEditor = async () => {
     console.log(this.state.imageNameCheck);
-    if(this.state.imageNameCheck)
-    return <ImageEditor
-    includeUI={{
-      loadImage: {
-              path: this.state.imageName,
-              name: 'SampleImage'
-            },
-            menu: ['shape', 'filter'],
-            initMenu: 'filter',
-            uiSize: {
-              width: '1000px',
-              height: '700px'
-            },
-            menuBarPosition: 'bottom'
-          }}
-          cssMaxHeight={500}
-          cssMaxWidth={700}
-          selectionStyle={{
-            cornerSize: 20,
-            rotatingPointOffset: 70
-          }}
-          usageStatistics={true}
-  />
   }
 
   
@@ -389,8 +409,8 @@ class Album extends PureComponent{
           alt = {this.state.MainBody.imgUrl}
         />
         <Body
-          setData={this._setData}
-          check={this.state.afters} 
+           setData={this._setData}
+           check={this.state.afters} 
            mode={this.props.mode}
            imgUrls={this.props.imgUrl}
            defautImge={this.state.MainBody.imgUrl}
@@ -418,7 +438,7 @@ const mapStateToProps = (state) => ({
   rightIcon: state.Album.Title.icon.update,
   backIcon: state.Album.Title.icon.back,
   mode: state.Album.Title.mode.show,
-  imgUrl: state.Album.Body.imgUrl
+  imgUrl: state.Album.Body.imgUrl,
 });
 
 // props 값으로 넣어 줄 액션 함수들을 정의해줍니다

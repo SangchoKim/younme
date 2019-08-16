@@ -10,17 +10,21 @@ class Loading extends PureComponent{
         };
       }
 
-    componentDidMount = ()  => {
+      lodings;
+
+    componentDidMount = () => {
     const url = '/main';
     _lottie('animation');   
-    setTimeout( () => {
+    this.lodings = setTimeout( () => {
       console.log("animation done");
       this.props.history.push({
         pathname: url
       });    
-      }, 5000);
-      
+      }, 5000); 
     }
+     componentWillUnmount(){
+      clearTimeout(this.lodings);
+     }
     
     render(){
         return(

@@ -12,6 +12,7 @@ const third_signUp = require('../etc/method/signUp').third_signUp;
 const backtosecond = require('../etc/method/signUp').backtosecond;
 const upload = require('../etc/method/eachPage').upload;
 const uploadAlbum = require('../etc/method/album').uploadAlbum;
+const modiAlbum = require('../etc/method/album').modiAlbum;
 const setbackground = require('../etc/method/eachPage').setbackground;
 const setalbum = require('../etc/method/album').setalbum;
 const mypage = require('../etc/method/mypage').mypage;
@@ -22,6 +23,7 @@ const logout = require('../etc/method/mypage').logout;
 const secondCodeSave = require('../etc/method/signUp').secondCodeSave;
 const checkLogin = require('../etc/method/eachPage').checkLogin;
 const albumRead = require('../etc/method/album').albumRead;
+const updatealbum = require('../etc/method/album').updatealbum;
 // const upload = multer({
 //   storage: multer.diskStorage({
 //     destination: function (req, file, cb) {
@@ -102,6 +104,11 @@ router.post('/api/login', passport.authenticate('local', {
       mainMethod(req,res);
     }
   }) 
+
+  router.post("/api/updatealbum", modiAlbum.single("myImage") , (req,res) => {
+    updatealbum(req,res);
+  })
+
 
   router.post("/api/setbackground", upload.single("myImage") , (req,res) => {
     setbackground(req,res);

@@ -12,7 +12,6 @@ const _albumRead = (req,res) =>{
     if(order){
       switch(mode){
         case "DELETE": return _deleteAlbum(shared_code,img,order,res);
-        case "MODIFY": return _modifyAlbum(shared_code,img,order,res);
         default: _readAlbum(order,res); 
       }    
     }else{
@@ -21,17 +20,37 @@ const _albumRead = (req,res) =>{
     }
   }
 
-  const _modifyAlbum = (shared_code,img,order,res) => {
-    console.log('공유앨범 Modify 준비',shared_code,img);
-    const query = {'_code':shared_code};
-    Album.updateOne(query,{$set:{sharedSchema: {src:img 
-                                  }}},(err,result)=>{
+  const s = multer.diskStorage({
+    destination: "./public/uploadsAlbum/",
+    filename: function(req, file, cb){
+       cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+    }
+  });
+
+  const _modiAlbum = multer({
+  storage: s,
+  limits:{fileSize: 10000000000},
+  });
+
+  const _updatealbum = (req,res) => {
+    console.log("req.file:", req.file);
+    const order = req.user._id;
+    const _filename = req.file.filename;
+    const _originalname = req.file.originalname;
+    const _size = req.file.size;
+    const shared_code = req.user._code.codes;
+    console.log('공유앨범 Modify 준비',shared_code,_originalname,_filename);
+    const query = {'_code':shared_code, "sharedSchema":{ $elemMatch:{"src":_originalname}}};
+    Album.updateOne(query,{$set:{"sharedSchema.$.originalname":_originalname, 
+                                  "sharedSchema.$.src":_filename,
+                                  "sharedSchema.$.size": _size
+                                  }},(err,result)=>{
                 if(err) throw new Error();
                 else {
                   if(result.ok===1){
-                    _fsModify(img);
+                    _fsRemove(_originalname,order,res);
                     console.log('공유앨범 수정완료');
-                  _readAlbum(order,res); 
+                  
               }
             }
           })
@@ -45,9 +64,9 @@ const _albumRead = (req,res) =>{
                 if(err) throw new Error();
                 else {
                   if(result.ok===1){
-                    _fsRemove(img);
+                    _fsRemove(img,order,res);
                     console.log('공유앨범Delete완료');
-                  _readAlbum(order,res); 
+                 
               }
             }
           })
@@ -68,11 +87,11 @@ const _albumRead = (req,res) =>{
     });
   }
 
-  const _fsRemove = (img) => {
+  const _fsRemove = async(img,order,res) => {
     const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
     console.log("directory:",directory);
     
-    fs.readdir(directory, (err, files) => {
+    await fs.readdir(directory, (err, files) => {
       if (err) throw err;
       for (const file of files) {
         if(file===img)
@@ -82,6 +101,7 @@ const _albumRead = (req,res) =>{
         });
       }
     });
+    await _readAlbum(order,res); 
   }
 
   const _readAlbum = (order,res) => {
@@ -208,4 +228,7 @@ module.exports = {
     albumRead: _albumRead,
     setalbum:_setalbum,
     uploadAlbum:_uploadAlbum,
+    modiAlbum:_modiAlbum,
+    updatealbum:_updatealbum,
+
 }

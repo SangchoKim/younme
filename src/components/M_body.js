@@ -84,7 +84,7 @@ class M_body extends PureComponent{
             imgUrls = {this.props.imgUrls}
             onClick = {this.props.onClick}
             imageNameCheck = {this.props.imageNameCheck}
-            onSubmit = {this.props.setData}
+            setData = {this.props.setData}
             imageName = {this.props.imageName}
             defautImgeHave={this.props.defautImgeHave}
             mode={this.props.mode}
