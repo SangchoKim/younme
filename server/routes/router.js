@@ -24,6 +24,7 @@ const secondCodeSave = require('../etc/method/signUp').secondCodeSave;
 const checkLogin = require('../etc/method/eachPage').checkLogin;
 const albumRead = require('../etc/method/album').albumRead;
 const updatealbum = require('../etc/method/album').updatealbum;
+const setcalendar = require('../etc/method/calendar').setcalendar;
 // const upload = multer({
 //   storage: multer.diskStorage({
 //     destination: function (req, file, cb) {
@@ -128,6 +129,10 @@ router.post('/api/login', passport.authenticate('local', {
 
   router.post("/api/changeinfo", (req,res) =>{
     changeinfo(req,res);
+  });
+
+  router.post("/api/setcalendar", (req,res) =>{
+    setcalendar(req,res);
   });
 
   router.post("/api/changebirth", (req,res) =>{

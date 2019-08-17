@@ -55,11 +55,7 @@ class M_nav extends PureComponent{
       switch2: false
     };
 
-  t = () => {
-    this.setState({
-      modal: !this.state.modal
-    });
-  }
+ 
 
   onClick = () => {
     this.setState({
@@ -101,7 +97,7 @@ class M_nav extends PureComponent{
                       />
                       <Calendarheader
                         mode={this.props.mode}
-                        t={this.t}
+                        t={this.props.t}
                         rightIcon ={this.props.rightIcon}
                       />
                       {this.props.mode!=="calendar"&&this.props.mode!=="album"&&
@@ -138,8 +134,8 @@ class M_nav extends PureComponent{
                   />
                  <Calendarmodal
                    mode={this.props.mode}
-                   modal={this.state.modal}
-                   t={this.t}
+                   modal={this.props.modal}
+                   t={this.props.t}
                    list1={list1}
                  />  
                 </MDBContainer>

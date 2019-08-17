@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
-import {MDBBtn,MDBModalBody,MDBModal,MDBModalHeader,MDBRow,MDBCol,MDBInput,MDBListGroup,MDBListGroupItem,MDBModalFooter} from 'mdbreact';
+import {MDBBtn,MDBModalBody,MDBModal,MDBRow,MDBCol,MDBInput,MDBListGroup,MDBListGroupItem,MDBModalFooter} from 'mdbreact';
 import Switch from "react-switch";
-import 'react-dates/initialize';
-import { DateRangePicker} from 'react-dates';
-import 'react-dates/lib/css/_datepicker.css';
-import TimeInput from 'material-ui-time-picker';
-import { Link  } from'react-router-dom';
-
+import CalendarTitle from './Calendar_title';
+import CalendarCategory from './Calendar_category';
+import DataRangePicker from '../lib/DataRangePicker';
+import TimeInputLiv from '../lib/TimeInputLiv';
+import { connect } from 'react-redux';
+import * as calendarAction from '../store/modules/Calendar';
 class Calendar_modal extends PureComponent{
  
  
@@ -18,46 +18,71 @@ class Calendar_modal extends PureComponent{
     modal7: false,
     modal: false,
     switch1: true,
-    switch2: false
+    switch2: false,
+    startDate:null,
+    endDate:null,
+    startTime:null,
+    endTime:null,
+    sub:'',
+    memo:'',
   };
 
   handleChanged = (checked) => {
     this.setState({ checked });
   }
 
+  _dateChange = (startDate,endDate) => {
+    console.log('_dataChange_Calendar',startDate,endDate);
+    const {setCalendarData} = this.props;
+    setCalendarData(startDate,endDate);
+  }
+
+  _timeChange = (key,val) => {
+    console.log('_timeChange_Calendar',key,val);
+    const {setCalendarTime} = this.props;
+    setCalendarTime(key,val);
+  }
+
+  _onClick = () => {
+    console.log('_onClick_calendar');
+    const {submitData} = this.props;
+    const {sub, memo} = this.state;
+    submitData(sub,memo);
+  }
+
+  _onchange = (e) => {
+    e.preventDefault();
+    const name = e.target.name;
+    const val = e.target.value;
+    console.log('_onchange_calendar',name,val);
+    this.setState((pre)=>({
+        ...pre,
+        [name]: val
+    }))
+  }
     render(){
+
+      let {sub,memo} = this.state;
+
         return(
             <React.Fragment>
                {this.props.mode==="calendar"&&
-                    <div>
                       <MDBModal isOpen={this.props.modal} toggle={this.props.t}>
-                        <MDBModalHeader toggle={this.props.t}>이벤트 추가</MDBModalHeader>
-                        <form> 
+                        <CalendarTitle t={this.props.t}  />
                         <MDBModalBody>
                         <MDBRow>
                             <MDBCol md="12">
                                 <div className="black-text">
                                   <MDBInput
+                                    name="sub"
                                     label="제목을 입력하세요"
                                     icon="circle fa-xs"
-                                    group
                                     type="text"
-                                    validate
-                                    error="wrong"
-                                    success="right"
+                                    value={sub}
+                                    onChange={this._onchange}
                                   />
                                 </div>
-                                <div className="black-text">
-                                <select className="browser-default custom-select">
-                                  <option>유형 선택</option>
-                                  <option value="1">데이트</option>
-                                  <option value="2">여행</option>
-                                  <option value="3">문화생활</option>
-                                  <option value="4">학교</option>
-                                  <option value="5">업무</option>
-                                  <option value="6">개인</option>
-                                </select>
-                                </div>
+                                <CalendarCategory />
                                 <hr color="black" style={{borderBlockColor:"30"}}></hr>
                                 <MDBListGroup className=" border-dark" >
                                   <MDBListGroupItem style={this.props.list1}>
@@ -66,52 +91,43 @@ class Calendar_modal extends PureComponent{
                                   </MDBListGroupItem>
                                   <MDBListGroupItem style={this.props.list1}>
                                       <span>날짜</span>
-                                      <DateRangePicker
-                                          startDate={this.state.startDate} // momentPropTypes.momentObj or null,
-                                          startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-                                          endDate={this.state.endDate} // momentPropTypes.momentObj or null,
-                                          endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-                                          onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })} // PropTypes.func.isRequired,
-                                          focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-                                          onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
-                                        />
+                                    <DataRangePicker
+                                      dateChange={this._dateChange}
+                                    />    
                                   </MDBListGroupItem>
                                   <MDBListGroupItem style={this.props.list1}>
                                       <span>시작시간</span>
-                                      <TimeInput
-                                        hintText="12hr Format with auto ok"
-                                        autoOk={true}
+                                      <TimeInputLiv
+                                        timeName={'startTime'}
+                                        timeChange={this._timeChange}
                                       />
                                   </MDBListGroupItem>
                                   <MDBListGroupItem style={this.props.list1}>
                                       <span>종료시간</span>
-                                      <TimeInput
-                                        hintText="12hr Format with auto ok"
-                                        autoOk={true}
+                                      <TimeInputLiv
+                                          timeName={'endTime'}
+                                         timeChange={this._timeChange}
                                       />
                                   </MDBListGroupItem>
                                   <MDBListGroupItem>
                                   <MDBInput
+                                      name="memo"
                                       label="메모"
                                       type="textarea"
-                                      validate
-                                      error="wrong"
-                                      success="right"
                                       maxLength="500"
+                                      value={memo}
+                                      onChange={this._onchange}
                                     />
                                   </MDBListGroupItem>
                                 </MDBListGroup>
                             </MDBCol>
                           </MDBRow>
-                        </MDBModalBody>
-                        
-                        <MDBModalFooter>
-                  <MDBBtn color="secondary" onClick={this.props.t}>닫기</MDBBtn>
-                  <Link to="#"><MDBBtn color="primary">로그인</MDBBtn></Link>
+                        </MDBModalBody>    
+                  <MDBModalFooter>
+                    <MDBBtn color="secondary" onClick={this.props.t}>닫기</MDBBtn>
+                    <MDBBtn color="primary" onClick={this._onClick}>등록</MDBBtn>
                 </MDBModalFooter>
-                </form>
-            </MDBModal>          
-            </div>
+            </MDBModal>      
                 }
             </React.Fragment>
         )
@@ -120,4 +136,17 @@ class Calendar_modal extends PureComponent{
 
 }
 
-export default Calendar_modal;
+// props 값으로 넣어 줄 상태를 정의해줍니다.
+const mapStateToProps = (state) => ({
+ 
+});
+
+// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
+const mapDispatchToProps = (dispatch) => ({
+  setCalendarData: (startDate,endDate) => dispatch(calendarAction.setCalendarData(startDate,endDate)),
+  setCalendarTime: (name,val) => dispatch(calendarAction.setCalendarTime(name,val)),
+  submitData: (sub,memo) => dispatch(calendarAction.submitData(sub,memo)),
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps) (Calendar_modal);

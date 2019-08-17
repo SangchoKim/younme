@@ -25,7 +25,20 @@ const _dateCal = (_relDay) =>{
     return result;
 }
 
+const _timeArrange = (time) =>{
+   return moment(time).format('h:mm a');
+}
+
+const _dataArrange = (startDate,endDate) =>{
+    const _startDate = moment(startDate).format('YYYY-MM-DD');
+    const _endDate = moment(endDate).format('YYYY-MM-DD');
+    console.log(_startDate,_endDate);
+    const result = {startDate:_startDate,endDate:_endDate }
+    return result
+}
 module.exports = {
     datediff:_dateDiff,
-    dateCal:_dateCal
+    dateCal:_dateCal,
+    timeArrange:_timeArrange,
+    dataArrange:_dataArrange,
 }

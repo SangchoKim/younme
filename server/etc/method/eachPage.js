@@ -1,6 +1,7 @@
 const datediff = require('../../../src/lib/moment').datediff;
 const User = require('../../model/user');
 const Album = require('../../model/album');
+const Calendar = require('../../model/calendar');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -27,6 +28,30 @@ const _checkLogin = (req, res) => {
   }
 }
 
+const init_calendar = async (result) => {
+  let check = null;
+  check = result._code.codes;
+  await Calendar.findOne({_code:check})
+  .then(result=>{
+    if(!result){
+      const calendar = new Calendar({
+        '_code': check,
+        'sharedSchema':null,
+        'wallpaperSchema': null
+      });
+        calendar.save((err)=>{
+        if(err){
+          return console.error(err);
+        }else{
+          return console.log('Calendar 생성');
+        }
+        })
+    }else{
+      return '존재합니다.';
+    }
+  })
+}
+
  const init = async (result) => {
   let check = null;
   check = result._code.codes;
@@ -36,8 +61,7 @@ const _checkLogin = (req, res) => {
       if(!result){
         const album = new Album({
           '_code': check,
-          'sharedSchema':null,
-          'wallpaperSchema': null
+          'dataSchema':null,
         });
           album.save((err)=>{
           if(err){
@@ -58,45 +82,48 @@ const _main = (req,res,next) =>{
       User.findOne({ _id: order })
       .then((result) =>{
         init(result).then((r) => {console.log("r:",r);
-        let _img = null;
-        let _oppentname = '';
-        let _oppentEmail = '';
-        let _name = null; 
-        let _relDay = null;
-        let _code = null;
-        _oppentEmail =  result._code.oppentEmail;
-        _code =  result._code.codes;
-        console.log("codes:",_oppentEmail);
-        _name = result.name;
-        _relDay = result.relday;
-        _relDay = datediff(_relDay);
-        Album.findOne({ '_code' : _code })
-        .then((result)=>{
-          if(result){
-            _img = result.wallpaperSchema.src;
-          }
-          next();
-        })
-        User.findOne({ 'id' : _oppentEmail })
-        .then((r)=>{
-          if(r){
-            console.log('oppent찾기 성공:',r);
-            _oppentname = r.name;
-            res.json({result:1, 
-              user_info:{
-                name: _name,
-                relDay: _relDay,
-                img: _img,
-                oppentname:_oppentname
-              }
-            });
-          }else{
-            console.log('oppent찾기 실패');
-            res.json({result:0});
-          }
-        }).catch((err) => {
-          console.log(err);
-        });
+        init_calendar(result).then((r)=>{
+          console.log("r:",r);
+          let _img = null;
+          let _oppentname = '';
+          let _oppentEmail = '';
+          let _name = null; 
+          let _relDay = null;
+          let _code = null;
+          _oppentEmail =  result._code.oppentEmail;
+          _code =  result._code.codes;
+          console.log("codes:",_oppentEmail);
+          _name = result.name;
+          _relDay = result.relday;
+          _relDay = datediff(_relDay);
+          Album.findOne({ '_code' : _code })
+          .then((result)=>{
+            if(result){
+              _img = result.wallpaperSchema.src;
+            }
+            next();
+          })
+          User.findOne({ 'id' : _oppentEmail })
+          .then((r)=>{
+            if(r){
+              console.log('oppent찾기 성공:',r);
+              _oppentname = r.name;
+              res.json({result:1, 
+                user_info:{
+                  name: _name,
+                  relDay: _relDay,
+                  img: _img,
+                  oppentname:_oppentname
+                }
+              });
+            }else{
+              console.log('oppent찾기 실패');
+              res.json({result:0});
+            }
+          }).catch((err) => {
+            console.log(err);
+          });
+        })  
       }) 
       })
     }else{
