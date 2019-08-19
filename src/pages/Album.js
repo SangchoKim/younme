@@ -55,7 +55,7 @@ class Album extends PureComponent{
     this._approchServer();
   };
 
-  _approchServer = async(img,order) =>{
+  _approchServer = async(img,order) => {
     const _img = img;
     const _order = order;
     console.log(_img,_order);

@@ -1,5 +1,36 @@
 const Calendar = require('../../model/calendar');
 
+const _readcalendar = (req,res) => {
+  const {order, data} = req.query;
+  console.log("_readcalendar",req.user._code,data);
+  switch(order){
+    case "READ":
+      return _calendarRead(req.user._code,res);
+    default:
+      return;
+  }
+}
+
+const _deletecalendar = (req,res) => {
+  const {_id} = req.query;
+  const shared_code = req.user._code.codes;
+  console.log("_deletecalendar",_id);
+  const query = {'_code':shared_code,"dataSchema":{ $elemMatch:{"_id":_id}}};
+              Calendar.updateOne(query,{$pull:{dataSchema: {_id:_id 
+                                  }}},(err,result)=>{
+                if(err) throw new Error();
+                else {
+                if(result.ok===1){
+                    _calendarRead(req.user._code,res);
+                    console.log('캘린더 Delete완료');
+              }else{
+                res.json({result:5});
+                    console.log('캘린더 Delete실패')
+              }
+            }
+          })
+}
+
 const _setcalendar = (req,res) => {
   const shared_code = req.user._code.codes;
   console.log("_setcalendar",shared_code);
@@ -34,7 +65,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res) => {
           }}},{upsert:true, new: true},(err,result)=>{
         if(err) throw new Error();
         else {
-          _calendarRead(result,req.user._code,res);
+          _calendarRead(req.user._code,res);
         }
         })
   }else{
@@ -54,32 +85,37 @@ const _calendarSkimaHaveOrNot = async(r,req,res) => {
           }}},{upsert:true, new: true},(err,result)=>{
         if(err) throw new Error();
         else {
-          _calendarRead(result,req.user._code,res);
+          if(result.ok===1){
+          _calendarRead(req.user._code,res);
+          }
         }
         })
   }
 }
 
-const _calendarRead = (result,{codes},res) => {
-  if(result.ok===1){
+const _calendarRead = ({codes},res) => {
+    console.log('_calendarRead',codes);
     Calendar.findOne({'_code':codes})
       .then((result)=>{
       if(result){
       console.log('캘린더Read 완료',result.dataSchema);
-      res.json({result:1, 
-                data:result.dataSchema});
+      const _result = result.dataSchema;
+      res.json({results:1, 
+                data:_result});
       }else{
         console.log('캘린더Read 실패'); 
-        res.json({result:5});
+        res.json({results:5});
        }
       })
     .catch((err) => {
       console.log(err);
       });  
     }
-}
+  
 
 module.exports = {
 
   setcalendar:_setcalendar,
+  readcalendar:_readcalendar,
+  deletecalendar:_deletecalendar,
 }

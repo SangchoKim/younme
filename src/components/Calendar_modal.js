@@ -7,6 +7,7 @@ import DataRangePicker from '../lib/DataRangePicker';
 import TimeInputLiv from '../lib/TimeInputLiv';
 import { connect } from 'react-redux';
 import * as calendarAction from '../store/modules/Calendar';
+
 class Calendar_modal extends PureComponent{
  
  
@@ -43,22 +44,23 @@ class Calendar_modal extends PureComponent{
     setCalendarTime(key,val);
   }
 
-  _onClick = () => {
-    console.log('_onClick_calendar');
-    const {submitData} = this.props;
+  _setSubMemo = () => {
     const {sub, memo} = this.state;
-    submitData(sub,memo);
+    const {setSubMemo} = this.props;
+    setSubMemo(sub,memo);
   }
 
-  _onchange = (e) => {
+  _onchange = async(e) => {
     e.preventDefault();
     const name = e.target.name;
     const val = e.target.value;
-    console.log('_onchange_calendar',name,val);
-    this.setState((pre)=>({
+   
+    console.log('_onchange_calendar',name,val); 
+    await this.setState((pre)=>({
         ...pre,
         [name]: val
     }))
+    await this._setSubMemo();
   }
     render(){
 
@@ -125,7 +127,7 @@ class Calendar_modal extends PureComponent{
                         </MDBModalBody>    
                   <MDBModalFooter>
                     <MDBBtn color="secondary" onClick={this.props.t}>닫기</MDBBtn>
-                    <MDBBtn color="primary" onClick={this._onClick}>등록</MDBBtn>
+                    <MDBBtn type="submit" color="primary" onClick={this.onClick}>등록</MDBBtn>
                 </MDBModalFooter>
             </MDBModal>      
                 }
@@ -145,7 +147,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   setCalendarData: (startDate,endDate) => dispatch(calendarAction.setCalendarData(startDate,endDate)),
   setCalendarTime: (name,val) => dispatch(calendarAction.setCalendarTime(name,val)),
-  submitData: (sub,memo) => dispatch(calendarAction.submitData(sub,memo)),
+  setSubMemo: (sub,memo) => dispatch(calendarAction.setSubMemo(sub,memo)),
 })
 
 

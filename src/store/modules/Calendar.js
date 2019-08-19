@@ -2,15 +2,17 @@
 // 액션 타입을 정의해줍니다.
 const SETCALENDARDATA = 'SETCALENDARDATA';
 const SETCALENDARTIME = 'SETCALENDARTIME';
-const SUBMITDATA = 'SUBMITDATA';
+const SETSUBMEMO = 'SETSUBMEMO';
 const SETCALENDARREAD = 'SETCALENDARREAD';
+const DELETECALENDAR = 'DELETECALENDAR';
 
 // 액션 생성 함수를 만듭니다.
 // 이 함수들은 나중에 다른 파일에서 불러와야 하므로 내보내줍니다.
 export const setCalendarData = (startDate,endDate) => ({ type: SETCALENDARDATA, payload:{startDate:startDate,endDate:endDate}});
 export const setCalendarTime = (name, val) => ({ type: SETCALENDARTIME, payload:{name:name,val:val}});
-export const submitData = (sub,memo) => ({ type: SUBMITDATA,payload:{sub:sub,memo:memo}});
+export const setSubMemo = (sub,memo) => ({ type: SETSUBMEMO,payload:{sub:sub,memo:memo}});
 export const setCalendarRead = (data) => ({ type: SETCALENDARREAD, payload:data});
+export const deleteCalendar = (_id) => ({ type: DELETECALENDAR, payload:_id});
 
 // 모듈의 초기 상태를 정의합니다.
 const initialState = {
@@ -26,11 +28,12 @@ const initialState = {
       startDate:null,
       endDate:null,
       startTime:null,
-      endTime:null,
-      order:null, 
+      endTime:null, 
       sub:'',
       memo:'',
+      order:'',
       data:[],
+      _id:null,
   };
 
 // 리듀서를 만들어서 내보내줍니다.
@@ -51,11 +54,10 @@ export default function reducer(state = initialState, action) {
           ...state,
           [action.payload.name]:action.payload.val,
         };
-        case SUBMITDATA:
-            console.log(SUBMITDATA,state);
+        case SETSUBMEMO:
+            console.log(SETSUBMEMO,state);
           return {
             ...state,
-            order:"SUBMIT", 
             sub: action.payload.sub,
             memo: action.payload.memo,
           };
@@ -63,8 +65,14 @@ export default function reducer(state = initialState, action) {
             console.log(SETCALENDARREAD,action.payload);
         return {
             ...state,
-            order:null, 
             data: action.payload, 
+          };
+        case DELETECALENDAR:
+            console.log(DELETECALENDAR,action.payload);
+        return {
+            ...state,
+            _id:action.payload,
+            order:"DELETE", 
           };
       default:
         return state; // 아무 일도 일어나지 않으면 현재 상태를 그대로 반환합니다.

@@ -1,29 +1,18 @@
 import React, { PureComponent } from 'react';
-import InfiniteCalendarLiv from '../lib/InfiniteCalendarLiv'
+// import InfiniteCalendarLiv from '../lib/InfiniteCalendarLiv'
 import { connect } from 'react-redux';
 // import {toastUiCalendarLiv} from '../lib/toastUiCalendarLiv'
+import DataPickers from '../lib/DataPicker'
 class Calendar_Body extends PureComponent{
 
-    state ={
-        s_date:[]
-    }
-
-    componentDidUpdate(){
-        console.log('componentDidUpdate_Calendar_body', this.props.data);
-        if(this.props.data){
-            const s_date = this.props.data.map((data) => {return data.s_date});
-            this.setState({
-                "s_date":s_date
-            })
-        }
-    }
 
     render(){
         return(
             <React.Fragment>
-                <InfiniteCalendarLiv
-                    data={this.state.s_date}
+                <div className="text-center mt-3">
+                <DataPickers  
                 />
+                </div>
             </React.Fragment>
         )
     }
