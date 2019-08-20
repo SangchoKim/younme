@@ -31,6 +31,33 @@ const _deletecalendar = (req,res) => {
           })
 }
 
+const _updatecalendar = (req,res) => {
+  const {_id} = req.query;
+  const shared_code = req.user._code.codes;
+  console.log("_updatecalendar",_id);
+  const query = {'_code':shared_code,"dataSchema":{ $elemMatch:{"_id":_id}}};
+              Calendar.updateOne(query,{$set:{
+                                  "dataSchema.$.title": _id,
+                                  "dataSchema.$.s_date": _id, 
+                                  "dataSchema.$.e_date": _id, 
+                                  "dataSchema.$.s_time": _id, 
+                                  "dataSchema.$.e_time": _id, 
+                                  "dataSchema.$.author": _id,   
+                                  "dataSchema.$.memo": _id,
+                                  }},(err,result)=>{
+                if(err) throw new Error();
+                else {
+                if(result.ok===1){
+                    _calendarRead(req.user._code,res);
+                    console.log('캘린더 Update완료');
+              }else{
+                res.json({result:5});
+                    console.log('캘린더 Update실패')
+              }
+            }
+          })
+}
+
 const _setcalendar = (req,res) => {
   const shared_code = req.user._code.codes;
   console.log("_setcalendar",shared_code);
@@ -118,4 +145,5 @@ module.exports = {
   setcalendar:_setcalendar,
   readcalendar:_readcalendar,
   deletecalendar:_deletecalendar,
+  updatecalendar:_updatecalendar,
 }

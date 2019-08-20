@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import {MDBRow,MDBBtn,MDBCol,MDBCard,MDBListGroupItem,MDBListGroup,MDBCardHeader,MDBCardBody,MDBCardFooter,MDBIcon} from 'mdbreact';
+import {MDBRow,MDBInput,MDBBtn,MDBCol,MDBCard,MDBListGroupItem,MDBListGroup,MDBCardHeader,MDBCardBody,MDBCardFooter,MDBIcon} from 'mdbreact';
 import { connect } from 'react-redux';
 import * as calendarAction from '../store/modules/Calendar';
+import Calendarmodal from './Calendar_modal'
 
 const font = {
     color:"black",
@@ -16,35 +17,98 @@ const font = {
     justifyContent: 'space-between',
    }
 
+   const list2 = {
+    display: 'flex',
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems:'center'
+   }
+
 
 class Calendar_dateInfo extends PureComponent{
 
-
-    _delete = async (e) => {
-     e.preventDefault();
-     const _id = e.target.id;
-     console.log('_delete_Calendar_dateInfo',_id);
-     fetch(`/api/deletecalendar?_id=${_id}`, {method: "GET",
-                                headers: {
-                                  'Accept': 'application/json',
-                                  'Content-Type': 'application/json'
-                                }
-                                })
-    .then(res => res.json())
-    .then(res=>{
-      if(res.results===1){
-        const {setCalendarRead} = this.props;
-         console.log('캘린더Delete 성공', res.data);
-         setCalendarRead(res.data);
-      }else if(res.results===5){
-        alert('캘린더Delete 실패');
-      }
-    })
+    state={
+        mode:'',
+        startDate:null,
+        endDate:null,
+        startTime:null,
+        endTime:null,
+        sub:'',
+        memo:'',
     }
+
+    _onClick = async (e) => {
+        e.preventDefault();
+
+      const {id,name} = e.target;
+      const {mode} = this.state;
+      setTimeout(() => {
+        if(name==="update"){
+            
+                console.log('_update_Calendar_dateInfo',id);
+                fetch(`/api/updatecalendar?_id=${id}`, {method: "GET",
+                                           headers: {
+                                             'Accept': 'application/json',
+                                             'Content-Type': 'application/json'
+                                           }
+                                           })
+               .then(res => res.json())
+               .then(res=>{
+                 if(res.results===1){
+                   const {setCalendarRead} = this.props;
+                    console.log('캘린더Update 성공', res.data);
+                    setCalendarRead(res.data);
+                 }else if(res.results===5){
+                   alert('캘린더Update 실패');
+                 }
+               })
+           
+           
+        }else if(name==="ready"){
+            const {mode} = this.state
+            this.setState({mode:"ready"});
+            console.log('_updateReady_Calendar_dateInfo',mode);
+            
+
+        }else if(name==="delete"){
+            console.log('_delete_Calendar_dateInfo',id);
+            window.confirm('정말로 삭제 하시겠습니까?')&&
+            fetch(`/api/deletecalendar?_id=${id}`, {method: "GET",
+                                       headers: {
+                                         'Accept': 'application/json',
+                                         'Content-Type': 'application/json'
+                                       }
+                                       })
+           .then(res => res.json())
+           .then(res=>{
+             if(res.results===1){
+               const {setCalendarRead} = this.props;
+                console.log('캘린더Delete 성공', res.data);
+                setCalendarRead(res.data);
+             }else if(res.results===5){
+               alert('캘린더Delete 실패');
+             }
+           })
+     }  
+        }, 100);
+    }
+
+    _onchange = async(e) => {
+        e.preventDefault();
+        const name = e.target.name;
+        const val = e.target.value;
+        console.log('_onchange_calendar_modify',name,val); 
+        await this.setState((pre)=>({
+            ...pre,
+            [name]: val
+        }))
+       
+      }
 
     render(){
 
-        const {isOpen, result, onsubmit}= this.props;
+        const {isOpen, result}= this.props;
+        let  {mode,sub,memo,startDate,endDate,startTime,endTime}= this.state;
         return(
             <React.Fragment>
             {isOpen&&   
@@ -55,11 +119,9 @@ class Calendar_dateInfo extends PureComponent{
                     <MDBRow style={font}>
                     {result.map((result)=>{
                         return(
-                        
                         <MDBCol md="4" key={result._id} >   
                         <MDBCard className="mt-2" >
                         <MDBCardHeader>{result.title}</MDBCardHeader>
-                        
                         <MDBCardBody>  
                             <MDBListGroup className="border-dark"> 
                             <MDBCardHeader>날짜</MDBCardHeader>
@@ -96,14 +158,12 @@ class Calendar_dateInfo extends PureComponent{
                                 </MDBListGroupItem>
                             </MDBListGroup>
                         </MDBCardBody> 
-                        {/* <form onSubmit={onsubmit}> */}
                          <MDBCardFooter>
                           <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={result._id} color="indigo" size="sm" className="" name="update" ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
-                                <MDBBtn id={result._id} color="danger" size="sm" onClick={this._delete}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
+                                <MDBBtn id={result._id} color="indigo" size="sm" name="ready" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
+                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
                           </div>  
                          </MDBCardFooter>
-                         {/* </form> */}
                         </MDBCard>
                         </MDBCol>
                         
@@ -112,7 +172,16 @@ class Calendar_dateInfo extends PureComponent{
                     </MDBRow>  
                 </MDBCol>   
                </MDBRow>
-               
+                }
+                {mode==="ready"&& isOpen&&
+                <React.Fragment>
+                    <Calendarmodal
+                      mode={this.props.mode}
+                      modal={this.props.modal}
+                      t={this.props.t}
+                      list1={list2}
+                    />
+                </React.Fragment>    
                 }
                 {!isOpen&&
                    <MDBRow style={font}>

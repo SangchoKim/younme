@@ -85,6 +85,9 @@ class DataPicker extends PureComponent{
                 <Calendar_dateInfo
                   isOpen={this.state.isOpen}
                   result={this.state.result}
+                  mode={this.props.mode}
+                  modal={this.props.modal}
+                  t={this.props.t}
                 />
                 )}
           

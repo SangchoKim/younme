@@ -117,6 +117,8 @@ class Calendar extends PureComponent{
         </form>
         <CalendarBody
           mode={this.props.mode}
+          modal={this.state.modal}
+          t={this.t}
         />
       </React.Fragment>
     )

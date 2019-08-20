@@ -10,7 +10,10 @@ class Calendar_Body extends PureComponent{
         return(
             <React.Fragment>
                 <div className="text-center mt-3">
-                <DataPickers  
+                <DataPickers 
+                    mode={this.props.mode}
+                    modal={this.props.modal}
+                    t={this.props.t} 
                 />
                 </div>
             </React.Fragment>

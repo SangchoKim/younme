@@ -27,6 +27,7 @@ const updatealbum = require('../etc/method/album').updatealbum;
 const setcalendar = require('../etc/method/calendar').setcalendar;
 const readcalendar = require('../etc/method/calendar').readcalendar;
 const deletecalendar = require('../etc/method/calendar').deletecalendar;
+const updatecalendar = require('../etc/method/calendar').updatecalendar;
 // const upload = multer({
 //   storage: multer.diskStorage({
 //     destination: function (req, file, cb) {
@@ -145,6 +146,10 @@ router.post('/api/login', passport.authenticate('local', {
 
   router.get("/api/deletecalendar", (req,res) =>{
     deletecalendar(req,res);
+  });
+
+  router.get("/api/updatecalendar", (req,res) =>{
+    updatecalendar(req,res);
   });
 
   router.post("/api/changebirth", (req,res) =>{
