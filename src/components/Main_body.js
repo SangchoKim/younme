@@ -12,7 +12,7 @@ class Main_body extends PureComponent{
       };
         return(
             <React.Fragment>
-              {this.props.mode==="main"&&
+            {this.props.mode==="main"&&
             // Main body 부분 
             <MDBRow style={this.props.font}>
                 <MDBCol md="1" >

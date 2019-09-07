@@ -39,7 +39,7 @@ const updatecalendar = require('../etc/method/calendar').updatecalendar;
 //   }),
 // });
 // // insert 방식
-// router.post("/api/first", (req,res) => {
+// router.post("/first", (req,res) => {
 //     const user = new User();
 //     user.id = req.body.email;
 //     user.password = req.body.password;
@@ -54,52 +54,52 @@ const updatecalendar = require('../etc/method/calendar').updatecalendar;
 //       }
 //     })
 // })
-router.get("/api/home", (req,res) => {
+router.get("/home", (req,res) => {
   getHome(req,res);
 })
 
 
-router.post("/api/home", (req,res) => {
+router.post("/home", (req,res) => {
   postHome(req,res);
 })
 
 
 
-router.post("/api/first", (req,res) => {  
+router.post("/first", (req,res) => {  
   first_signUp(req,res);
 })
 
-router.post("/api/secondCodeSave", (req,res) => {
+router.post("/secondCodeSave", (req,res) => {
   secondCodeSave(req,res);
 })
 
-router.post("/api/second", (req,res) => {
+router.post("/second", (req,res) => {
   second_signUp(req,res); 
 })
 
-router.post("/api/backtofirst", (req,res) => {
+router.post("/backtofirst", (req,res) => {
   backtofirst(req,res);
 })
 
-router.post("/api/third", (req,res) => {
+router.post("/third", (req,res) => {
   third_signUp(req,res);
   
 })
 
-router.post("/api/backtosecond", (req,res) => {
+router.post("/backtosecond", (req,res) => {
   backtosecond(req,res);
 })
 
 
-router.post('/api/login', passport.authenticate('local', {
-    failureRedirect: '/api/home', failureFlash:true  
+router.post('/login', passport.authenticate('local', {
+    failureRedirect: '/home', failureFlash:true  
   }), (req, res) => {
     console.log('성공');
     checkLogin(req,res);
   });
 
 
-  router.get("/api/main", (req,res) => {
+  router.get("/main", (req,res) => {
     const _momorial = req.query.momorial;
     if(_momorial){
       console.log(_momorial);
@@ -109,72 +109,72 @@ router.post('/api/login', passport.authenticate('local', {
     }
   }) 
 
-  router.post("/api/updatealbum", modiAlbum.single("myImage") , (req,res) => {
+  router.post("/updatealbum", modiAlbum.single("myImage") , (req,res) => {
     updatealbum(req,res);
   })
 
 
-  router.post("/api/setbackground", upload.single("myImage") , (req,res) => {
+  router.post("/setbackground", upload.single("myImage") , (req,res) => {
     setbackground(req,res);
   })
 
-  router.post("/api/setalbum", uploadAlbum.single("myImages") , (req,res) => {
+  router.post("/setalbum", uploadAlbum.single("myImages") , (req,res) => {
     setalbum(req,res);
   })
 
-  router.get("/api/mypage", (req,res) => {
+  router.get("/mypage", (req,res) => {
     mypage(req,res);
   });
 
-  router.get("/api/changeGender", (req,res) =>{
+  router.get("/changeGender", (req,res) =>{
     changeGender(req,res);
   });
 
   
 
-  router.post("/api/changeinfo", (req,res) =>{
+  router.post("/changeinfo", (req,res) =>{
     changeinfo(req,res);
   });
 
-  router.post("/api/setcalendar", (req,res) =>{
+  router.post("/setcalendar", (req,res) =>{
     setcalendar(req,res);
   });
 
-  router.get("/api/readcalendar", (req,res) =>{
+  router.get("/readcalendar", (req,res) =>{
     readcalendar(req,res);
   });
 
-  router.get("/api/deletecalendar", (req,res) =>{
+  router.get("/deletecalendar", (req,res) =>{
     deletecalendar(req,res);
   });
 
-  router.get("/api/updatecalendar", (req,res) =>{
+  router.patch("/updatecalendar", (req,res) =>{
     updatecalendar(req,res);
   });
 
-  router.post("/api/changebirth", (req,res) =>{
+  router.post("/changebirth", (req,res) =>{
     changebirth(req,res);
     
   });
 
-  router.get("/api/logout", (req,res) =>{ 
+  router.get("/logout", (req,res) =>{ 
     logout(req,res);
 });
 
-router.get("/api/album", (req,res) =>{ 
+router.get("/album", (req,res) =>{ 
   albumRead(req,res);
 });
 
-router.get('/api/facebook', passport.authenticate('facebook', {
+router.get('/facebook', passport.authenticate('facebook', {
   authType: 'rerequest', scope: ['public_profile', 'email']
 }));
 
-router.get('/api/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }), function(req, res) {
+router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }), function(req, res) {
   console.log('성공');
     res.json({result:1});
 });
 
-router.get("/api/customers", (req,res) =>{ // app 대신 router에 연결
+router.get("/customers", (req,res) =>{ // app 대신 router에 연결
     const customers = {id:1, firstName: "John"};
     res.json(customers);
 });

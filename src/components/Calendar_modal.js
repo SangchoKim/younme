@@ -107,7 +107,7 @@ class Calendar_modal extends PureComponent{
                                   <MDBListGroupItem style={this.props.list1}>
                                       <span>종료시간</span>
                                       <TimeInputLiv
-                                          timeName={'endTime'}
+                                         timeName={'endTime'}
                                          timeChange={this._timeChange}
                                       />
                                   </MDBListGroupItem>

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import {MDBNavbar,MDBContainer,MDBNavbarToggler,MDBCollapse, MDBNavbarNav, MDBNavItem, MDBIcon,MDBBadge } from 'mdbreact';
 import { Link  } from'react-router-dom';
+import { Button } from '@material-ui/core';
 
 
 
@@ -37,6 +38,14 @@ class M_nav extends PureComponent{
     });
   }
 
+  _onClick = () => {
+    const url = '/talk';
+    this.props.history.push({
+      pathname: url,
+      states: { isOneProceed:"ONCE",},
+    })
+  }
+
   render(){
     return(
       <React.Fragment>  
@@ -55,7 +64,7 @@ class M_nav extends PureComponent{
                         <Link to="/album"><MDBIcon icon="image fa-2x" /><br></br>앨범</Link>
                       </MDBNavItem>
                       <MDBNavItem >
-                        <Link to="/talk"><MDBIcon icon="sms fa-3x"  /><br></br></Link>
+                        <Button onClick={this._onClick}><MDBIcon icon="sms fa-3x"  /><br></br></Button>
                       </MDBNavItem>
                       <MDBNavItem>
                         <Link to="/alert"><MDBIcon icon="bell fa-2x" /><br></br>알림</Link><MDBBadge pill color="danger">5</MDBBadge>

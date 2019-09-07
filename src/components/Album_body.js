@@ -32,6 +32,7 @@ class Album_body extends PureComponent{
     render(){
         return(
             <React.Fragment>
+            {this.props.mode ==="album"&&
             <AlbumImg
               font={font}
               imgUrls = {this.props.imgUrls}
@@ -43,6 +44,7 @@ class Album_body extends PureComponent{
               onClick = {this.props.onClick}
               mode = {this.props.mode}
             />
+            }
              {this.props.imageNameCheck&&
                   (
                 <form onSubmit={this.props.setData} >
@@ -82,6 +84,7 @@ class Album_body extends PureComponent{
                 </MDBCol>
               </MDBRow>
             } 
+            
             </React.Fragment>
         )
     }

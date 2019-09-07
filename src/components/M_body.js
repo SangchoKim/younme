@@ -52,6 +52,7 @@ class M_body extends PureComponent{
   state = {
     modal6: false,
     modal7: false,
+    modal8: false,
     modal: false,
     images: []
   }
@@ -73,13 +74,17 @@ class M_body extends PureComponent{
     return(
       <React.Fragment >
       <MDBContainer>
+        {this.props.mode==="main"&&
           <Mainheader
             font = {font}
             imgUrl = {this.props.imgUrl}
             mode={this.props.mode}
-          /> 
+          />
+           } 
+          {this.props.mode ==="album"&& 
           <Albumbody
             font = {font}
+            mode={this.props.mode}
             check = {this.props.check}
             imgUrls = {this.props.imgUrls}
             onClick = {this.props.onClick}
@@ -87,18 +92,23 @@ class M_body extends PureComponent{
             setData = {this.props.setData}
             imageName = {this.props.imageName}
             defautImgeHave={this.props.defautImgeHave}
-            mode={this.props.mode}
             defautImge={this.props.defautImge}
             image={this.props.image}
             imageNameShow={this.props.imageNameShow}
           />
+          }
+          {this.props.mode==="talk"&&
            <Talkbody
              font = {font}
              mode={this.props.mode}
              modal8 ={this.state.modal8}
              toggle = {this.toggle(8)}
              modal ={modal}
+            location={this.props.location}
+              history={this.props.history} 
            />
+            }
+          {this.props.mode==="main"&&
            <Mainbody
             font = {font}
             mode={this.props.mode}
@@ -120,6 +130,7 @@ class M_body extends PureComponent{
             capture={this.props.capture}
             onClickRetake={this.props.onClickRetake}
            /> 
+          }
         </MDBContainer>
       </React.Fragment>
 

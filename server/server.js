@@ -1,14 +1,20 @@
 const express = require('express');
+const app = express();
+const morgan = require('morgan');
 const db = require('./db.js');
-const router = require('./routes/router')
+const router = require('./routes/router');
+const socketIoRouter = require('./routes/socketIoRouter');
 const session = require('express-session'); // 세션 설정
 const FileStore = require('session-file-store')(session); 
 const passport = require('passport');
 const passportConfig = require('./passport'); 
-const app = express();
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
+const SocketIo = require('socket.io'); // 소켓
+const socketEvents = require('./socket/soket'); // 
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv'); 
 // const https = require('https');
 // const lex = require('greenlock-express').create({
 //   version: 'draft-11', // 버전2
@@ -29,11 +35,18 @@ const flash = require('connect-flash');
 
 // https.createServer(lex.httpsOptions, lex.middleware(app)).listen(process.env.SSL_PORT || 443);
 
-
+dotenv.config();
+app.use(morgan('dev'));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
-  secret:'keyboard cat',
+  secret: process.env.COOKIE_SECRET,
   resave: false,
   saveUninitialized: true,
+  cookie:{
+    httpOnly:true,
+    secure:false,  // https를 쓸 때 True
+  },
+  name:'shelley',
   store: new FileStore()
 })); // 세션 활성화
 app.use(flash());
@@ -45,7 +58,8 @@ app.use(passport.session()); // 세션 연결
 db();
 passportConfig(); // 이 부분 추가
 
-app.use('/', router);
+app.use('/api', router);
+app.use('/io', socketIoRouter);
 app.use((req, res, next) => { // 404 처리 부분
     res.status(404).send('일치하는 주소가 없습니다!');
   });
@@ -55,4 +69,8 @@ app.use((req, res, next) => { // 404 처리 부분
   });
 
 const port = 5000;
-app.listen(port, () => console.log('Server started on port', {port}))
+const server = app.listen(port, () => console.log('Server started on port', {port}));
+
+const io = SocketIo(server); // socket.io와 서버 연결하는 부분
+socketEvents(io); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
+

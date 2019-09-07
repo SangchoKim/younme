@@ -31,31 +31,49 @@ const _deletecalendar = (req,res) => {
           })
 }
 
-const _updatecalendar = (req,res) => {
-  const {_id} = req.query;
+const _updatecalendar = async (req,res,next) => {
+  const _id = req.body.data.id;
+  const {startDate,endDate,startTime,endTime,sub,memo} = req.body.data;
+  const author = req.user.name;
   const shared_code = req.user._code.codes;
   console.log("_updatecalendar",_id);
   const query = {'_code':shared_code,"dataSchema":{ $elemMatch:{"_id":_id}}};
-              Calendar.updateOne(query,{$set:{
-                                  "dataSchema.$.title": _id,
-                                  "dataSchema.$.s_date": _id, 
-                                  "dataSchema.$.e_date": _id, 
-                                  "dataSchema.$.s_time": _id, 
-                                  "dataSchema.$.e_time": _id, 
-                                  "dataSchema.$.author": _id,   
-                                  "dataSchema.$.memo": _id,
-                                  }},(err,result)=>{
-                if(err) throw new Error();
-                else {
-                if(result.ok===1){
-                    _calendarRead(req.user._code,res);
-                    console.log('캘린더 Update완료');
-              }else{
-                res.json({result:5});
-                    console.log('캘린더 Update실패')
-              }
-            }
-          })
+  await Calendar.findOne({$and:[query]})
+  .then((result)=>{
+    if(result){
+      console.log("_updatecalendar",result);
+      try {
+          
+         Calendar.updateOne(query,{$set:{
+                                      "dataSchema.$.title": sub!==null?sub:result.dataSchema.title,
+                                      "dataSchema.$.s_date": startDate!==null?startDate:result.dataSchema.s_date, 
+                                      "dataSchema.$.e_date": endDate!==null?endDate:result.dataSchema.e_date, 
+                                      "dataSchema.$.s_time": startTime!==null?startTime:result.dataSchema.s_time,
+                                      "dataSchema.$.e_time": endTime!==null?endTime:result.dataSchema.e_time, 
+                                      "dataSchema.$.author": author,   
+                                      "dataSchema.$.memo": memo!==null?memo:result.dataSchema.memo,
+                                      }},(err,result)=>{
+                    if(err) throw new Error();
+                    else {
+                    if(result.ok===1){
+                        _calendarRead(req.user._code,res);
+                        console.log('캘린더 Update완료');
+                  }else{
+                    res.json({result:5});
+                        console.log('캘린더 Update실패')
+                  }
+                }
+              })
+      } catch (e) {
+        console.error(e);
+        next(e);
+      }
+    }else{
+      res.send("데이터가 존재하지 않습니다.");
+    }
+  })
+  
+              
 }
 
 const _setcalendar = (req,res) => {

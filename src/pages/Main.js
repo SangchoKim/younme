@@ -229,7 +229,6 @@ class Main extends PureComponent{
       <MainNav 
          history={this.props.history}
          location={this.props.location}
-        
       />
       <MainHeader 
         userName={this.props.name}

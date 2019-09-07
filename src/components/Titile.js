@@ -102,8 +102,8 @@ class M_nav extends PureComponent{
                       />
                       {this.props.mode!=="calendar"&&this.props.mode!=="album"&&
                       <MDBNavItem >
-                      <Link to="#"><MDBIcon icon={this.props.rightIcon} /><br></br>{this.props.update}</Link>
-                    </MDBNavItem> 
+                        <Link to="#"><MDBIcon icon={this.props.rightIcon} /><br></br>{this.props.update}</Link>
+                     </MDBNavItem> 
                       }             
                     </MDBNavbarNav>
                   </MDBCollapse>
@@ -130,7 +130,7 @@ class M_nav extends PureComponent{
                     modal8={this.state.modal8}
                     modal={modal}
                     caretDown={this.props.caretDown}
-                    toggle={this.toggle}
+                    toggle={this.toggle(8)}
                   />
                  <Calendarmodal
                    mode={this.props.mode}

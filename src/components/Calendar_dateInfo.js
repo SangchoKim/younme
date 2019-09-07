@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react';
 import {MDBRow,MDBInput,MDBBtn,MDBCol,MDBCard,MDBListGroupItem,MDBListGroup,MDBCardHeader,MDBCardBody,MDBCardFooter,MDBIcon} from 'mdbreact';
 import { connect } from 'react-redux';
 import * as calendarAction from '../store/modules/Calendar';
-import Calendarmodal from './Calendar_modal'
+import DataRangePicker from '../lib/UpdateDataRangePicker';
+import TimeInputLiv from '../lib/UpdateTimeInputLiv';
 
 const font = {
     color:"black",
@@ -33,30 +34,48 @@ class Calendar_dateInfo extends PureComponent{
         endDate:null,
         startTime:null,
         endTime:null,
-        sub:'',
-        memo:'',
+        sub:null,
+        memo:null,
+        setIniailSub: true,
+        setIniailMemo: true,
     }
 
     _onClick = async (e) => {
         e.preventDefault();
 
       const {id,name} = e.target;
-      const {mode} = this.state;
+     
       setTimeout(() => {
         if(name==="update"){
-            
+                const {startDate,endDate,startTime,endTime,sub,memo} = this.state;
+
                 console.log('_update_Calendar_dateInfo',id);
-                fetch(`/api/updatecalendar?_id=${id}`, {method: "GET",
+                fetch('/api/updatecalendar', {method: "PATCH",
                                            headers: {
                                              'Accept': 'application/json',
                                              'Content-Type': 'application/json'
-                                           }
+                                           },
+                                           body: JSON.stringify({'data':{
+                                            id:id,
+                                            startDate:startDate&&startDate,
+                                            endDate:endDate&&endDate,
+                                            startTime:startTime&&startTime,
+                                            endTime:endTime&&endTime,
+                                            sub:sub&&sub,
+                                            memo:memo&&memo,  
+                                           }})
                                            })
                .then(res => res.json())
                .then(res=>{
                  if(res.results===1){
                    const {setCalendarRead} = this.props;
                     console.log('캘린더Update 성공', res.data);
+                     this.setState((pre)=>({
+                        ...pre,
+                        setIniailSub:true,
+                        setIniailMemo:true,
+                        mode:'',
+                    })) 
                     setCalendarRead(res.data);
                  }else if(res.results===5){
                    alert('캘린더Update 실패');
@@ -68,7 +87,6 @@ class Calendar_dateInfo extends PureComponent{
             const {mode} = this.state
             this.setState({mode:"ready"});
             console.log('_updateReady_Calendar_dateInfo',mode);
-            
 
         }else if(name==="delete"){
             console.log('_delete_Calendar_dateInfo',id);
@@ -97,7 +115,22 @@ class Calendar_dateInfo extends PureComponent{
         e.preventDefault();
         const name = e.target.name;
         const val = e.target.value;
-        console.log('_onchange_calendar_modify',name,val); 
+        console.log('_onchange_calendar_modify',name,val);
+
+        if(name==="sub"){
+            await this.setState((pre)=>({
+                ...pre,
+                setIniailSub:false,
+            }))  
+        } 
+
+        if(name==="memo"){
+            await this.setState((pre)=>({
+                ...pre,
+                setIniailMemo:false,
+            }))  
+        } 
+
         await this.setState((pre)=>({
             ...pre,
             [name]: val
@@ -105,10 +138,27 @@ class Calendar_dateInfo extends PureComponent{
        
       }
 
+      _dateChange = async(startDate,endDate) => {
+        console.log('_dataChange_Calendar',startDate,endDate);
+        await this.setState((pre)=>({
+            ...pre,
+            startDate:startDate,
+            endDate:endDate,
+        })) 
+      }
+
+      _timeChange = async(key,val) => {
+        console.log('_timeChange_Calendar',key,val);
+        await this.setState((pre)=>({
+            ...pre,
+            [key]: val
+        })) 
+      }
+
     render(){
 
         const {isOpen, result}= this.props;
-        let  {mode,sub,memo,startDate,endDate,startTime,endTime}= this.state;
+        let  {mode,sub,setIniailSub,setIniailMemo,memo}= this.state;
         return(
             <React.Fragment>
             {isOpen&&   
@@ -121,32 +171,80 @@ class Calendar_dateInfo extends PureComponent{
                         return(
                         <MDBCol md="4" key={result._id} >   
                         <MDBCard className="mt-2" >
+                        {mode==="ready"&& isOpen
+                            ?
+                        <MDBCardHeader>
+                        <MDBInput
+                           name="sub"
+                           type="text"
+                           value={setIniailSub?result.title:sub}
+                           onChange={this._onchange} 
+                        />
+                        </MDBCardHeader>
+                            :
                         <MDBCardHeader>{result.title}</MDBCardHeader>
+                            }           
                         <MDBCardBody>  
                             <MDBListGroup className="border-dark"> 
                             <MDBCardHeader>날짜</MDBCardHeader>
-                                <MDBListGroupItem style={list1}>   
+                            {mode==="ready"&& isOpen
+                                ?         
+                                <DataRangePicker 
+                                    s_date={result.s_date}
+                                    e_date={result.e_date}
+                                    dateChange={this._dateChange}
+                                />            
+                                :
+                            <MDBListGroupItem style={list1}>   
                                     <React.Fragment >
                                         <div className="ml-2">{result.s_date}</div>
                                         <div className="ml-2">{result.e_date}</div>
                                     </React.Fragment >
                                 </MDBListGroupItem>
+                            }
                             </MDBListGroup>
                             <MDBListGroup className="border-dark">
-                                <MDBCardHeader>시간</MDBCardHeader> 
+                                <MDBCardHeader>시간</MDBCardHeader>
+                                {mode==="ready"&& isOpen
+                                ?
+                                <MDBListGroupItem style={list1}> 
+                                    <TimeInputLiv
+                                        timeName={'startTime'}
+                                        timeChange={this._timeChange}
+                                        timeVal={result.s_time}
+                                    />
+                                    <TimeInputLiv
+                                        timeName={'endTime'}
+                                        timeChange={this._timeChange}
+                                        timeVal={result.e_time}
+                                    />
+                                </MDBListGroupItem>
+                                :
                                 <MDBListGroupItem style={list1}> 
                                     <React.Fragment >
                                         <div className="ml-2">{result.s_time}</div>
                                         <div className="ml-2">{result.e_time}</div>
                                     </React.Fragment >
                                 </MDBListGroupItem>
+                                }
                             </MDBListGroup>
                             <MDBListGroup className="border-dark">
                                 <MDBCardHeader>메모</MDBCardHeader> 
-                                <MDBListGroupItem style={list1}> 
-                                    <React.Fragment >
-                                        <div className="ml-2">{result.memo}</div>
-                                    </React.Fragment >
+                                <MDBListGroupItem style={list1}>
+                                {mode==="ready"&& isOpen
+                                 ?
+                                <MDBInput
+                                    name="memo"
+                                    type="textarea"
+                                    maxLength="500"
+                                    value={setIniailMemo?result.memo:memo}
+                                    onChange={this._onchange}
+                                /> 
+                                :    
+                                <React.Fragment >
+                                    <div className="ml-2">{result.memo}</div>
+                                </React.Fragment >
+                                }
                                 </MDBListGroupItem>
                             </MDBListGroup>
                             <MDBListGroup className="border-dark"> 
@@ -159,10 +257,18 @@ class Calendar_dateInfo extends PureComponent{
                             </MDBListGroup>
                         </MDBCardBody> 
                          <MDBCardFooter>
-                          <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={result._id} color="indigo" size="sm" name="ready" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
+                         {mode==="ready"&& isOpen
+                         ?
+                         <div className="mask flex-center rgba-green-slight">
+                                <MDBBtn id={result._id} color="info" size="sm" name="update" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
                                 <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
                           </div>  
+                         :
+                          <div className="mask flex-center rgba-green-slight">
+                                <MDBBtn id={result.id}  color="indigo" size="sm" name="ready" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
+                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
+                          </div>  
+                          }
                          </MDBCardFooter>
                         </MDBCard>
                         </MDBCol>
@@ -175,12 +281,7 @@ class Calendar_dateInfo extends PureComponent{
                 }
                 {mode==="ready"&& isOpen&&
                 <React.Fragment>
-                    <Calendarmodal
-                      mode={this.props.mode}
-                      modal={this.props.modal}
-                      t={this.props.t}
-                      list1={list2}
-                    />
+
                 </React.Fragment>    
                 }
                 {!isOpen&&

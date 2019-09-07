@@ -19,10 +19,14 @@ class Talk extends PureComponent{
           backIcon={this.props.backIcon}
           caretDown={this.props.caretDown}
           mode={this.props.mode}
+          
         />
         <Body
            mode={this.props.mode}
            imgUrl={this.props.imgUrl}
+           location={this.props.location}
+           history={this.props.history} 
+           
         />
       </React.Fragment>
     )
