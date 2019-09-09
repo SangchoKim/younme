@@ -92,7 +92,7 @@ router.post("/backtosecond", (req,res) => {
 
 
 router.post('/login', passport.authenticate('local', {
-    failureRedirect: '/home', failureFlash:true  
+    failureRedirect: '/home', failureFlash:true,   
   }), (req, res) => {
     console.log('성공');
     checkLogin(req,res);

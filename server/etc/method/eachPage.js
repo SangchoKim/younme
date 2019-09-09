@@ -78,6 +78,7 @@ const init_calendar = async (result) => {
 
 const _main = (req,res,next) =>{
     const order = req.user._id;
+    console.log(req.user);
     if(order){
       User.findOne({ _id: order })
       .then((result) =>{

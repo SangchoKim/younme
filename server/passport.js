@@ -35,24 +35,24 @@ module.exports = () => {
     });
   }));
 
-  passport.use(new FacebookStrategy({
-    clientID: '372621646779170',
-    clientSecret: '48fb2ddd76c8dfa7fa4a51502bcdf680',
-    callbackURL: '홈페이지주소/auth/facebook/callback',
-    passReqToCallback: true,
-  }, (req, accessToken, refreshToken, profile, done) => {
-    Users.findOne({ id: profile.id }, (err, user) => {
-      if (user) {
-        return done(err, user);
-      } // 회원 정보가 있으면 로그인
-      const newUser = new Users({ // 없으면 회원 생성
-        id: profile.id
-      });
-      newUser.save((user) => {
-        return done(null, user); // 새로운 회원 생성 후 로그인
-      });
-    });
-  }));
+  // passport.use(new FacebookStrategy({
+  //   clientID: '372621646779170',
+  //   clientSecret: '48fb2ddd76c8dfa7fa4a51502bcdf680',
+  //   callbackURL: '홈페이지주소/auth/facebook/callback',
+  //   passReqToCallback: true,
+  // }, (req, accessToken, refreshToken, profile, done) => {
+  //   Users.findOne({ id: profile.id }, (err, user) => {
+  //     if (user) {
+  //       return done(err, user);
+  //     } // 회원 정보가 있으면 로그인
+  //     const newUser = new Users({ // 없으면 회원 생성
+  //       id: profile.id
+  //     });
+  //     newUser.save((user) => {
+  //       return done(null, user); // 새로운 회원 생성 후 로그인
+  //     });
+  //   });
+  // }));
 };
 
 

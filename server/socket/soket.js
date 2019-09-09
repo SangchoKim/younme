@@ -1,49 +1,51 @@
 const uuids = require('uuid/v1');
 const moment = require('moment');
+const axios = require('axios');
 const uid = uuids();
-const clients = [];
+ 
+module.exports = (io, app, sessionMiddleware) => {
+  // 익스프레스 변수 저장 방법 
+  app.set('io',io);
+  // req.app.get('io').of('/room).emit
+  // 소켓 -> 네임스페이스 필수
+  // io.of('/') -> 기본
+  const initChat = io.of('/chat');
+  const initRoom = io.of('/room');
+  
+  let roomNo = null;
 
-module.exports = (io) => {
-    io.on('connection', (socket) => { // 웹소켓 연결 시
-      console.log('유저 접속 됨');
 
-      socket.on('isConnecting',(data)=>{ // 접속한 유저 메일과 소켓 id 저장
-        console.log('isConnecting',data);
-        const clientInfo = {
-                            _id:socket.id,
-                            sender:data._userInfo.sender,
-                            }
-        clients.unshift(clientInfo);
-      });
+  app.use((socket,next) => { // 익스프레스 미들웨어를 소켓IO에서 쓰는 방법
+    sessionMiddleware(socket.request, socket.request.res, next);
+  });
 
-      socket.on('message', (data) => { // 상대방에게 전달할 메세지 
-            console.log('전달된 메세지',data);  
-            const do_sendData = {
-                message: "메시지 감사합니다.",
-                uid:uid,
-                reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
-                sender:'김상초',
-              }  
-          for (let i = 0; i < clients.length; i++) {
-              const client = clients[i];
-              console.log('client_ID',client);
-              if(client.sender===data.getter){
-                io.to(client._id).emit('message', do_sendData );
-                break;
-              }
-            }
-      });
+  initRoom.on('connection',(socket) => { // 룸 소켓 연결 시
+    const req = socket.request;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log('initRoom 접속 됨', ip, socket.id, req.ip);
+
+    socket.on('_code', (_code) => {
+      console.log('initRoom_code',_code);
+      roomNo = _code;
+    })
+
+  });
+
+  initChat.on('connection', (socket) => { // 채팅 소켓 연결 시
+     
+      const req = socket.request;
+      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      console.log('initChat 접속 됨', ip, socket.id, req.ip);
+
+
+      socket.join(roomNo);
+      
+      socket.on('error',(error)=>{
+        console.error('에러발생',error);
+      })
 
       socket.on('disconnect',()=>{
-        for (let i = 0; i < clients.length; i++) {
-          const client = clients[i];
-          console.log('client_ID',client);
-          if(client._id===socket.id){
-            clients.splice(i,1);
-            break;
-          }
-        }
-        console.log('유저 접속 종료');
+        console.log('initChat 접속 종료');
       })
     });
   };

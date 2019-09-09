@@ -50,7 +50,7 @@ class SignUp extends PureComponent {
 
    getdata = (e) => {
     e.preventDefault();
-    const url = '/loading';
+    const url = '/main';
     const { email, password } = this.state;
     console.log("email:",email);
     console.log("password:",password);
@@ -73,7 +73,7 @@ class SignUp extends PureComponent {
       console.log(res.result);
       if(res.result===1){
       console.log('move to main');
-      alert('You&ME에 접속합니다.');
+      // alert('You&ME에 접속합니다.');
       this.props.history.push({
         pathname: url,
         state: { mycode: email}

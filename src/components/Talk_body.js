@@ -3,8 +3,9 @@ import {MDBRow,MDBCol,MDBCard,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBInput,MDBL
 import uuids from 'uuid/v1';
 import moment from 'moment';
 import SocketIo from 'socket.io-client'; // 소켓
-import { async } from 'q';
-const socket = SocketIo.connect('http://localhost:5000');
+const socket_Chat = SocketIo.connect('http://localhost:5000/chat');
+const socket_Room = SocketIo.connect('http://localhost:5000/room');
+
 const uid = uuids();
 
 const layout = {
@@ -32,8 +33,13 @@ class Talk_body extends PureComponent{
         intro:'',
         oppentEmail:'',
         oppentName:'',
-      }
-
+      },
+      chat_info:{
+        user:'',
+        chat:'',
+        gif:'',
+        cratedAt:'',
+      },
     }
 
     _onchange = async(e) => {
@@ -51,8 +57,6 @@ class Talk_body extends PureComponent{
 
     _approchServer = async() =>{
       console.log("_approchServer");
-
-
       fetch('/io/inituser',{method: "GET",
                             headers: {
                               'Content-Type': 'application/json',
@@ -63,18 +67,29 @@ class Talk_body extends PureComponent{
       .then((res) =>{
         console.log('User 정보 확인', res.results);
         if(res.results===1){
-          const {name,email,intro,oppentEmail,oppentName} = res.user_info;
-          
+          const {name,email,intro,oppentEmail,oppentName,_code} = res.user_info;
+          let _chat_info = null;
+          if(res.chat_info){
+            const {user,chat,gif,cratedAt} = res.chat_info;
+            _chat_info = {
+                          user:user,
+                          chat:chat,
+                          gif:gif,
+                          cratedAt:cratedAt,
+                        }
+          }
          this.setState(prev=>({
             ...prev,
             user:{
-              name:name,
-              email:email,
-              intro:intro,
-              oppentEmail:oppentEmail,
-              oppentName:oppentName,
-            }
+                  name:name,
+                  email:email,
+                  intro:intro,
+                  oppentEmail:oppentEmail,
+                  oppentName:oppentName,
+                  },
+            chat_info:_chat_info,
           }));
+          socket_Room.emit('_code',_code);
         }else if(res.result===5){
           alert('User 정보 Read 실패');
         }
@@ -86,14 +101,16 @@ class Talk_body extends PureComponent{
          this._isMounted = true;
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer();
-
+  
           // 소켓 IO 페이지에 접근했을때 
           const {log} = this.state;
-          socket.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
+
+          socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
             console.log('messageFromServer',data,log);
             const add = {uuid:data.uid,
                           comment:data.message,
                           sender:data.sender,
+                          getter:data.getter,
                           reg_time:data.reg_time,
                           };
             log.unshift(add);
@@ -104,7 +121,6 @@ class Talk_body extends PureComponent{
               }))
             }
           })
-        
     }
 
     
@@ -128,19 +144,22 @@ class Talk_body extends PureComponent{
         ...prev,
         sendlog:log
       }))
-      await socket.emit('isConnecting',{
-        _userInfo:{
-          sender:email,
-        }
-      });
-      await socket.emit('message',{
-        _message:{
-                  uuid:uid,
-                  comment:message,
-                  getter:oppentEmail,
-                  reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
-                  }
-      });
+
+      const _message={
+                      uuid:uid,
+                      comment:message,
+                      sender:email,
+                      getter:oppentEmail,
+                      reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
+                      }
+
+       fetch('/io/chat_info',{method: "POST",
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'
+                            },
+                            body:JSON.stringify(_message)
+                          })
       this.setState({message:''});
     }
 

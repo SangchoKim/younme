@@ -15,6 +15,19 @@ const SocketIo = require('socket.io'); // 소켓
 const socketEvents = require('./socket/soket'); // 
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv'); 
+const ColorHash = require('color-hash');
+
+const sessionMiddleware = session({
+  secret: process.env.COOKIE_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie:{
+    httpOnly:true,
+    secure:false,  // https를 쓸 때 True
+  },
+  name:'shelley',
+  store: new FileStore()
+});
 // const https = require('https');
 // const lex = require('greenlock-express').create({
 //   version: 'draft-11', // 버전2
@@ -38,23 +51,20 @@ const dotenv = require('dotenv');
 dotenv.config();
 app.use(morgan('dev'));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({
-  secret: process.env.COOKIE_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie:{
-    httpOnly:true,
-    secure:false,  // https를 쓸 때 True
-  },
-  name:'shelley',
-  store: new FileStore()
-})); // 세션 활성화
+app.use(sessionMiddleware); // 세션 활성화
 app.use(flash());
+app.use((req,res,next) => {
+  if(!req.session.color){
+    const colorHash = new ColorHash();
+    req.session.color = colorHash.hex(req.sessionID);
+  }
+  next();
+});
+app.use(passport.initialize()); // passport 구동
+app.use(passport.session()); // 세션 연결
 app.use(methodOverride()); // PUT, DELETE를 지원 안 하는 클라이언트를 위해
 app.use(bodyParser.urlencoded({ extended: true })); // qs모듈로 쿼리스트링 파싱
 app.use(bodyParser.json()); // body의 데이터를 json형식으로 받음
-app.use(passport.initialize()); // passport 구동
-app.use(passport.session()); // 세션 연결
 db();
 passportConfig(); // 이 부분 추가
 
@@ -72,5 +82,5 @@ const port = 5000;
 const server = app.listen(port, () => console.log('Server started on port', {port}));
 
 const io = SocketIo(server); // socket.io와 서버 연결하는 부분
-socketEvents(io); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
+socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
 
