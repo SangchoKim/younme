@@ -38,18 +38,21 @@ router.post('/chat_info',async(req,res,next) =>{
 
 router.get("/inituser", async(req,res,next) => {
     try {
+        const limit = req.query.limit;
         const order = req.user._id;
         const e = req.user._code.oppentEmail;
         const _code = req.user._code.codes;
-        let chatss = null;
+        let chatss = [];
         let _chat_info = null;
+        console.log('limit',limit);
         if (await order){
             const r = await User.findOne({"id":e});
             console.log(r);
-            Chat.findOne(({'_code':_code}).sort({'dataSchema.cratedAt':1}))
+            Chat.findOne({"_code":parseInt(_code)})
             .then((r) => {
               if(r){
                 // 채팅 DB가 있는 경우 => read
+                
                 chatss = r;
               }else{
                 // 채팅 DB가 없는 경우 => db 만든다.
@@ -67,6 +70,9 @@ router.get("/inituser", async(req,res,next) => {
                   return null;
                 })
               }
+            }
+            ).catch((err) => {
+              console.error(err);
             })
             // const chatss = await _getChat(_code,next);
             setTimeout(() => {
@@ -75,22 +81,26 @@ router.get("/inituser", async(req,res,next) => {
               console.log("Read 성공:",result);
               const {name,id,intro} = result;
               const _oppentEmail = result._code.oppentEmail;
-              console.log("채팅테이블info:");
+              console.log("채팅테이블info:",chatss.dataSchema[0]);
               if(chatss){
-                _chat_info = chatss.dataSchema;
-                // console.log("_chat_info",_chat_info);
+                const min = limit - 10;
+                const max = limit;
+                chatss = chatss.dataSchema.slice(min,max);
+                // chatss = chatss.dataSchema;
+                console.log("_chat_info",chatss);
               }
-              res.json({results:1,
-                      user_info:{
-                                name:name,
-                                email:id,
-                                intro:intro,
-                                oppentEmail:_oppentEmail,
-                                oppentName:r.name,
-                                _code:_code,
-                                },
-                      chat_info:_chat_info,
-                  });
+                res.json({results:1,
+                  user_info:{
+                            name:name,
+                            email:id,
+                            intro:intro,
+                            oppentEmail:_oppentEmail,
+                            oppentName:r.name,
+                            _code:_code,
+                            },
+                  chat_info:chatss,
+              });
+              
             })
             .catch((err) => {
               console.log(err);

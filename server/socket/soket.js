@@ -15,7 +15,6 @@ module.exports = (io, app, sessionMiddleware) => {
     sessionMiddleware(socket.request, socket.request.res, next);
   });
 
-
   initChat.on('connection', (socket) => { // 채팅 소켓 연결 시
      
       const req = socket.request;

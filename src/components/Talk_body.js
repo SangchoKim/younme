@@ -51,8 +51,13 @@ class Talk_body extends PureComponent{
     }
 
     _approchServer = async() =>{
+      const logs = this.state.log;
+      let lastId = null;
+      if(logs.length>=1){
+        lastId = logs[logs.length-1].cratedAt;
+      };
       console.log("_approchServer");
-      fetch('/io/inituser',{method: "GET",
+      fetch(`/io/inituser?lastId=${lastId}&limit=10`,{method: "GET",
                             headers: {
                               'Content-Type': 'application/json',
                               'Accept': 'application/json'
@@ -86,9 +91,19 @@ class Talk_body extends PureComponent{
       })
     }
 
-    
+    onScroll = () => {
+      // 첫번쨰와 두번쨰 더하면 세번째 것이 된다. 
+      // window.scrollY = 페이지의 가장 위쪽에 위치
+      // document.documentElement.clientHeight = 페이지 위쪽부터 페이지 밑쪽까지
+      // document.documentElement.scrollHeight = 페이지 가장 위쪽에서 가장 밑쪽까지
+      console.log(window.scrollY, document.documentElement.clientHeight, document.documentElement.scrollHeight);
+      if(window.scrollY + document.documentElement.clientHeight === document.documentElement.scrollHeight - 300){
+        this._approchServer();
+      }
+    };
 
     componentDidMount(){
+        window.addEventListener('scroll', this.onScroll);
          this._isMounted = true;
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer();
@@ -109,11 +124,11 @@ class Talk_body extends PureComponent{
           
           socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
             console.log('messageFromServer',data,log);
-            const add = { uuid:data.uid,
+            const add = { _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           getter:data.getter,
-                          reg_time:data.reg_time,
+                          cratedAt:data.reg_time,
                           };
             if(this._isMounted){
               this.setState((prev)=>({
@@ -125,6 +140,7 @@ class Talk_body extends PureComponent{
     }
     componentWillUnmount() {
       this._isMounted = false;
+      window.removeEventListener('scroll',this.onScroll);
     }
     
 
@@ -133,20 +149,6 @@ class Talk_body extends PureComponent{
       const {name,email,oppentEmail,_code} = this.state.user;
       console.log('_onClick_setMessage',message);
       await socket_Chat.emit('code',_code);
-        
-            // const add = {uuid:uid,
-            //               comment:message,
-            //               sender:email,
-            //               getter:oppentEmail,
-            //               reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
-            //               };
-            // log.unshift(add);
-  
-            // if(this._isMounted){
-            //   this.setState((prev)=>({
-            //     ...prev,
-            //     log:log,
-            //   }))}
       const _message={
                       _id:uid,
                       comment:message,
