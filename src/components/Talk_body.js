@@ -4,7 +4,6 @@ import uuids from 'uuid/v1';
 import moment from 'moment';
 import SocketIo from 'socket.io-client'; // 소켓
 const socket_Chat = SocketIo.connect('http://localhost:5000/chat');
-const socket_Room = SocketIo.connect('http://localhost:5000/room');
 
 const uid = uuids();
 
@@ -27,18 +26,14 @@ class Talk_body extends PureComponent{
     state={
       message:'',
       log:[],
+      socket_id:'',
       user:{
         name:'',
         email:'',
         intro:'',
         oppentEmail:'',
         oppentName:'',
-      },
-      chat_info:{
-        user:'',
-        chat:'',
-        gif:'',
-        cratedAt:'',
+        _code:'',
       },
     }
 
@@ -65,18 +60,12 @@ class Talk_body extends PureComponent{
                           })
       .then((res) => res.json())
       .then((res) =>{
-        console.log('User 정보 확인', res.results);
+        console.log('User 정보 확인', res.chat_info);
         if(res.results===1){
           const {name,email,intro,oppentEmail,oppentName,_code} = res.user_info;
           let _chat_info = null;
           if(res.chat_info){
-            const {user,chat,gif,cratedAt} = res.chat_info;
-            _chat_info = {
-                          user:user,
-                          chat:chat,
-                          gif:gif,
-                          cratedAt:cratedAt,
-                        }
+            _chat_info = res.chat_info;
           }
          this.setState(prev=>({
             ...prev,
@@ -86,15 +75,17 @@ class Talk_body extends PureComponent{
                   intro:intro,
                   oppentEmail:oppentEmail,
                   oppentName:oppentName,
+                  _code:_code,
                   },
-            chat_info:_chat_info,
+            log:_chat_info,
           }));
-          socket_Room.emit('_code',_code);
+          socket_Chat.emit("isConnecting",email);  
         }else if(res.result===5){
           alert('User 정보 Read 실패');
         }
       })
     }
+
     
 
     componentDidMount(){
@@ -102,28 +93,36 @@ class Talk_body extends PureComponent{
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer();
   
+          socket_Chat.on('socket_id',(data) => {
+            console.log('socket_id',data);
+
+            if(this._isMounted){
+              this.setState((prev)=>({
+                ...prev,
+                socket_id:data,
+              }))
+            }
+          });
+
           // 소켓 IO 페이지에 접근했을때 
           const {log} = this.state;
-
+          
           socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
             console.log('messageFromServer',data,log);
-            const add = {uuid:data.uid,
+            const add = { uuid:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           getter:data.getter,
                           reg_time:data.reg_time,
                           };
-            log.unshift(add);
             if(this._isMounted){
               this.setState((prev)=>({
                 ...prev,
-                senderlog:log,
+                log:[...this.state.log, add],
               }))
             }
           })
     }
-
-    
     componentWillUnmount() {
       this._isMounted = false;
     }
@@ -131,26 +130,29 @@ class Talk_body extends PureComponent{
 
     _onClick = async() => {
       const {message,log} = this.state;
-      const {name,email,oppentEmail} = this.state.user;
+      const {name,email,oppentEmail,_code} = this.state.user;
       console.log('_onClick_setMessage',message);
-      const add = 
-        {uuid:uid,
-         comment:message,
-         sender:name,
-         reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
-        };
-        log.unshift(add);
-      this.setState((prev)=>({
-        ...prev,
-        sendlog:log
-      }))
-
+      await socket_Chat.emit('code',_code);
+        
+            // const add = {uuid:uid,
+            //               comment:message,
+            //               sender:email,
+            //               getter:oppentEmail,
+            //               reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
+            //               };
+            // log.unshift(add);
+  
+            // if(this._isMounted){
+            //   this.setState((prev)=>({
+            //     ...prev,
+            //     log:log,
+            //   }))}
       const _message={
-                      uuid:uid,
+                      _id:uid,
                       comment:message,
                       sender:email,
                       getter:oppentEmail,
-                      reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
+                      cratedAt:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
                       }
 
        fetch('/io/chat_info',{method: "POST",
@@ -164,7 +166,7 @@ class Talk_body extends PureComponent{
     }
 
     render(){
-      const {message,log} = this.state;
+      const {message,log,socket_id} = this.state;
       console.log("TalkLog:",log);
       const {name,email,oppentEmail,intro,oppentName} = this.state.user;
         return(
@@ -179,7 +181,7 @@ class Talk_body extends PureComponent{
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
                     <MDBListGroup>
                       <MDBListGroupItem className="blue border-default" >
-                        <span>{name}</span>  <MDBIcon icon="heart" />  <span>{oppentName}</span>
+                        <span>{name}</span>  {socket_id?<MDBIcon icon="heart" style={{color:'#ff6b6b'}}/>:<MDBIcon icon="heart"/> }  <span>{oppentName}</span>
                       </MDBListGroupItem>
                     </MDBListGroup>
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
@@ -189,17 +191,38 @@ class Talk_body extends PureComponent{
                 {log&&
                   log.map(data => {
                     return(
-                    <MDBListGroupItem  key={data.uuid+'_'+data.reg_time} className="text-right">
+                    data.sender===email? 
+                    <MDBListGroupItem  key={data._id+'_'+data.cratedAt} className="text-right">
                           <MDBRow>
                             <MDBCol md="8"></MDBCol>
                             <MDBCol md="4" style={round} className="light-green">
+                              <div style={{fontSize:15}} className="text-left m-2">
+                                <p>{name}</p>
+                              </div>
                               <div className="text-left ml-2">
                                 <p>{data.comment}</p>
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
-                                <p>{moment(data.reg_time).format("YYYY-MM-DD, hh:mm a")}</p>
+                                <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
                               </div>
                             </MDBCol>
+                          </MDBRow> 
+                    </MDBListGroupItem>
+                    :
+                    <MDBListGroupItem  key={data._id+'_'+data.cratedAt} className="text-left">
+                          <MDBRow>
+                            <MDBCol md="4" style={round} className="light-blue">
+                              <div style={{fontSize:15}} className="text-left m-2">
+                                <p>{oppentName}</p>
+                              </div>
+                              <div className="text-left ml-2">
+                                <p>{data.comment}</p>
+                              </div>
+                              <div style={{fontSize:10}} className="text-right mr-2">
+                                <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
+                              </div>
+                            </MDBCol>
+                            <MDBCol md="8"></MDBCol>
                           </MDBRow> 
                     </MDBListGroupItem>
                   )})

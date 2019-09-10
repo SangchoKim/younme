@@ -10,35 +10,27 @@ module.exports = (io, app, sessionMiddleware) => {
   // 소켓 -> 네임스페이스 필수
   // io.of('/') -> 기본
   const initChat = io.of('/chat');
-  const initRoom = io.of('/room');
   
-  let roomNo = null;
-
-
   app.use((socket,next) => { // 익스프레스 미들웨어를 소켓IO에서 쓰는 방법
     sessionMiddleware(socket.request, socket.request.res, next);
   });
 
-  initRoom.on('connection',(socket) => { // 룸 소켓 연결 시
-    const req = socket.request;
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log('initRoom 접속 됨', ip, socket.id, req.ip);
-
-    socket.on('_code', (_code) => {
-      console.log('initRoom_code',_code);
-      roomNo = _code;
-    })
-
-  });
 
   initChat.on('connection', (socket) => { // 채팅 소켓 연결 시
      
       const req = socket.request;
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       console.log('initChat 접속 됨', ip, socket.id, req.ip);
+      
+      socket.on('isConnecting', (email) => {
+        console.log('isConnecting',email);
+        socket.emit('socket_id',socket.id);
+      })
 
-
-      socket.join(roomNo);
+      socket.on('code', (_code) => {
+        console.log('initRoom_code',_code);
+        socket.join(_code);
+      })
       
       socket.on('error',(error)=>{
         console.error('에러발생',error);
