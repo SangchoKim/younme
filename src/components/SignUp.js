@@ -50,7 +50,7 @@ class SignUp extends PureComponent {
 
    getdata = (e) => {
     e.preventDefault();
-    const url = '/main';
+    const url = '/loading';
     const { email, password } = this.state;
     console.log("email:",email);
     console.log("password:",password);

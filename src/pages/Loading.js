@@ -20,7 +20,7 @@ class Loading extends PureComponent{
       this.props.history.push({
         pathname: url
       });    
-      }, 1000); 
+      }, 5000); 
     }
      componentWillUnmount(){
       clearTimeout(this.lodings);

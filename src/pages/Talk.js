@@ -21,7 +21,7 @@ class Talk extends PureComponent{
           mode={this.props.mode}
           
         />
-        <Body
+        <Body 
            mode={this.props.mode}
            imgUrl={this.props.imgUrl}
            location={this.props.location}

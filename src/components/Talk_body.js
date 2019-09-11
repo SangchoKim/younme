@@ -1,11 +1,14 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, createRef } from 'react';
 import {MDBRow,MDBCol,MDBCard,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBInput,MDBListGroup,MDBListGroupItem} from 'mdbreact';
 import uuids from 'uuid/v1';
 import moment from 'moment';
 import SocketIo from 'socket.io-client'; // 소켓
+import Talkmodalbottom from './Talk_modal_bottom'
 const socket_Chat = SocketIo.connect('http://localhost:5000/chat');
 
 const uid = uuids();
+
+
 
 const layout = {
   disPlay: "flex",
@@ -23,7 +26,11 @@ const layout = {
 
 class Talk_body extends PureComponent{
   _isMounted = false;
-    state={
+
+
+  constructor(props){
+    super(props)
+    this.state={
       message:'',
       log:[],
       socket_id:'',
@@ -35,7 +42,11 @@ class Talk_body extends PureComponent{
         oppentName:'',
         _code:'',
       },
+      num:10,
+      length:null,
     }
+    this.myRef = createRef();
+  }
 
     _onchange = async(e) => {
       e.preventDefault();
@@ -50,14 +61,15 @@ class Talk_body extends PureComponent{
      
     }
 
-    _approchServer = async() =>{
+    _approchServer = async(limit) =>{
       const logs = this.state.log;
       let lastId = null;
+      console.log("limit",limit);
       if(logs.length>=1){
         lastId = logs[logs.length-1].cratedAt;
       };
       console.log("_approchServer");
-      fetch(`/io/inituser?lastId=${lastId}&limit=10`,{method: "GET",
+      fetch(`/io/inituser?lastId=${lastId}&limit=${limit}`,{method: "GET",
                             headers: {
                               'Content-Type': 'application/json',
                               'Accept': 'application/json'
@@ -69,8 +81,12 @@ class Talk_body extends PureComponent{
         if(res.results===1){
           const {name,email,intro,oppentEmail,oppentName,_code} = res.user_info;
           let _chat_info = null;
+          let _length = null;
           if(res.chat_info){
             _chat_info = res.chat_info;
+          }
+          if(res.length){
+            _length = res.length;
           }
          this.setState(prev=>({
             ...prev,
@@ -83,6 +99,7 @@ class Talk_body extends PureComponent{
                   _code:_code,
                   },
             log:_chat_info,
+            length:_length,
           }));
           socket_Chat.emit("isConnecting",email);  
         }else if(res.result===5){
@@ -96,17 +113,29 @@ class Talk_body extends PureComponent{
       // window.scrollY = 페이지의 가장 위쪽에 위치
       // document.documentElement.clientHeight = 페이지 위쪽부터 페이지 밑쪽까지
       // document.documentElement.scrollHeight = 페이지 가장 위쪽에서 가장 밑쪽까지
-      console.log(window.scrollY, document.documentElement.clientHeight, document.documentElement.scrollHeight);
-      if(window.scrollY + document.documentElement.clientHeight === document.documentElement.scrollHeight - 300){
-        this._approchServer();
-      }
+      console.log(parseInt(window.scrollY)+document.documentElement.clientHeight, document.documentElement.scrollHeight);
+      if(parseInt(window.scrollY) + parseInt(document.documentElement.clientHeight) === parseInt(document.documentElement.scrollHeight)-1){
+        let {num,length} = this.state;
+        if(length>=num){
+          num = num + 10;
+          this.setState((prev) => ({
+            ...prev,
+            num:num,
+          }))
+          console.log('제발',num,length);
+          this._approchServer(num);
+        }
+        }
+       
     };
+    
 
     componentDidMount(){
-        window.addEventListener('scroll', this.onScroll);
+      this.myRef.current.scrollTop = this.myRef.current.scrollHeight;
+      window.addEventListener('scroll', this.onScroll);
          this._isMounted = true;
           // 처음에 Talk 페이지에 접근했을 때 
-          this._approchServer();
+          this._approchServer(10);
   
           socket_Chat.on('socket_id',(data) => {
             console.log('socket_id',data);
@@ -144,7 +173,8 @@ class Talk_body extends PureComponent{
     }
     
 
-    _onClick = async() => {
+    _onClick = async(e) => {
+      e.preventDefault();
       const {message,log} = this.state;
       const {name,email,oppentEmail,_code} = this.state.user;
       console.log('_onClick_setMessage',message);
@@ -175,7 +205,7 @@ class Talk_body extends PureComponent{
             <React.Fragment>
             {this.props.mode==="talk"&&
             // Talk body 부분 
-            <MDBRow style={this.props.font}>
+            <MDBRow style={this.props.font} ref={this.myRef}>
               <MDBCol md="1" >
               </MDBCol>
               <MDBCol md="10" >
@@ -235,21 +265,13 @@ class Talk_body extends PureComponent{
               </MDBCol>
               <MDBCol md="1" >
               </MDBCol>
-              <MDBCol md="1" >
-                <MDBBtn outline color="danger" onClick={this.props.toggle}><MDBIcon icon="plus-circle fa-lg" /></MDBBtn>
-                <MDBModal isOpen={this.props.modal8} toggle={this.props.toggle} fullHeight position="bottom">            
-                        <MDBModalBody>
-                          <MDBCard style={this.props.modal} className="text-center">
-                            <MDBBtn color="cyan"><MDBIcon far icon="images fa-2x" /><br></br>사진</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="video fa-2x" /> <br></br>동영상</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="camera-retro fa-2x" /> <br></br>카메라</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="grin-beam fa-2x" /> <br></br>움짤</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="microphone fa-2x" /> <br></br>음성</MDBBtn>
-                            <MDBBtn color="cyan"><MDBIcon icon="envelope-open fa-2x" /> <br></br>러브레터</MDBBtn>
-                          </MDBCard>
-                        </MDBModalBody>
-                      </MDBModal>
-              </MDBCol>    
+                <Talkmodalbottom
+                  toggle={this.props.toggle}
+                  modal8={this.props.modal8}
+                  modal={this.props.modal}
+                  sender={email}
+                  getter={oppentEmail}
+                /> 
               <MDBCol md="8">
                 <div className="ml-4">
                   <MDBInput 
