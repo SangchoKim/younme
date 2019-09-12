@@ -101,11 +101,9 @@ class M_body extends PureComponent{
            <Talkbody
              font = {font}
              mode={this.props.mode}
-             modal8 ={this.state.modal8}
-             toggle = {this.toggle(8)}
              modal ={modal}
             location={this.props.location}
-              history={this.props.history} 
+            history={this.props.history} 
            />
             }
           {this.props.mode==="main"&&

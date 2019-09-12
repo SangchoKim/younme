@@ -133,8 +133,9 @@ class Talk_modal_bottom extends PureComponent{
                           {isPhoto&&
                           <TalkModalPhoto
                             onClick={this._onClick}
-                            seder = {this.props.seder}
-                            getter = {this.props.getter}
+                            setData={this.props.setData}
+                            onChangePhoto={this.props.onChangePhoto}
+                            file={this.props.file}
                           />
                           }
                           {isVideo&&
@@ -145,8 +146,12 @@ class Talk_modal_bottom extends PureComponent{
                           {isCamera&&
                           <TalkModalCamera
                             onClick={this._onClick}
-                            seder = {this.props.seder}
+                            sender = {this.props.sender}
                             getter = {this.props.getter}
+                            toggle={this.props.toggle}
+                            modal8={this.props.modal8}
+                            modal={this.props.modal}
+                            code={this.props.code}
                           />
                           }
                           {isGif&&

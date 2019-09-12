@@ -72,7 +72,8 @@ class TalkModalCamera extends PureComponent{
             'content-type': 'multipart/form-data'
         }
       };
-      fetch("/io/chat_camera", {method: "PATCH",
+      fetch(`/io/chat_camera?sender=${sender}&getter=${getter}`, 
+                          {method: "PATCH",
                           config,
                           body: formData 
                           })

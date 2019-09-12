@@ -1,5 +1,5 @@
-const User = require('../model/user');
-const Chat = require('../model/chat');
+const User = require('../../model/user');
+const Chat = require('../../model/chat');
 const multer = require('multer');
 const fs = require('fs');
 const moment = require('moment');
@@ -46,6 +46,7 @@ const _chatInfo = async(req,res,next) => {
                 // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
                 // console.log(req.app.get('io').of('/chat').sockets);
                 req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
+                res.json({results:1});
               })
     } catch (error) {
       console.error(error);
@@ -73,15 +74,16 @@ const _chatPhoto = async(req,res,next) => {
               // 데이터 내용 뿌려주기 
               const do_sendData = {
                 message: null,
-                gif:filename,
+                gif:[image],
                 uid:uid,
                 reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
                 getter:getter,
                 sender:sender,
               } 
-              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+              console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
               // console.log(req.app.get('io').of('/chat').sockets);
-              req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
+              req.app.get('io').of('/chat').to(shared_code).emit('photo', do_sendData ); // 키, 값
+              res.json({results:1});
             })
   } catch (error) {
     console.error(error);

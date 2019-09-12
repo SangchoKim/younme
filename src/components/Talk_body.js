@@ -42,11 +42,23 @@ class Talk_body extends PureComponent{
         oppentName:'',
         _code:'',
       },
+      photo:{
+        file: null,
+        realfile: null,
+      },
       num:10,
       length:null,
+      modal8:false,
     }
     this.myRef = createRef();
   }
+
+    toggle = nr => () => {
+      let modalNumber = 'modal' + nr
+      this.setState({
+        [modalNumber]: !this.state[modalNumber]
+      });
+    }
 
     _onchange = async(e) => {
       e.preventDefault();
@@ -151,11 +163,13 @@ class Talk_body extends PureComponent{
           // 소켓 IO 페이지에 접근했을때 
           const {log} = this.state;
           
+          // 문자일때
           socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
-            console.log('messageFromServer',data,log);
+          
             const add = { _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
+                          gif:data.gif,
                           getter:data.getter,
                           cratedAt:data.reg_time,
                           };
@@ -166,6 +180,24 @@ class Talk_body extends PureComponent{
               }))
             }
           })
+
+          // photo 일때 
+          socket_Chat.on('photo', (data) => { // 서버로부터 photo 파일 들어옴
+            console.log('PhotoFromServer',data);
+            const add = {  _id:data.uid,
+                          comment:data.message,
+                          sender:data.sender,
+                          gif:data.gif,
+                          getter:data.getter,
+                          cratedAt:data.reg_time,
+                        };
+            if(this._isMounted){
+              this.setState((prev)=>({
+                ...prev,
+                log:[...this.state.log, add],
+              }))
+            }        
+          })  
     }
     componentWillUnmount() {
       this._isMounted = false;
@@ -178,7 +210,7 @@ class Talk_body extends PureComponent{
       const {message,log} = this.state;
       const {name,email,oppentEmail,_code} = this.state.user;
       console.log('_onClick_setMessage',message);
-      await socket_Chat.emit('code',_code);
+      
       const _message={
                       _id:uid,
                       comment:message,
@@ -186,7 +218,7 @@ class Talk_body extends PureComponent{
                       getter:oppentEmail,
                       cratedAt:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
                       }
-
+        await socket_Chat.emit('code',_code); 
        fetch('/io/chat_info',{method: "POST",
                             headers: {
                               'Content-Type': 'application/json',
@@ -194,7 +226,57 @@ class Talk_body extends PureComponent{
                             },
                             body:JSON.stringify(_message)
                           })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res.results);
+      })
       this.setState({message:''});
+    }
+
+    // TalkModalPhoto 구역입니다. 
+    _onChangePhoto = (e) => {
+      const file = e.target.files[0];
+      this.setState(prev=>({
+        ...prev,
+        photo: {
+          file: URL.createObjectURL(file),
+          realfile:file,
+        }    
+      }));
+    }
+
+    _setData = async(e) => {
+      e.preventDefault();
+      const {name,email,oppentEmail,_code} = this.state.user;
+      console.log('TalkModalPhoto 구역입니다.',_code);
+      await socket_Chat.emit('code',_code);
+      let file = this.state.photo.realfile;
+      if(!file){
+        alert('사진을 선택해주세요');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('myImages',file);
+      const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+            'Accept': 'application/json'
+        }
+      };
+       fetch(`/io/chat_photo?sender=${email}&getter=${oppentEmail}`, 
+                          {method: "PATCH",
+                          config,
+                          body: formData
+                          })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res.results);
+        if(res.results===1)
+        this.setState(prev => ({
+          ...prev,
+          modal8:!this.state.modal8
+        }));
+      })
     }
 
     render(){
@@ -232,7 +314,9 @@ class Talk_body extends PureComponent{
                                 <p>{name}</p>
                               </div>
                               <div className="text-left ml-2">
-                                <p>{data.comment}</p>
+                                {data.comment&&<p>{data.comment}</p>}
+                                {data.gif&&<img src={`/uploadsChat/${data.gif[0].filename}`}
+                                alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>}
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
                                 <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
@@ -266,11 +350,12 @@ class Talk_body extends PureComponent{
               <MDBCol md="1" >
               </MDBCol>
                 <Talkmodalbottom
-                  toggle={this.props.toggle}
-                  modal8={this.props.modal8}
+                  toggle={this.toggle(8)}
+                  modal8={this.state.modal8}
                   modal={this.props.modal}
-                  sender={email}
-                  getter={oppentEmail}
+                  setData={this._setData}
+                  onChangePhoto={this._onChangePhoto}
+                  file={this.state.photo.file}
                 /> 
               <MDBCol md="8">
                 <div className="ml-4">
