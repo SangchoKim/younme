@@ -1,9 +1,15 @@
 import React, { PureComponent, createRef } from 'react';
-import {MDBRow,MDBCol,MDBCard,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBInput,MDBListGroup,MDBListGroupItem} from 'mdbreact';
+import {MDBRow,MDBCol,MDBCard,MDBBtn,MDBIcon,MDBInput,MDBListGroup,MDBListGroupItem} from 'mdbreact';
 import uuids from 'uuid/v1';
 import moment from 'moment';
 import SocketIo from 'socket.io-client'; // 소켓
 import Talkmodalbottom from './Talk_modal_bottom'
+import Lottie from 'lottie-react-web';
+import animation1 from '../lotties/159-servishero-loading.json';
+import animation2 from '../lotties/128-around-the-world.json';
+import animation3 from '../lotties/8134-dont-worry-be-happy.json';
+import animation4 from '../lotties/8144-battery-low-humour-animation.json';
+import {imageEncodeToBase64} from '../lib/imageEncoder'
 const socket_Chat = SocketIo.connect('http://localhost:5000/chat');
 
 const uid = uuids();
@@ -45,6 +51,12 @@ class Talk_body extends PureComponent{
       photo:{
         file: null,
         realfile: null,
+      },
+      camera:{
+        isCapture:false,
+        isReady:true,
+        imageData: null,
+        imageName:'',
       },
       num:10,
       length:null,
@@ -113,6 +125,7 @@ class Talk_body extends PureComponent{
             log:_chat_info,
             length:_length,
           }));
+          
           socket_Chat.emit("isConnecting",email);  
         }else if(res.result===5){
           alert('User 정보 Read 실패');
@@ -148,7 +161,6 @@ class Talk_body extends PureComponent{
          this._isMounted = true;
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer(10);
-  
           socket_Chat.on('socket_id',(data) => {
             console.log('socket_id',data);
 
@@ -198,6 +210,45 @@ class Talk_body extends PureComponent{
               }))
             }        
           })  
+
+          // camera 일때 
+          socket_Chat.on('camera', (data) => { // 서버로부터 photo 파일 들어옴
+            console.log('CameraFromServer',data);
+            const add = {  _id:data.uid,
+                          comment:data.message,
+                          sender:data.sender,
+                          gif:data.gif,
+                          getter:data.getter,
+                          cratedAt:data.reg_time,
+                        };
+                        
+            if(this._isMounted){
+              this.setState((prev)=>({
+                ...prev,
+                log:[...this.state.log, add],
+              }))
+            }        
+          })
+          
+          // gif 일떄 
+          socket_Chat.on('gif', (data) => { // 서버로부터 gif 파일 들어옴
+            console.log('GifFromServer',data);
+            // _lottie(data.gif[0].gifname); 
+            const add = {  _id:data.uid,
+                          comment:data.message,
+                          sender:data.sender,
+                          gif:data.gif,
+                          getter:data.getter,
+                          cratedAt:data.reg_time,
+                        };
+                
+            if(this._isMounted){       
+              this.setState((prev)=>({
+                ...prev,
+                log:[...this.state.log, add],
+              }))
+            }        
+          })
     }
     componentWillUnmount() {
       this._isMounted = false;
@@ -279,9 +330,116 @@ class Talk_body extends PureComponent{
       })
     }
 
+    // TalkModalCamera 구역입니다.
+
+    _setRef = (webcam) => {
+      this.webcam = webcam;
+    };
+
+    _onChangeCamera = (e) => {
+      e.preventDefault();
+      const {name,value} = e.target;
+      console.log(name,value);
+      this.setState(prev => ({
+        ...prev,
+        camera:{
+          ...prev.camera,
+          [name] : value
+          }
+       }));
+    }
+
+    _capture = (e) => {
+      e.preventDefault();
+      const imageSrc = this.webcam.getScreenshot();
+      this.setState( prev => ({
+        ...prev,
+        camera:{
+          ...prev.camera,
+          imageData: imageSrc,
+          isCapture:true,
+          isReady:false,
+          }
+       }));
+    };
+
+    _setCameraData = async(e) => {
+      e.preventDefault();
+      console.log('TalkModalCamera 구역입니다.');
+      const {imageData,imageName} = this.state.camera;
+      const {email,oppentEmail,_code} = this.state.user;
+      await socket_Chat.emit('code',_code);
+      const myBlob = imageEncodeToBase64(imageData,'image/jpeg');
+      let formData = new FormData();
+      formData.append('myImages',myBlob,imageName);
+      const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+      };
+      fetch(`/io/chat_camera?sender=${email}&getter=${oppentEmail}`, 
+                          {method: "PATCH",
+                          config,
+                          body: formData 
+                          })
+      .then(res => res.json())
+      .then(res => {
+        console.log("TalkModalCamera완료",res.results);
+        if(res.results===1)
+        this.setState(prev => ({
+          ...prev,
+          modal8:!this.state.modal8
+        }));
+      })
+    }
+
+     _onClickRetake = (e) => {
+        e.preventDefault();
+        this.setState(prev => ({
+          ...prev,
+          camera:{
+            ...prev.camera,
+            imageData: null,
+            imageName:'',
+            isCapture:false,
+            isReady:true,
+            }
+        }));
+      }
+
+      // TalkModalGif 구역
+
+      _setGifData = async(e) => {
+        e.preventDefault();
+        const {email,oppentEmail,_code} = this.state.user;
+        const gifKey = {
+                        gifKey:e.target.name,
+                        sender:email,
+                        getter:oppentEmail,
+                        };
+        console.log('TalkModalGif 구역입니다.',_code,gifKey);
+        await socket_Chat.emit('code',_code);
+        fetch('/io/chat_gif',{method: "POST",
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'
+                            },
+                            body:JSON.stringify(gifKey)
+                          })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res.results);
+          if(res.results===1)
+          this.setState(prev => ({
+            ...prev,
+            modal8:!this.state.modal8
+          }));
+        })
+      }
+
     render(){
-      const {message,log,socket_id} = this.state;
-      console.log("TalkLog:",log);
+      const {message,log,socket_id,length} = this.state;
+      console.log("TalkLog:",log,length);
       const {name,email,oppentEmail,intro,oppentName} = this.state.user;
         return(
             <React.Fragment>
@@ -300,10 +458,23 @@ class Talk_body extends PureComponent{
                     </MDBListGroup>
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
                 </MDBCard>
-                {/* <img src={this.props.imgUrl} alt="Logo" width="100%" height="" /> */}
                 <MDBListGroup >
-                {log&&
+               
+                {length>0?
                   log.map(data => {
+                    let paths = null;
+                    if(data.gif&&data.gif[0].gifname){
+                      console.log("data.gif[0].gifname",data.gif[0].gifname);
+                      if(data.gif[0].gifname==="annimation1"){
+                        paths = animation1;
+                      }else if(data.gif[0].gifname==="annimation2"){
+                        paths = animation2;
+                      }else if(data.gif[0].gifname==="annimation3"){
+                        paths = animation3;
+                      }else if(data.gif[0].gifname==="annimation4"){
+                        paths = animation4;
+                      }
+                    }
                     return(
                     data.sender===email? 
                     <MDBListGroupItem  key={data._id+'_'+data.cratedAt} className="text-right">
@@ -315,8 +486,16 @@ class Talk_body extends PureComponent{
                               </div>
                               <div className="text-left ml-2">
                                 {data.comment&&<p>{data.comment}</p>}
-                                {data.gif&&<img src={`/uploadsChat/${data.gif[0].filename}`}
+                                {data.gif&&data.gif[0].filename&&<img src={`/uploadsChat/${data.gif[0].filename}`}
                                 alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>}
+                                {data.gif&&data.gif[0].gifname&&
+                                                                <Lottie
+                                                                options={{
+                                                                  animationData:paths,
+                                                                  loop: true,
+                                                                  autoplay: true,
+                                                                }}
+                                                              />}
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
                                 <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
@@ -332,7 +511,16 @@ class Talk_body extends PureComponent{
                                 <p>{oppentName}</p>
                               </div>
                               <div className="text-left ml-2">
-                                <p>{data.comment}</p>
+                                {data.comment&&<p>{data.comment}</p>}
+                                {data.gif&&data.gif[0].filename&&<img src={`/uploadsChat/${data.gif[0].filename}`}
+                                alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>}
+                                {data.gif&&data.gif[0].gifname&&<Lottie
+                                                                options={{
+                                                                  animationData:paths,
+                                                                  loop: true,
+                                                                  autoplay: true,
+                                                                }}
+                                                              />}
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
                                 <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
@@ -342,6 +530,8 @@ class Talk_body extends PureComponent{
                           </MDBRow> 
                     </MDBListGroupItem>
                   )})
+                  :
+                  <div>대화내용이 없습니다.</div>
                 }
                 </MDBListGroup>
               </MDBCol>
@@ -353,9 +543,22 @@ class Talk_body extends PureComponent{
                   toggle={this.toggle(8)}
                   modal8={this.state.modal8}
                   modal={this.props.modal}
+                  // photo
                   setData={this._setData}
                   onChangePhoto={this._onChangePhoto}
                   file={this.state.photo.file}
+                  // camera
+                  setRef={this._setRef}
+                  onChangeCamera={this._onChangeCamera}
+                  imageName={this.state.camera.imageName}
+                  imageData={this.state.camera.imageData}
+                  isCapture={this.state.camera.isCapture}
+                  isReady={this.state.camera.isReady}
+                  capture={this._capture}
+                  setCameraData={this._setCameraData}
+                  onClickRetake={this._onClickRetake}
+                  // gif
+                  setGifData={this._setGifData}
                 /> 
               <MDBCol md="8">
                 <div className="ml-4">

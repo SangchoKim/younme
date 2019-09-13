@@ -80,7 +80,7 @@ const _chatPhoto = async(req,res,next) => {
                 getter:getter,
                 sender:sender,
               } 
-              console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
               // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('photo', do_sendData ); // 키, 값
               res.json({results:1});
@@ -93,33 +93,75 @@ const _chatPhoto = async(req,res,next) => {
 
 const _chatCamera = async(req,res,next) => {
   try {
+    console.log("req.file:", req.file);
     const shared_code = req.user._code.codes;
-    const {uuid,comment,sender,getter,reg_time} = req.body;
+    const {sender,getter} =  req.query;
+    const {size,filename,originalname} = req.file;
+    console.log('chatPhoto 준비',shared_code,originalname,filename,size);
+    const image = {'size':size,'filename':filename,'originalname':originalname};
     const query = {'_code':shared_code};
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
-            'comment':comment,
-            'gif':null,
-            'cratedAt':reg_time,
+            'comment':null,
+            'gif':image,
+            'cratedAt':moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
             }}},(err,result) => {
               if(err) console.error(err);
               // 데이터 내용 뿌려주기 
               const do_sendData = {
-                message: comment,
-                uid:uuid,
-                reg_time:reg_time,
+                message: null,
+                gif:[image],
+                uid:uid,
+                reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
                 getter:getter,
                 sender:sender,
               } 
               // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
               // console.log(req.app.get('io').of('/chat').sockets);
-              req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
+              req.app.get('io').of('/chat').to(shared_code).emit('camera', do_sendData ); // 키, 값
+              res.json({results:1});
             })
-  } catch (error) {
-    console.error(error);
-    next();
-  }
+      } catch (error) {
+        console.error(error);
+        next();
+      }
+}
+
+const _chatGif = async(req,res,next) => {
+  try {
+    
+    const shared_code = req.user._code.codes;
+    const {gifKey,sender,getter} = req.body;
+    console.log('chatGif 준비',shared_code,gifKey,sender,getter);
+    const image = {'size':0,'gifname':gifKey,'originalname':gifKey};
+    const query = {'_code':shared_code};
+    Chat.updateOne(query,{$addToSet:{'dataSchema': 
+            {'sender':sender, 
+            'getter':getter,
+            'comment':null,
+            'gif':image,
+            'cratedAt':moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+            }}},(err,result) => {
+              if(err) console.error(err);
+              // 데이터 내용 뿌려주기 
+              const do_sendData = {
+                message: null,
+                gif:[image],
+                uid:uid,
+                reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+                getter:getter,
+                sender:sender,
+              } 
+              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+              // console.log(req.app.get('io').of('/chat').sockets);
+              req.app.get('io').of('/chat').to(shared_code).emit('gif', do_sendData ); // 키, 값
+              res.json({results:1});
+            })
+      } catch (error) {
+        console.error(error);
+        next();
+      }
 }
 
 const _initUser = async(req,res,next) => {
@@ -218,4 +260,5 @@ module.exports = {
     chatPhoto: _chatPhoto,
     chatCamera: _chatCamera,
     storageChat: _storageChat,
+    chatGif: _chatGif,
 }

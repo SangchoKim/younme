@@ -1,32 +1,40 @@
 import React, { PureComponent } from 'react';
-import {MDBBtn,MDBIcon,MDBModalBody,MDBModal,MDBCard} from 'mdbreact';
-
-
+import {MDBContainer,MDBRow,MDBCol,MDBBtn,MDBCard} from 'mdbreact';
 class TalkModalGif extends PureComponent{
 
+    state = {
+      gif:[
+        {'aniName':'annimation1','imgPath':'annimation1.png'},
+        {'aniName':'annimation2','imgPath':'annimation2.png'},
+        {'aniName':'annimation3','imgPath':'annimation3.png'},
+        {'aniName':'annimation4','imgPath':'annimation4.png'}],
+    }
+
+  
     render(){
+      const gif = this.state.gif;
+      console.log(gif);
+      const animation = gif.map((data,index) => 
+        {return(
+          <MDBCol  key={index + Date()} md="2">
+            <div><img src={`/lottie/${data.imgPath}`}
+            alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/></div>
+            <div className="text-center">
+             <MDBBtn name={data.aniName} onClick={this.props.setGifData}>사용</MDBBtn>
+            </div>
+          </MDBCol>
+        )})
         return(
             <React.Fragment>
-               {this.props.mode==="talk" &&
-                      <div>                      
-                        <MDBBtn outline color="light-blue" onClick={this.props.toggle}><MDBIcon icon={this.props.caretDown} /></MDBBtn>
-                        <MDBModal isOpen={this.props.modal8} toggle={this.props.toggle} fullHeight position="top">            
-                        <form> 
-                        <MDBModalBody>
-                          <MDBCard style={this.props.modal} className="text-center">
-                            <MDBBtn color="white"><MDBIcon far icon="images fa-2x" /> 사진 모아보기</MDBBtn>
-                            <MDBBtn color="white"><MDBIcon icon="envelope fa-2x" /> 러브레터 보관함</MDBBtn>
-                            <MDBBtn color="white"><MDBIcon icon="envelope fa-2x" /> S/T</MDBBtn>
-                            <MDBBtn color="white"><MDBIcon icon="envelope fa-2x" /> S/T</MDBBtn>
-                            <MDBBtn color="white"><MDBIcon icon="envelope fa-2x" /> S/T</MDBBtn>
-                            <MDBBtn color="white"><MDBIcon icon="envelope fa-2x" /> S/T</MDBBtn>
-                          </MDBCard>
-                        </MDBModalBody>
-                        </form>
-                      </MDBModal>
-                    </div>
-                  }
-            </React.Fragment>
+              <MDBContainer>
+                <MDBRow>
+                  {animation}
+                </MDBRow>
+                <div className="text-center mt-3">
+                  <MDBBtn name="back" color="danger" onClick={this.props.onClick}>뒤로</MDBBtn>
+                </div>
+              </MDBContainer>
+          </React.Fragment>
         )
     }
 

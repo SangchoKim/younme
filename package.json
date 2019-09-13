@@ -55,6 +55,7 @@
     "jest-environment-jsdom-fourteen": "0.1.0",
     "jest-resolve": "24.7.1",
     "jest-watch-typeahead": "0.3.0",
+    "lottie-react-web": "^2.1.4",
     "lottie-web": "^5.5.7",
     "material-ui-time-picker": "^1.2.0",
     "mdbootstrap": "^4.8.7",

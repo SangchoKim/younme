@@ -36,7 +36,7 @@ class TalkModalPhoto extends PureComponent{
                               </div>
                               <div className="text-center mt-3">
                                 <MDBBtn name="back" color="danger" onClick={this.props.onClick}>뒤로</MDBBtn>
-                                <MDBBtn type="submit" name="submit" color="info" >변경</MDBBtn>
+                                <MDBBtn type="submit" name="submit" color="info" >보내기</MDBBtn>
                               </div>
                               </MDBCol>
                           </MDBRow>

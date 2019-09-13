@@ -146,17 +146,22 @@ class Talk_modal_bottom extends PureComponent{
                           {isCamera&&
                           <TalkModalCamera
                             onClick={this._onClick}
-                            sender = {this.props.sender}
-                            getter = {this.props.getter}
-                            toggle={this.props.toggle}
-                            modal8={this.props.modal8}
+                            setRef={this.props.setRef}
                             modal={this.props.modal}
-                            code={this.props.code}
+                            onChangeCamera={this.props.onChangeCamera}
+                            imageName={this.props.imageName}
+                            capture={this.props.capture}
+                            imageData={this.props.imageData}
+                            isCapture={this.props.isCapture}
+                            isReady={this.props.isReady}
+                            setCameraData={this.props.setCameraData}
+                            onClickRetake={this.props.onClickRetake}
                           />
                           }
                           {isGif&&
                           <TalkModalGif
                             onClick={this._onClick}
+                            setGifData={this.props.setGifData}
                           />
                           }
                           {isVoice&&

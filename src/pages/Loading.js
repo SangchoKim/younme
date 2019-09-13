@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
-import {_lottie} from '../lib/lottie'
-import LoadingPage from '../components/Loading'
+import Lottie from 'lottie-react-web';
+import animation from '../lotties/159-servishero-loading.json'
 
 class Loading extends PureComponent{
 
@@ -13,8 +13,7 @@ class Loading extends PureComponent{
       lodings;
 
     componentDidMount = () => {
-    const url = '/main';
-    _lottie('animation');   
+    const url = '/main'; 
     this.lodings = setTimeout( () => {
       console.log("animation done");
       this.props.history.push({
@@ -29,7 +28,13 @@ class Loading extends PureComponent{
     render(){
         return(
             <React.Fragment>
-               <LoadingPage /> 
+               <Lottie
+                  options={{
+                    animationData: animation,
+                    loop: true,
+                    autoplay: true,
+                  }}
+                />
             </React.Fragment>
         )
     }
