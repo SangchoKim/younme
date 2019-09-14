@@ -7,6 +7,12 @@ class TalkModalPhoto extends PureComponent{
             <React.Fragment>
                 <form onSubmit={this.props.setData}>
                      <MDBRow>
+                        <MDBCol md="12" >
+                          <div className="text-center m-1">
+                            <h3>사진</h3>
+                          </div>
+                          <hr color="#000000" />
+                        </MDBCol> 
                         <MDBCol md="4" >
                         </MDBCol> 
                           <MDBCol md="4">

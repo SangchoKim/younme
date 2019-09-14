@@ -8,6 +8,18 @@ const uuids = require('uuid/v1');
 
 const uid = uuids();
 
+const _voiceStorage = multer.diskStorage({
+  destination: "./public/uploadsVoiceRecodeChat/",
+  filename: function(req, file, cb){
+     cb(null,"VoiceRecode-" + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const _storageVoiceRecodeChat = multer({
+  storage: _voiceStorage,
+  limits:{fileSize: 1000000},
+});
+
 const _storage = multer.diskStorage({
   destination: "./public/uploadsVideoChat/",
   filename: function(req, file, cb){
@@ -244,6 +256,43 @@ const _chatAlbum = async(req,res,next) => {
       }
 }
 
+const _chatvoiceRecord = async(req,res,next) => {
+  try {
+    console.log("req.file:", req.file);
+    const shared_code = req.user._code.codes;
+    const {sender,getter} =  req.query;
+    const {size,filename,originalname} = req.file;
+    console.log('chatVoiceRecord 준비',shared_code,originalname,filename,size);
+    const image = {'size':size,'voiceRecordname':filename,'originalname':originalname};
+    const query = {'_code':shared_code};
+    Chat.updateOne(query,{$addToSet:{'dataSchema': 
+            {'sender':sender, 
+            'getter':getter,
+            'comment':null,
+            'gif':image,
+            'cratedAt':moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+            }}},(err,result) => {
+              if(err) console.error(err);
+              // 데이터 내용 뿌려주기 
+              const do_sendData = {
+                message: null,
+                gif:[image],
+                uid:uid,
+                reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+                getter:getter,
+                sender:sender,
+              } 
+              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+              // console.log(req.app.get('io').of('/chat').sockets);
+              req.app.get('io').of('/chat').to(shared_code).emit('voiceRecord', do_sendData ); // 키, 값
+              res.json({results:1});
+            })
+      } catch (error) {
+        console.error(error);
+        next();
+      }
+}
+
 const _initUser = async(req,res,next) => {
   try {
     const limit = req.query.limit;
@@ -344,4 +393,6 @@ module.exports = {
     chatVideo:_chatVideo,
     storageVideoChat:_storageVideoChat,
     chatAlbum:_chatAlbum,
+    chatvoiceRecord:_chatvoiceRecord,
+    storageVoiceRecodeChat:_storageVoiceRecodeChat,
 }

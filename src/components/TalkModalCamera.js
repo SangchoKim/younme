@@ -22,6 +22,12 @@ class TalkModalCamera extends PureComponent{
             <React.Fragment>
               {this.props.isReady&&
                 <MDBRow>
+                  <MDBCol md="12" >
+                    <div className="text-center m-1">
+                      <h3>카메라</h3>
+                    </div>
+                    <hr color="#000000" />
+                  </MDBCol> 
                   <MDBCol md="2" >
                     </MDBCol> 
                       <MDBCol md="8">

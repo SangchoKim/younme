@@ -182,8 +182,8 @@ class Talk_modal_bottom extends PureComponent{
                             <MDBBtn color="cyan" name='album' onClick={this._onClick} ><MDBIcon far icon="images fa-2x" /><br></br>공유앨범</MDBBtn>
                             <MDBBtn color="cyan" name='video' onClick={this._onClick}><MDBIcon icon="video fa-2x" /> <br></br>동영상</MDBBtn>
                             <MDBBtn color="cyan" name='camera' onClick={this._onClick}><MDBIcon icon="camera-retro fa-2x" /> <br></br>카메라</MDBBtn>
-                            <MDBBtn color="cyan" name='gif' onClick={this._onClick}><MDBIcon icon="grin-beam fa-2x" /> <br></br>움짤</MDBBtn>
-                            <MDBBtn color="cyan" name='voice' onClick={this._onClick}><MDBIcon icon="microphone fa-2x" /> <br></br>음성</MDBBtn>
+                            <MDBBtn color="cyan" name='gif' onClick={this._onClick}><MDBIcon icon="grin-beam fa-2x" /> <br></br>이모티콘</MDBBtn>
+                            <MDBBtn color="cyan" name='voice' onClick={this._onClick}><MDBIcon icon="microphone fa-2x" /> <br></br>음성녹음</MDBBtn>
                             <MDBBtn color="cyan" name='loveletter' onClick={this._onClick}><MDBIcon icon="envelope-open fa-2x" /> <br></br>러브레터</MDBBtn>
                           </MDBCard>
                           }
@@ -238,6 +238,13 @@ class Talk_modal_bottom extends PureComponent{
                           {isVoice&&
                           <TalkModalVoice
                             onClick={this._onClick}
+                            startRecording={this.props.startRecording}
+                            stopRecording={this.props.stopRecording}
+                            onStop={this.props.onStop}
+                            onData={this.props.onData}
+                            recordedBlob={this.props.recordedBlob}
+                            record={this.props.record}
+                            setRecordData={this.props.setRecordData}
                           />
                           }
                           {isLoveletter&&

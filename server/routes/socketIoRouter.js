@@ -9,6 +9,8 @@ const chatGif = require('../etc/method/chat').chatGif;
 const chatVideo = require('../etc/method/chat').chatVideo;
 const storageVideoChat = require('../etc/method/chat').storageVideoChat;
 const chatAlbum = require('../etc/method/chat').chatAlbum;
+const chatvoiceRecord = require('../etc/method/chat').chatvoiceRecord;
+const storageVoiceRecodeChat = require('../etc/method/chat').storageVoiceRecodeChat;
 
 router.post('/chat_info',async(req,res,next) =>{
     chatInfo(req,res,next);
@@ -37,5 +39,9 @@ router.post('/chat_gif',async(req,res,next) =>{
 router.post('/chat_album',async(req,res,next) =>{
   chatAlbum(req,res,next);
 })
+
+router.patch("/chat_voicerecord", storageVoiceRecodeChat.single("voiceRecord"), async(req,res,next) => {
+  chatvoiceRecord(req,res,next);
+});
 
 module.exports = router;

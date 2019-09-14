@@ -10,11 +10,12 @@ class TalkModalAlbum extends PureComponent{
             <React.Fragment>
               <form onSubmit={this.props.setAlbumData}>
                 <MDBRow>
-                  <MDBCol md="12">
-                      <div className="text-center">
+                  <MDBCol md="12" >
+                      <div className="text-center m-1">
                         <h3>공유 앨범</h3>
                       </div>
-                  </MDBCol>
+                      <hr color="#000000" />
+                  </MDBCol> 
                 {this.props.imgUrls.map((image,index) => {
                     return (
                         <MDBCol md="2" key={image + index + Date()}>

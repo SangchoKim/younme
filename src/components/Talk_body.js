@@ -68,6 +68,10 @@ class Talk_body extends PureComponent{
         imageData: null,
         imageName:'',
       },
+      voicerRecord:{
+        record: false,
+        recordedBlob: null,
+      },
       num:10,
       length:null,
       modal8:false,
@@ -280,6 +284,24 @@ class Talk_body extends PureComponent{
           // album 일때
           socket_Chat.on('album', (data) => { // 서버로부터 gif 파일 들어옴
             console.log('AlbumFromServer',data);
+            const add = {  _id:data.uid,
+                          comment:data.message,
+                          sender:data.sender,
+                          gif:data.gif,
+                          getter:data.getter,
+                          cratedAt:data.reg_time,
+                        };
+            if(this._isMounted){       
+              this.setState((prev)=>({
+                ...prev,
+                log:[...this.state.log, add],
+              }))
+            }        
+          })
+
+           // voiceRecord 일때
+           socket_Chat.on('voiceRecord', (data) => { // 서버로부터 gif 파일 들어옴
+            console.log('voiceRecordFromServer',data);
             const add = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
@@ -602,6 +624,84 @@ class Talk_body extends PureComponent{
         })
       }
       
+      // TalkModalRecordVoice 구역입니다. 
+
+      _startRecording = () => {
+        this.setState(prev=>({
+          ...prev,
+          voicerRecord:{
+            ...prev.voicerRecord,
+            record: true,
+          }
+        }));
+      }
+     
+      _stopRecording = () => {
+        this.setState(prev=>({
+          ...prev,
+          voicerRecord:{
+            ...prev.voicerRecord,
+            record: false,
+          }
+        }));
+      }
+    
+      _onData = (recordedBlob) => {
+        console.log('chunk of real-time data is: ', recordedBlob);
+        this.setState(prev=> ({
+          ...prev,
+          voicerRecord:{
+            ...prev.voicerRecord,
+            recordedBlob:recordedBlob
+          }
+        }));
+      }
+     
+      _onStop = (recordedBlob) => {
+        console.log('recordedBlob is: ', recordedBlob);
+        this.setState(prev=> ({
+          ...prev,
+          voicerRecord:{
+            ...prev.voicerRecord,
+            recordedBlob:recordedBlob
+          }
+        }));
+      }
+
+      _setRecordData = async(e) => {
+        e.preventDefault();
+        const {email,oppentEmail,_code} = this.state.user;
+        await socket_Chat.emit('code',_code);
+        let file = this.state.voicerRecord.recordedBlob;
+        console.log('TalkModalRecord 구역입니다.',file,_code);
+        if(!file){
+          alert('음성녹음을 해주세요');
+          return;
+        }
+        const formData = new FormData();
+        const filename = file.blobURL.split('/');
+        formData.append('voiceRecord',file.blob,filename[3]);
+        const config = {
+          headers: {
+              'content-type': 'multipart/form-data',
+              'Accept': 'application/json'
+          }
+        };
+         fetch(`/io/chat_voicerecord?sender=${email}&getter=${oppentEmail}`, 
+                            {method: "PATCH",
+                            config,
+                            body: formData
+                            })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res.results);
+          if(res.results===1)
+          this.setState(prev => ({
+            ...prev,
+            modal8:!this.state.modal8
+          }));
+        })
+      }
 
     render(){
       const {message,log,socket_id,length} = this.state;
@@ -682,6 +782,13 @@ class Talk_body extends PureComponent{
                                   <img src={data.gif[0].imagePath}
                                   alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
                                 }
+                                {data.gif&&data.gif[0].voiceRecordname&&
+                                    <div className="text-center">
+                                      <audio controls style={{width:'250px'}}
+                                        src={`/uploadsVoiceRecodeChat/${data.gif[0].voiceRecordname}`}
+                                      />
+                                    </div>
+                                }
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
                                 <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
@@ -712,6 +819,27 @@ class Talk_body extends PureComponent{
                                                                 playsInline
                                                                 src={`/uploadsVideoChat/${data.gif[0].videoName}`}
                                                                 />
+                                }
+                                {data.gif&&data.gif.length>=2&&
+                                  data.gif.map((img,index) => {
+                                    return(
+                                          <MDBCol md="12" key={img.imageName+index+Date()}>
+                                            <img src={img.imagePath}
+                                            alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
+                                          </MDBCol>
+                                          )
+                                })
+                                }
+                                {data.gif&&data.gif[0].imagePath&&data.gif.length===1&&
+                                  <img src={data.gif[0].imagePath}
+                                  alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
+                                }
+                                {data.gif&&data.gif[0].voiceRecordname&&
+                                  <div className="text-center">
+                                    <audio controls style={{width:'250px'}}
+                                      src={`/uploadsVoiceRecodeChat/${data.gif[0].voiceRecordname}`}
+                                    />
+                                  </div>
                                 }
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
@@ -761,6 +889,14 @@ class Talk_body extends PureComponent{
                   setAlbumData={this._setAlbumData}
                   isChoice={this.state.album.isChoice}
                   albumFile={this.state.album.file}
+                  //record
+                  startRecording={this._startRecording}
+                  stopRecording={this._stopRecording}
+                  onStop={this._onStop}
+                  onData={this._onData}
+                  setRecordData={this._setRecordData}
+                  recordedBlob={this.state.voicerRecord.recordedBlob}
+                  record={this.state.voicerRecord.record}
                   
                 /> 
               <MDBCol md="8">

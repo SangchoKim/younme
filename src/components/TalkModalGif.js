@@ -28,6 +28,12 @@ class TalkModalGif extends PureComponent{
             <React.Fragment>
               <MDBContainer>
                 <MDBRow>
+                  <MDBCol md="12" >
+                    <div className="text-center m-1">
+                      <h3>이모티콘</h3>
+                    </div>
+                    <hr color="#000000" />
+                  </MDBCol> 
                   {animation}
                 </MDBRow>
                 <div className="text-center mt-3">
