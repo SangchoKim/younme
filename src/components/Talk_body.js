@@ -5,6 +5,7 @@ import moment from 'moment';
 import SocketIo from 'socket.io-client'; // 소켓
 import Talkmodalbottom from './Talk_modal_bottom'
 import Lottie from 'lottie-react-web';
+import {Player} from 'video-react';
 import animation1 from '../lotties/159-servishero-loading.json';
 import animation2 from '../lotties/128-around-the-world.json';
 import animation3 from '../lotties/8134-dont-worry-be-happy.json';
@@ -51,6 +52,15 @@ class Talk_body extends PureComponent{
       photo:{
         file: null,
         realfile: null,
+      },
+      album: {
+        file: [],
+        isChoice:false,
+      },    
+      video:{
+        file: null,
+        realfile: null,
+        isReady:false,
       },
       camera:{
         isCapture:false,
@@ -233,7 +243,6 @@ class Talk_body extends PureComponent{
           // gif 일떄 
           socket_Chat.on('gif', (data) => { // 서버로부터 gif 파일 들어옴
             console.log('GifFromServer',data);
-            // _lottie(data.gif[0].gifname); 
             const add = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
@@ -242,6 +251,42 @@ class Talk_body extends PureComponent{
                           cratedAt:data.reg_time,
                         };
                 
+            if(this._isMounted){       
+              this.setState((prev)=>({
+                ...prev,
+                log:[...this.state.log, add],
+              }))
+            }        
+          })
+
+          // video 일때
+          socket_Chat.on('video', (data) => { // 서버로부터 gif 파일 들어옴
+            console.log('VideoFromServer',data);
+            const add = {  _id:data.uid,
+                          comment:data.message,
+                          sender:data.sender,
+                          gif:data.gif,
+                          getter:data.getter,
+                          cratedAt:data.reg_time,
+                        };
+            if(this._isMounted){       
+              this.setState((prev)=>({
+                ...prev,
+                log:[...this.state.log, add],
+              }))
+            }        
+          })
+
+          // album 일때
+          socket_Chat.on('album', (data) => { // 서버로부터 gif 파일 들어옴
+            console.log('AlbumFromServer',data);
+            const add = {  _id:data.uid,
+                          comment:data.message,
+                          sender:data.sender,
+                          gif:data.gif,
+                          getter:data.getter,
+                          cratedAt:data.reg_time,
+                        };
             if(this._isMounted){       
               this.setState((prev)=>({
                 ...prev,
@@ -285,6 +330,7 @@ class Talk_body extends PureComponent{
     }
 
     // TalkModalPhoto 구역입니다. 
+
     _onChangePhoto = (e) => {
       const file = e.target.files[0];
       this.setState(prev=>({
@@ -437,6 +483,126 @@ class Talk_body extends PureComponent{
         })
       }
 
+      // TalkModalVideo 구역
+
+      _onChangeVideo = (e) => {
+        const file = e.target.files[0];
+        this.setState(prev=>({
+          ...prev,
+          video: {
+            file: URL.createObjectURL(file),
+            realfile:file,
+            isReady:true,
+          }    
+        }));
+      }
+  
+      _setVideoData = async(e) => {
+        e.preventDefault();
+        const {email,oppentEmail,_code} = this.state.user;
+        console.log('TalkModalVideo 구역입니다.',_code);
+        await socket_Chat.emit('code',_code);
+        let file = this.state.video.realfile;
+        if(!file){
+          alert('동영상을 선택해주세요');
+          return;
+        }
+        const formData = new FormData();
+        formData.append('videoFile',file);
+        const config = {
+          headers: {
+              'content-type': 'multipart/form-data',
+              'Accept': 'application/json'
+          }
+        };
+         fetch(`/io/chat_video?sender=${email}&getter=${oppentEmail}`, 
+                            {method: "PATCH",
+                            config,
+                            body: formData
+                            })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res.results);
+          if(res.results===1)
+          this.setState(prev => ({
+            ...prev,
+            modal8:!this.state.modal8
+          }));
+        })
+      }
+
+      // TalkModalAlbum 구역
+      _onAlbumChoice = (e) => {
+        const files = this.state.album.file;
+        const albumImagePath = e.target.id; // imagePath
+        const albumImageName = e.target.name; // imageName
+        if(files.length>=1){
+          for (const imgPath of files) {
+
+            // 이미 공유사진을 선택했을 때
+            if(imgPath.imageName===albumImageName){
+              alert('이미 선택된 사진입니다.');
+              return;
+            }
+
+            // 공유사진을 취소할때 
+            if(albumImageName==="unselected"){
+              const reArray = files.filter(data=>{return(data.imagePath!==albumImagePath)})
+              this.setState(prev=>({
+                ...prev,
+                album: {
+                  file: reArray,
+                  isChoice:true,
+                }
+              }));
+              return; 
+            }
+          }
+        }
+        this.setState(prev=>({
+          ...prev,
+          album: {
+            file: [{imagePath:albumImagePath, imageName:albumImageName}, ...this.state.album.file],
+            isChoice:true,
+          }    
+        }));
+      }
+
+      _setAlbumData = async(e) => {
+        e.preventDefault();
+        const {email,oppentEmail,_code} = this.state.user;
+        await socket_Chat.emit('code',_code);
+        const imagePath = this.state.album.file; // imagePath, imageName
+        console.log('TalkModalAlbum 구역입니다.',_code,imagePath);
+        if(!imagePath){
+          alert('공유사진을 선택해주세요');
+          return;
+        }
+        const AlbumKey = {
+                          imageInfo:imagePath, //  배열
+                          getter:oppentEmail,
+                          sender:email,
+                        };
+        await fetch(`/io/chat_album`, 
+                            {method: "POST",
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(AlbumKey)
+                            })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res.results);
+          if(res.results===1)
+          this.setState(prev => ({
+            ...prev,
+            modal8:!this.state.modal8
+          }));
+        })
+      }
+      
+
     render(){
       const {message,log,socket_id,length} = this.state;
       console.log("TalkLog:",log,length);
@@ -496,6 +662,26 @@ class Talk_body extends PureComponent{
                                                                   autoplay: true,
                                                                 }}
                                                               />}
+                                {data.gif&&data.gif[0].videoName&&
+                                                                <Player
+                                                                playsInline
+                                                                src={`/uploadsVideoChat/${data.gif[0].videoName}`}
+                                                                />
+                                }
+                                {data.gif&&data.gif.length>=2&&
+                                  data.gif.map((img,index) => {
+                                    return(
+                                          <MDBCol md="12" key={img.imageName+index+Date()}>
+                                            <img src={img.imagePath}
+                                            alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
+                                          </MDBCol>
+                                          )
+                                })
+                                }
+                                {data.gif&&data.gif[0].imagePath&&data.gif.length===1&&
+                                  <img src={data.gif[0].imagePath}
+                                  alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
+                                }
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
                                 <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
@@ -521,6 +707,12 @@ class Talk_body extends PureComponent{
                                                                   autoplay: true,
                                                                 }}
                                                               />}
+                                {data.gif&&data.gif[0].videoName&&
+                                                                <Player
+                                                                playsInline
+                                                                src={`/uploadsVideoChat/${data.gif[0].videoName}`}
+                                                                />
+                                }
                               </div>
                               <div style={{fontSize:10}} className="text-right mr-2">
                                 <p>{moment(data.cratedAt).format("YYYY-MM-DD, hh:mm a")}</p>
@@ -559,6 +751,17 @@ class Talk_body extends PureComponent{
                   onClickRetake={this._onClickRetake}
                   // gif
                   setGifData={this._setGifData}
+                  // video
+                  onChangeVideo={this._onChangeVideo}
+                  setVideoData={this._setVideoData}
+                  videoFile={this.state.video.file}
+                  videoFileisReady={this.state.video.isReady}
+                  //album
+                  onAlbumChoice={this._onAlbumChoice}
+                  setAlbumData={this._setAlbumData}
+                  isChoice={this.state.album.isChoice}
+                  albumFile={this.state.album.file}
+                  
                 /> 
               <MDBCol md="8">
                 <div className="ml-4">

@@ -4,7 +4,7 @@ import { Link  } from'react-router-dom';
 import Albumheader from './Album_header'
 import Calendarheader from './Calendar_header'
 import Albummodal from './Album_modal'
-import Talkmodal from './Talk_modal'
+// import Talkmodal from './Talk_modal'
 import Calendarmodal from './Calendar_modal'
 
 const font = {
@@ -125,13 +125,13 @@ class M_nav extends PureComponent{
                     capture={this.props.capture}
                     onClickRetake={this.props.onClickRetake}
                   />
-                  <Talkmodal
+                  {/* <Talkmodal
                     mode={this.props.mode}
                     modal8={this.state.modal8}
                     modal={modal}
                     caretDown={this.props.caretDown}
                     toggle={this.toggle(8)}
-                  />
+                  /> */}
                  <Calendarmodal
                    mode={this.props.mode}
                    modal={this.props.modal}

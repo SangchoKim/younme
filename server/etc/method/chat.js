@@ -7,7 +7,18 @@ const path = require('path');
 const uuids = require('uuid/v1');
 
 const uid = uuids();
- 
+
+const _storage = multer.diskStorage({
+  destination: "./public/uploadsVideoChat/",
+  filename: function(req, file, cb){
+     cb(null,"Video-" + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const _storageVideoChat = multer({
+  storage: _storage,
+  limits:{fileSize: 1000000},
+});
 
 const s = multer.diskStorage({
   destination: "./public/uploadsChat/",
@@ -130,7 +141,6 @@ const _chatCamera = async(req,res,next) => {
 
 const _chatGif = async(req,res,next) => {
   try {
-    
     const shared_code = req.user._code.codes;
     const {gifKey,sender,getter} = req.body;
     console.log('chatGif 준비',shared_code,gifKey,sender,getter);
@@ -156,6 +166,76 @@ const _chatGif = async(req,res,next) => {
               // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
               // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('gif', do_sendData ); // 키, 값
+              res.json({results:1});
+            })
+      } catch (error) {
+        console.error(error);
+        next();
+      }
+}
+
+const _chatVideo = async(req,res,next) => {
+  try {
+    console.log("req.file:", req.file);
+    const shared_code = req.user._code.codes;
+    const {sender,getter} =  req.query;
+    const {size,filename,originalname} = req.file;
+    console.log('chatVideo 준비',shared_code,originalname,filename,size);
+    const image = {'size':size,'videoName':filename,'originalname':originalname};
+    const query = {'_code':shared_code};
+    Chat.updateOne(query,{$addToSet:{'dataSchema': 
+            {'sender':sender, 
+            'getter':getter,
+            'comment':null,
+            'gif':image,
+            'cratedAt':moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+            }}},(err,result) => {
+              if(err) console.error(err);
+              // 데이터 내용 뿌려주기 
+              const do_sendData = {
+                message: null,
+                gif:[image],
+                uid:uid,
+                reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+                getter:getter,
+                sender:sender,
+              } 
+              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+              // console.log(req.app.get('io').of('/chat').sockets);
+              req.app.get('io').of('/chat').to(shared_code).emit('video', do_sendData ); // 키, 값
+              res.json({results:1});
+            })
+  } catch (error) {
+    console.error(error);
+    next();
+  }
+}
+
+const _chatAlbum = async(req,res,next) => {
+  try {
+    const shared_code = req.user._code.codes;
+    const {imageInfo,sender,getter} = req.body;
+    console.log('chatAlbum 준비',shared_code,imageInfo,sender,getter);
+    const image = imageInfo;
+    const query = {'_code':shared_code};
+    Chat.updateOne(query,{$addToSet:{'dataSchema': 
+            {'sender':sender, 
+            'getter':getter,
+            'comment':null,
+            'gif':image,
+            'cratedAt':moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+            }}},(err,result) => {
+              if(err) console.error(err);
+              // 데이터 내용 뿌려주기 
+              const do_sendData = {
+                message: null,
+                gif:image,
+                uid:uid,
+                reg_time:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss"),
+                getter:getter, 
+                sender:sender,
+              } 
+              req.app.get('io').of('/chat').to(shared_code).emit('album', do_sendData ); // 키, 값
               res.json({results:1});
             })
       } catch (error) {
@@ -261,4 +341,7 @@ module.exports = {
     chatCamera: _chatCamera,
     storageChat: _storageChat,
     chatGif: _chatGif,
+    chatVideo:_chatVideo,
+    storageVideoChat:_storageVideoChat,
+    chatAlbum:_chatAlbum,
 }

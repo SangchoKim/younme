@@ -6,11 +6,13 @@ import TalkModalCamera from './TalkModalCamera';
 import TalkModalGif from './TalkModalGif';
 import TalkModalVoice from './TalkModalVoice';
 import TalkModalLoveLetter from './TalkModalLoveLetter';
+import TalkModalAlbum from './TalkModalAlbum';
 
 class Talk_modal_bottom extends PureComponent{
 
   state = {
     isPhoto:false,
+    isAlbum:false,
     isVideo:false,
     isCamera:false,
     isGif:false,
@@ -18,6 +20,7 @@ class Talk_modal_bottom extends PureComponent{
     isLoveletter:false,
     isBack:false,
     isBegin:true,
+    image:[],
   }
 
   _onClick = (e) => {
@@ -25,6 +28,7 @@ class Talk_modal_bottom extends PureComponent{
       case 'photo': 
         this.setState({
           isPhoto:true,
+          isAlbum:false,
           isVideo:false,
           isCamera:false,
           isGif:false,
@@ -33,10 +37,25 @@ class Talk_modal_bottom extends PureComponent{
           isBack:true,
           isBegin:false,
         });
-        return console.log('photo');;
+        return console.log('photo');
+      case 'album': 
+        this.setState({
+          isPhoto:false,
+          isAlbum:true,
+          isVideo:false,
+          isCamera:false,
+          isGif:false,
+          isVoice:false,
+          isLoveletter:false,
+          isBack:true,
+          isBegin:false,
+        });
+        this._setAlbume();
+        return console.log('album');;
       case 'video':
           this.setState({
             isVideo:true,
+            isAlbum:false,
             isPhoto:false,
             isCamera:false,
             isGif:false,
@@ -49,6 +68,7 @@ class Talk_modal_bottom extends PureComponent{
       case 'camera':
           this.setState({
             isCamera:true,
+            isAlbum:false,
             isPhoto:false,
             isVideo:false,
             isGif:false,
@@ -61,6 +81,7 @@ class Talk_modal_bottom extends PureComponent{
        case 'gif':
           this.setState({
             isGif:true,
+            isAlbum:false,
             isPhoto:false,
             isVideo:false,
             isCamera:false,
@@ -73,6 +94,7 @@ class Talk_modal_bottom extends PureComponent{
       case 'voice':
           this.setState({
             isVoice:true,
+            isAlbum:false,
             isPhoto:false,
             isVideo:false,
             isCamera:false,
@@ -85,6 +107,7 @@ class Talk_modal_bottom extends PureComponent{
       case 'loveletter':
           this.setState({
             isLoveletter:true,
+            isAlbum:false,
             isPhoto:false,
             isVideo:false,
             isCamera:false,
@@ -97,6 +120,7 @@ class Talk_modal_bottom extends PureComponent{
       case 'back':
           this.setState({
             isBack:false,
+            isAlbum:false,
             isPhoto:false,
             isVideo:false,
             isCamera:false,
@@ -111,8 +135,40 @@ class Talk_modal_bottom extends PureComponent{
     }
   }
 
+  _setAlbume = async() => {
+    fetch(`/api/album?image=null&order=null`,{method: "get",
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json'
+                        }
+                        })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+      if(res.result===1){
+      let _img = res.img;
+      if(_img){
+        console.log("img:",_img);
+        const r = _img.map((_img)=>{return _img.src});
+        console.log("_setAlbume:",r);
+        this.setState(prev=>({
+          ...prev,
+          image: r
+        }));
+      }else{
+        console.log("공유앨범 없음 -> default 이미지 출력");
+      }
+      
+    }else if(res.result===5){
+        alert('공유앨범이 아직 없습니다.');
+      }else{
+        alert('오류발생.');
+      }
+     });
+  }
+
     render(){
-      const {isBack,isPhoto,isVideo,isCamera,isGif,isVoice,isLoveletter,isBegin} = this.state;
+      const {isAlbum,isPhoto,isVideo,isCamera,isGif,isVoice,isLoveletter,isBegin} = this.state;
         return(
             <React.Fragment>
 
@@ -122,7 +178,8 @@ class Talk_modal_bottom extends PureComponent{
                         <MDBModalBody>
                           {isBegin&&
                             <MDBCard style={this.props.modal} className="text-center">
-                            <MDBBtn color="cyan" name='photo' onClick={this._onClick} ><MDBIcon far icon="images fa-2x" /><br></br>사진</MDBBtn>
+                            <MDBBtn color="cyan" name='photo' onClick={this._onClick} ><MDBIcon far icon="file-image fa-2x" /><br></br>사진</MDBBtn>
+                            <MDBBtn color="cyan" name='album' onClick={this._onClick} ><MDBIcon far icon="images fa-2x" /><br></br>공유앨범</MDBBtn>
                             <MDBBtn color="cyan" name='video' onClick={this._onClick}><MDBIcon icon="video fa-2x" /> <br></br>동영상</MDBBtn>
                             <MDBBtn color="cyan" name='camera' onClick={this._onClick}><MDBIcon icon="camera-retro fa-2x" /> <br></br>카메라</MDBBtn>
                             <MDBBtn color="cyan" name='gif' onClick={this._onClick}><MDBIcon icon="grin-beam fa-2x" /> <br></br>움짤</MDBBtn>
@@ -138,9 +195,23 @@ class Talk_modal_bottom extends PureComponent{
                             file={this.props.file}
                           />
                           }
+                          {isAlbum&&
+                          <TalkModalAlbum
+                            onClick={this._onClick}
+                            setAlbumData={this.props.setAlbumData}
+                            onAlbumChoice={this.props.onAlbumChoice}
+                            imgUrls = {this.state.image}
+                            albumFile={this.props.albumFile}
+                            isChoice={this.props.isChoice}
+                          />
+                          }
                           {isVideo&&
                           <TalkModalVideo
                             onClick={this._onClick}
+                            onChangeVideo={this.props.onChangeVideo}
+                            setVideoData={this.props.setVideoData}
+                            videoFile={this.props.videoFile}
+                            videoFileisReady={this.props.videoFileisReady}
                           />
                           }
                           {isCamera&&
