@@ -184,7 +184,7 @@ class Talk_modal_bottom extends PureComponent{
                             <MDBBtn color="cyan" name='camera' onClick={this._onClick}><MDBIcon icon="camera-retro fa-2x" /> <br></br>카메라</MDBBtn>
                             <MDBBtn color="cyan" name='gif' onClick={this._onClick}><MDBIcon icon="grin-beam fa-2x" /> <br></br>이모티콘</MDBBtn>
                             <MDBBtn color="cyan" name='voice' onClick={this._onClick}><MDBIcon icon="microphone fa-2x" /> <br></br>음성녹음</MDBBtn>
-                            <MDBBtn color="cyan" name='loveletter' onClick={this._onClick}><MDBIcon icon="envelope-open fa-2x" /> <br></br>러브레터</MDBBtn>
+                            {/* <MDBBtn color="cyan" name='loveletter' onClick={this._onClick}><MDBIcon icon="envelope-open fa-2x" /> <br></br>러브레터</MDBBtn> */}
                           </MDBCard>
                           }
                           {isPhoto&&

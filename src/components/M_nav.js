@@ -42,7 +42,7 @@ class M_nav extends PureComponent{
     const url = '/talk';
     this.props.history.push({
       pathname: url,
-      states: { isOneProceed:"ONCE",},
+      states: { join_code:"2678",},
     })
   }
 

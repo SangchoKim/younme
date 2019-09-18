@@ -16,11 +16,12 @@ module.exports = (io, app, sessionMiddleware) => {
   });
 
   initChat.on('connection', (socket) => { // 채팅 소켓 연결 시
-     
+      let join_code = socket.handshake.query.id;
       const req = socket.request;
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      console.log('initChat 접속 됨', ip, socket.id, req.ip);
-      
+      console.log('initChat 접속 됨', ip, socket.id, socket.handshake.query.id, join_code);
+      socket.join(join_code);
+
       socket.on('isConnecting', (email) => {
         console.log('isConnecting',email);
         socket.emit('socket_id',socket.id);
@@ -28,7 +29,7 @@ module.exports = (io, app, sessionMiddleware) => {
 
       socket.on('code', (_code) => {
         console.log('initRoom_code',_code);
-        socket.join(_code);
+        // join_code = _code;
       })
       
       socket.on('error',(error)=>{

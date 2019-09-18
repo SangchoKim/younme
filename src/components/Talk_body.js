@@ -11,7 +11,8 @@ import animation2 from '../lotties/128-around-the-world.json';
 import animation3 from '../lotties/8134-dont-worry-be-happy.json';
 import animation4 from '../lotties/8144-battery-low-humour-animation.json';
 import {imageEncodeToBase64} from '../lib/imageEncoder'
-const socket_Chat = SocketIo.connect('http://localhost:5000/chat');
+let join_code = '2678';
+const socket_Chat = SocketIo.connect(`http://localhost:5000/chat?id=${join_code}`);
 
 const uid = uuids();
 
@@ -140,7 +141,7 @@ class Talk_body extends PureComponent{
             length:_length,
           }));
           
-          socket_Chat.emit("isConnecting",email);  
+          // socket_Chat.emit("isConnecting",email);  
         }else if(res.result===5){
           alert('User 정보 Read 실패');
         }
@@ -167,14 +168,19 @@ class Talk_body extends PureComponent{
         }
        
     };
+
+    
     
 
     componentDidMount(){
-      this.myRef.current.scrollTop = this.myRef.current.scrollHeight;
+      // console.log('this.myRef.current',document.documentElement.scrollHeight)
+      // window.scrollY = document.documentElement.scrollHeight-300;
       window.addEventListener('scroll', this.onScroll);
          this._isMounted = true;
+         
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer(10);
+          
           socket_Chat.on('socket_id',(data) => {
             console.log('socket_id',data);
 
@@ -188,10 +194,11 @@ class Talk_body extends PureComponent{
 
           // 소켓 IO 페이지에 접근했을때 
           const {log} = this.state;
+         
           
           // 문자일때
           socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
-          
+            console.log('messageFromServer',data);
             const add = { _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
@@ -336,7 +343,7 @@ class Talk_body extends PureComponent{
                       getter:oppentEmail,
                       cratedAt:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
                       }
-        await socket_Chat.emit('code',_code); 
+       await socket_Chat.emit('code',_code);
        fetch('/io/chat_info',{method: "POST",
                             headers: {
                               'Content-Type': 'application/json',
@@ -711,7 +718,7 @@ class Talk_body extends PureComponent{
             <React.Fragment>
             {this.props.mode==="talk"&&
             // Talk body 부분 
-            <MDBRow style={this.props.font} ref={this.myRef}>
+            <MDBRow style={this.props.font} ref={this.myRef} >
               <MDBCol md="1" >
               </MDBCol>
               <MDBCol md="10" >

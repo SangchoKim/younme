@@ -49,6 +49,7 @@ const _chatInfo = async(req,res,next) => {
       const shared_code = req.user._code.codes;
       const {uuid,comment,sender,getter,reg_time} = req.body;
       const query = {'_code':shared_code};
+      console.log('chatMessage 준비',shared_code,comment,sender,getter);
       Chat.updateOne(query,{$addToSet:{'dataSchema': 
               {'sender':sender, 
               'getter':getter,
@@ -61,12 +62,12 @@ const _chatInfo = async(req,res,next) => {
                 const do_sendData = {
                   message: comment,
                   gif:null,
-                  uid:uuid,
+                  uid:uid,
                   reg_time:reg_time,
                   getter:getter,
                   sender:sender,
                 } 
-                // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+                console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
                 // console.log(req.app.get('io').of('/chat').sockets);
                 req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
                 res.json({results:1});

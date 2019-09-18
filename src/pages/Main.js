@@ -5,7 +5,7 @@ import MainBody from '../components/M_body'
 import { connect } from 'react-redux';
 import * as MainAction from '../store/modules/M_header';
 import defautImge from '../img/main_default.jpg';
-
+import {imageEncodeToBase64} from '../lib/imageEncoder'
 class Main extends PureComponent{
   constructor(props){
     super(props);
@@ -162,14 +162,9 @@ class Main extends PureComponent{
       console.log('Camera 구역입니다.');
       const _imageName = this.state.camera.myImage;
       const _imageData = this.state.camera.imageData;
-      const decodedData = atob(_imageData);
-      // base64Image를 decode 해야하는 과정 필요 
-      // const img = base64Img.imgSync(_imageData,'./server/etc',_imageName);
-      // const myBlob = new Blob([_imageData], {type : 'image/jpeg'});
-      const formData = new FormData();
-      console.log("myImage",_imageData);
-      console.log("imageName",_imageName);
-      formData.append('myImage',decodedData);
+      const myBlob = imageEncodeToBase64(_imageData,'image/jpeg');
+      let formData = new FormData();
+      formData.append('myImage',myBlob,_imageName);
       const config = {
         headers: {
             'content-type': 'multipart/form-data'
