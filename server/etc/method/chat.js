@@ -67,7 +67,7 @@ const _chatInfo = async(req,res,next) => {
                   getter:getter,
                   sender:sender,
                 } 
-                console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+                // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
                 // console.log(req.app.get('io').of('/chat').sockets);
                 req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
                 res.json({results:1});

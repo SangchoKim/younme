@@ -11,8 +11,8 @@ import animation2 from '../lotties/128-around-the-world.json';
 import animation3 from '../lotties/8134-dont-worry-be-happy.json';
 import animation4 from '../lotties/8144-battery-low-humour-animation.json';
 import {imageEncodeToBase64} from '../lib/imageEncoder'
-let join_code = '2678';
-const socket_Chat = SocketIo.connect(`http://localhost:5000/chat?id=${join_code}`);
+
+const socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
 
 const uid = uuids();
 
@@ -97,7 +97,6 @@ class Talk_body extends PureComponent{
           ...pre,
           [name]: val
       }))
-     
     }
 
     _approchServer = async(limit) =>{
@@ -141,7 +140,7 @@ class Talk_body extends PureComponent{
             length:_length,
           }));
           
-          // socket_Chat.emit("isConnecting",email);  
+        socket_Chat.emit("joinRoom",_code,name);  
         }else if(res.result===5){
           alert('User 정보 Read 실패');
         }
@@ -169,9 +168,7 @@ class Talk_body extends PureComponent{
        
     };
 
-    
-    
-
+  
     componentDidMount(){
       // console.log('this.myRef.current',document.documentElement.scrollHeight)
       // window.scrollY = document.documentElement.scrollHeight-300;
@@ -180,20 +177,24 @@ class Talk_body extends PureComponent{
          
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer(10);
+
+          socket_Chat.on('connect',()=>{
+            console.log('client-Sokect 접속 됨'); 
+         });
+
+         socket_Chat.on('joinedRoom',(joinCode,name)=>{
+          console.log(name+'님이' + joinCode +'방에 입장하셨습니다'); 
+          if(joinCode){
+            this.setState((prev)=>({
+              ...prev,
+              socket_id:name,
+            }))
+          }
+        });
           
-          socket_Chat.on('socket_id',(data) => {
-            console.log('socket_id',data);
-
-            if(this._isMounted){
-              this.setState((prev)=>({
-                ...prev,
-                socket_id:data,
-              }))
-            }
-          });
-
           // 소켓 IO 페이지에 접근했을때 
           const {log} = this.state;
+         
          
           
           // 문자일때
@@ -343,8 +344,7 @@ class Talk_body extends PureComponent{
                       getter:oppentEmail,
                       cratedAt:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
                       }
-       await socket_Chat.emit('code',_code);
-       fetch('/io/chat_info',{method: "POST",
+       await fetch('/io/chat_info',{method: "POST",
                             headers: {
                               'Content-Type': 'application/json',
                               'Accept': 'application/json'
@@ -375,7 +375,6 @@ class Talk_body extends PureComponent{
       e.preventDefault();
       const {name,email,oppentEmail,_code} = this.state.user;
       console.log('TalkModalPhoto 구역입니다.',_code);
-      await socket_Chat.emit('code',_code);
       let file = this.state.photo.realfile;
       if(!file){
         alert('사진을 선택해주세요');
@@ -443,7 +442,6 @@ class Talk_body extends PureComponent{
       console.log('TalkModalCamera 구역입니다.');
       const {imageData,imageName} = this.state.camera;
       const {email,oppentEmail,_code} = this.state.user;
-      await socket_Chat.emit('code',_code);
       const myBlob = imageEncodeToBase64(imageData,'image/jpeg');
       let formData = new FormData();
       formData.append('myImages',myBlob,imageName);
@@ -493,7 +491,6 @@ class Talk_body extends PureComponent{
                         getter:oppentEmail,
                         };
         console.log('TalkModalGif 구역입니다.',_code,gifKey);
-        await socket_Chat.emit('code',_code);
         fetch('/io/chat_gif',{method: "POST",
                             headers: {
                               'Content-Type': 'application/json',
@@ -530,7 +527,6 @@ class Talk_body extends PureComponent{
         e.preventDefault();
         const {email,oppentEmail,_code} = this.state.user;
         console.log('TalkModalVideo 구역입니다.',_code);
-        await socket_Chat.emit('code',_code);
         let file = this.state.video.realfile;
         if(!file){
           alert('동영상을 선택해주세요');
@@ -600,7 +596,6 @@ class Talk_body extends PureComponent{
       _setAlbumData = async(e) => {
         e.preventDefault();
         const {email,oppentEmail,_code} = this.state.user;
-        await socket_Chat.emit('code',_code);
         const imagePath = this.state.album.file; // imagePath, imageName
         console.log('TalkModalAlbum 구역입니다.',_code,imagePath);
         if(!imagePath){
@@ -678,7 +673,6 @@ class Talk_body extends PureComponent{
       _setRecordData = async(e) => {
         e.preventDefault();
         const {email,oppentEmail,_code} = this.state.user;
-        await socket_Chat.emit('code',_code);
         let file = this.state.voicerRecord.recordedBlob;
         console.log('TalkModalRecord 구역입니다.',file,_code);
         if(!file){
@@ -726,7 +720,9 @@ class Talk_body extends PureComponent{
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
                     <MDBListGroup>
                       <MDBListGroupItem className="blue border-default" >
-                        <span>{name}</span>  {socket_id?<MDBIcon icon="heart" style={{color:'#ff6b6b'}}/>:<MDBIcon icon="heart"/> }  <span>{oppentName}</span>
+                       {socket_id===name?<span className="text-info">{name}</span>:<span>{name}</span>}
+                       <MDBIcon icon="heart"/>  
+                       {socket_id===oppentName?<span className="text-info">{name}</span>:<span>{oppentName}</span>}
                       </MDBListGroupItem>
                     </MDBListGroup>
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />

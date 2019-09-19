@@ -1,7 +1,10 @@
 const uuids = require('uuid/v1');
-const moment = require('moment');
-const axios = require('axios');
+const cookieParser = require('cookie-parser');
+const passportSocketIo = require('passport.socketio');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session); 
 const uid = uuids();
+
  
 module.exports = (io, app, sessionMiddleware) => {
   // 익스프레스 변수 저장 방법 
@@ -11,27 +14,31 @@ module.exports = (io, app, sessionMiddleware) => {
   // io.of('/') -> 기본
   const initChat = io.of('/chat');
   
+  io.use(passportSocketIo.authorize({
+    cookieParser: cookieParser,       // the same middleware you registrer in express
+    key:'shelley',       // the name of the cookie where express/connect stores its session_id
+    secret: process.env.COOKIE_SECRET,    // the session_secret to parse the cookie
+    store:new FileStore(),
+  }));
+  
   app.use((socket,next) => { // 익스프레스 미들웨어를 소켓IO에서 쓰는 방법
     sessionMiddleware(socket.request, socket.request.res, next);
   });
 
   initChat.on('connection', (socket) => { // 채팅 소켓 연결 시
-      let join_code = socket.handshake.query.id;
+      const join_code = socket.request.user._code.codes;
       const req = socket.request;
+      
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      console.log('initChat 접속 됨', ip, socket.id, socket.handshake.query.id, join_code);
+      console.log('Server-Sokect 접속 됨', ip, socket.id, join_code);
       socket.join(join_code);
 
-      socket.on('isConnecting', (email) => {
-        console.log('isConnecting',email);
-        socket.emit('socket_id',socket.id);
+      socket.on('joinRoom', (_code,name) => {
+        console.log(name + ' join a ' + _code);
+        console.log('rooms',initChat.adapter.rooms);
+        initChat.to(_code).emit('joinedRoom', _code, name);
       })
 
-      socket.on('code', (_code) => {
-        console.log('initRoom_code',_code);
-        // join_code = _code;
-      })
-      
       socket.on('error',(error)=>{
         console.error('에러발생',error);
       })
