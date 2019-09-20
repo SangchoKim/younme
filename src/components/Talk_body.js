@@ -16,8 +16,6 @@ const socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
 
 const uid = uuids();
 
-
-
 const layout = {
   disPlay: "flex",
   flexDirection: "row",

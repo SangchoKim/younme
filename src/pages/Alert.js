@@ -1,6 +1,6 @@
 import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
-import Body from '../components/Memory_firstBody'
+import Body from '../components/AlertBody'
 import { connect } from 'react-redux';  
 
 class Alert extends PureComponent{

@@ -2,7 +2,8 @@ const uuids = require('uuid/v1');
 const cookieParser = require('cookie-parser');
 const passportSocketIo = require('passport.socketio');
 const session = require('express-session');
-const FileStore = require('session-file-store')(session); 
+const FileStore = require('session-file-store')(session);
+const Alert = require('../model/alert'); 
 const uid = uuids();
 
  
@@ -13,6 +14,7 @@ module.exports = (io, app, sessionMiddleware) => {
   // 소켓 -> 네임스페이스 필수
   // io.of('/') -> 기본
   const initChat = io.of('/chat');
+  const initAlert = io.of('/alert');
   
   io.use(passportSocketIo.authorize({
     cookieParser: cookieParser,       // the same middleware you registrer in express
@@ -25,12 +27,39 @@ module.exports = (io, app, sessionMiddleware) => {
     sessionMiddleware(socket.request, socket.request.res, next);
   });
 
+  
+  // 알림 네임스페이스
+  initAlert.on('connection', async(socket,next) => {
+    const join_code = socket.request.user._code.codes;
+    const req = socket.request;
+
+      // for (let room of initAlert.adapter.rooms) {
+        if(join_code===initAlert.adapter.rooms){
+          console.log('이미 조인되어 있는 룸이 존재합니다.');
+        }else{
+          await socket.join(join_code);     
+        }
+      // }
+    
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log('Server-Sokect_Alert 접속 됨', ip, socket.id, join_code);
+
+    socket.on('error',(error)=>{
+      console.error('에러발생',error);
+    })
+    
+    socket.on('disconnect',()=>{
+      console.log('initAlert 접속 종료');
+    })
+  });
+
+  // 채팅 네임스페이스
   initChat.on('connection', (socket) => { // 채팅 소켓 연결 시
       const join_code = socket.request.user._code.codes;
       const req = socket.request;
       
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      console.log('Server-Sokect 접속 됨', ip, socket.id, join_code);
+      console.log('Server-Sokect_Chat 접속 됨', ip, socket.id, join_code);
       socket.join(join_code);
 
       socket.on('joinRoom', (_code,name) => {

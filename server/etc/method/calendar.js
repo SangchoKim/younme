@@ -1,4 +1,36 @@
 const Calendar = require('../../model/calendar');
+const Alert = require('../../model/alert');
+const User = require('../../model/user');
+
+const _alertFindOne = async(join_code, req, next) => {
+  try {
+    const order = req.user._id;
+    const oppentEmail = req.user._code.oppentEmail;
+
+    const userData = await User.findOne({'_id':order});
+    const oppentData = await User.findOne({'id':oppentEmail}); 
+    const alertData = await Alert.findOne({"_code":parseInt(join_code)}); 
+  if(alertData){
+    console.log('Alert_데이터가 존재합니다.');
+    const index = alertData.dataSchema.length - 1;
+    const _sendData = await {
+                            _code:alertData._code,
+                            number:alertData.dataSchema[index].number,
+                            crud:alertData.dataSchema[index].crud,
+                            name:userData.name,
+                            oppentName:oppentData.name,
+                            cratedAt:alertData.dataSchema[index].cratedAt,
+                            }
+                            
+    req.app.get('io').of('/alert').to(join_code).emit('Alert_send', _sendData); // 키, 값                     
+  }else{
+    console.log('찾는 Alert data가 존재하지 않습니다.');
+  }
+  } catch (error) {
+    console.error(error);
+    next();
+  }
+}
 
 const _readcalendar = (req,res) => {
   const {order, data} = req.query;
@@ -11,10 +43,25 @@ const _readcalendar = (req,res) => {
   }
 }
 
-const _deletecalendar = (req,res) => {
+const _deletecalendar = (req,res,next) => {
   const {_id} = req.query;
   const shared_code = req.user._code.codes;
   console.log("_deletecalendar",_id);
+  
+  const querys = {'_code':shared_code};
+
+  // Alert 업데이트 
+  Alert.updateOne(querys,{$addToSet:{'dataSchema':{number: 3, crud:3}}},(err,result)=>{
+    if(err) throw new Error();
+    else {
+      if(result.ok===1){
+        console.log("Alert_캘린더 삭제 코드 수정 완료");
+        _alertFindOne(shared_code,req,next);
+      }
+    }
+  });
+
+  // 캘린더 data 삭제 
   const query = {'_code':shared_code,"dataSchema":{ $elemMatch:{"_id":_id}}};
               Calendar.updateOne(query,{$pull:{dataSchema: {_id:_id 
                                   }}},(err,result)=>{
@@ -37,13 +84,26 @@ const _updatecalendar = async (req,res,next) => {
   const author = req.user.name;
   const shared_code = req.user._code.codes;
   console.log("_updatecalendar",_id);
+  const querys = {'_code':shared_code};
   const query = {'_code':shared_code,"dataSchema":{ $elemMatch:{"_id":_id}}};
   await Calendar.findOne({$and:[query]})
   .then((result)=>{
     if(result){
       console.log("_updatecalendar",result);
       try {
-          
+
+         // Alert 업데이트 
+          Alert.updateOne(querys,{$addToSet:{'dataSchema':{number: 3, crud:2}}},(err,result)=>{
+            if(err) throw new Error();
+            else {
+              if(result.ok===1){
+                console.log("Alert_캘린더 수정 코드 수정 완료");
+                _alertFindOne(shared_code,req,next);
+              }
+            }
+          });
+
+         // 캘린더 data 수정 
          Calendar.updateOne(query,{$set:{
                                       "dataSchema.$.title": sub!==null?sub:result.dataSchema.title,
                                       "dataSchema.$.s_date": startDate!==null?startDate:result.dataSchema.s_date, 
@@ -76,22 +136,22 @@ const _updatecalendar = async (req,res,next) => {
               
 }
 
-const _setcalendar = (req,res) => {
+const _setcalendar = (req,res,next) => {
   const shared_code = req.user._code.codes;
   console.log("_setcalendar",shared_code);
-  _calendarHaveOrNot(shared_code,req,res); 
+  _calendarHaveOrNot(shared_code,req,res,next); 
 }
 
-const _calendarHaveOrNot = async(shared_code,req,res) => {
+const _calendarHaveOrNot = async(shared_code,req,res,next) => {
   console.log("_calendarHaveOrNot",shared_code);
   await Calendar.findOne({ '_code' : shared_code })
   .then((r)=>{
     console.log("CalendarSkima유뮤존재",r);
-    _calendarSkimaHaveOrNot(r,req,res);
+    _calendarSkimaHaveOrNot(r,req,res,next);
   })
 }
 
-const _calendarSkimaHaveOrNot = async(r,req,res) => {
+const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
   console.log("_calendarSkimaHaveOrNot",r);
     if(r.dataSchema!==null){
     // 스키마자 존재 -> $addToset
@@ -99,7 +159,20 @@ const _calendarSkimaHaveOrNot = async(r,req,res) => {
     console.log('스키마자 존재',req.body.data);
     const {startDate,endDate,startTime,endTime,sub,memo} = req.body.data;
     const query = {'_code':r._code};
-      Calendar.updateOne(query,{$addToSet:{'dataSchema': 
+
+     // Alert 업데이트 
+     Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 3, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_캘린더 삽입 코드 수정 완료");
+          _alertFindOne(r,req,next);
+        }
+      }
+    });
+
+    // 캘린더 data가 있을 때 수정 
+    Calendar.updateOne(query,{$addToSet:{'dataSchema': 
             {'title':sub, 
             's_date':startDate,
             'e_date':endDate,
@@ -119,7 +192,20 @@ const _calendarSkimaHaveOrNot = async(r,req,res) => {
     const {author} = req.user.name;
     const {startDate,endDate,startTime,endTime,sub,memo} = req.body.data;
     const query = {'_code':r._code};
-      Calendar.updateOne(query,{$set:{'dataSchema': 
+
+    // Alert 업데이트 
+    Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 3, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_캘린더 삽입 코드 수정 완료");
+          _alertFindOne(r,req,next);
+        }
+      }
+    });
+
+    // 캘린더 data가 없을 때 수정 
+    Calendar.updateOne(query,{$set:{'dataSchema': 
             {'title':sub, 
             's_date':startDate,
             'e_date':endDate,

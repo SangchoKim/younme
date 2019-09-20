@@ -28,45 +28,28 @@ class Memory_firstBody extends PureComponent{
                 <MDBCard className="mt-2" >
                 <MDBListGroup className="border-dark">
                   <MDBListGroupItem style={list1}>
-                      {this.props.mode==='alert'?
-                      <div className="ml-2"><MDBIcon className="mr-2" far icon={this.props.leftIcon} />{this.props.firstSpaceDay}</div>
-                      :
                       <React.Fragment >
                         <div className="ml-2">{this.props.firstSpaceDay}</div>
                         <div className="ml-2">{this.props.firstSpaceLeftDay}</div>
                       </React.Fragment >
-                      }
-                      
                   </MDBListGroupItem>
                   <MDBListGroupItem style={list1}>
-                    {this.props.mode==='alert'?
-                      <div className="ml-2"><MDBIcon className="mr-2" far icon={this.props.leftIcon} />{this.props.firstSpaceDay}</div>
-                      :
                       <React.Fragment >
                         <div className="ml-2">{this.props.secondSpaceDay}</div>
                         <div className="ml-2">{this.props.secondSpaceLeftDay}</div>
                       </React.Fragment >
-                      }
                   </MDBListGroupItem>
                   <MDBListGroupItem style={list1}>
-                    {this.props.mode==='alert'?
-                      <div className="ml-2"><MDBIcon className="mr-2" far icon={this.props.leftIcon} />{this.props.firstSpaceDay}</div>
-                      :
                       <React.Fragment >
                         <div className="ml-2">{this.props.thirdSpaceDay}</div>
-                      <div className="ml-2">{this.props.thirdSpaceLeftDay}</div>
-                      </React.Fragment >
-                      }   
+                        <div className="ml-2">{this.props.thirdSpaceLeftDay}</div>
+                      </React.Fragment >  
                   </MDBListGroupItem>
                   <MDBListGroupItem style={list1}>
-                    {this.props.mode==='alert'?
-                      <div className="ml-2"><MDBIcon className="mr-2" far icon={this.props.leftIcon} />{this.props.firstSpaceDay}</div>
-                      :
                       <React.Fragment >
                         <div className="ml-2">{this.props.forthSpaceDay}</div>
-                      <div className="ml-2">{this.props.forthSpaceLeftDay}</div>
-                      </React.Fragment >
-                      }    
+                        <div className="ml-2">{this.props.forthSpaceLeftDay}</div>
+                      </React.Fragment > 
                   </MDBListGroupItem>
                 </MDBListGroup>
                 </MDBCard>

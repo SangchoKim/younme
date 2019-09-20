@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router(); 
+const router = express.Router();
+const alertInfo = require('../etc/method/alert').alertInfo; 
 const chatInfo = require('../etc/method/chat').chatInfo;
 const initUser = require('../etc/method/chat').initUser;
 const chatPhoto = require('../etc/method/chat').chatPhoto;
@@ -43,5 +44,9 @@ router.post('/chat_album',async(req,res,next) =>{
 router.patch("/chat_voicerecord", storageVoiceRecodeChat.single("voiceRecord"), async(req,res,next) => {
   chatvoiceRecord(req,res,next);
 });
+
+router.get('/getAlert',async(req,res,next) =>{
+  alertInfo(req,res,next);
+})
 
 module.exports = router;

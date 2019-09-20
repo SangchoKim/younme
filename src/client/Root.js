@@ -5,8 +5,6 @@ import App from '../shared/App';
 import store from '../store';
 
 
-// const store = createStore();
-
 const Root = () => (
     <BrowserRouter > 
         <Provider store={store}>

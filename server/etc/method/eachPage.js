@@ -2,9 +2,40 @@ const datediff = require('../../../src/lib/moment').datediff;
 const User = require('../../model/user');
 const Album = require('../../model/album');
 const Calendar = require('../../model/calendar');
+const Alert = require('../../model/alert');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+
+const _alertFindOne = async(join_code, req, next) => {
+  try {
+    const order = req.user._id;
+    const oppentEmail = req.user._code.oppentEmail;
+
+    const userData = await User.findOne({'_id':order});
+    const oppentData = await User.findOne({'id':oppentEmail}); 
+    const alertData = await Alert.findOne({"_code":parseInt(join_code)}); 
+  if(alertData){
+    console.log('Alert_데이터가 존재합니다.');
+    const index = alertData.dataSchema.length - 1;
+    const _sendData = await {
+                            _code:alertData._code,
+                            number:alertData.dataSchema[index].number,
+                            crud:alertData.dataSchema[index].crud,
+                            name:userData.name,
+                            oppentName:oppentData.name,
+                            cratedAt:alertData.dataSchema[index].cratedAt,
+                            }
+                            
+    req.app.get('io').of('/alert').to(join_code).emit('Alert_send', _sendData); // 키, 값                     
+  }else{
+    console.log('찾는 Alert data가 존재하지 않습니다.');
+  }
+  } catch (error) {
+    console.error(error);
+    next();
+  }
+}
 
 const _checkLogin = (req, res) => {
   const order = req.user._id;
@@ -52,6 +83,29 @@ const init_calendar = async (result) => {
   })
 }
 
+const init_alert = async (result) => {
+  let check = null;
+  check = result._code.codes;
+  await Alert.findOne({_code:check})
+  .then(result=>{
+    if(!result){
+      const alert = new Alert({
+        '_code': check,
+        'dataSchema':[],
+      });
+      alert.save((err)=>{
+        if(err){
+          return console.error(err);
+        }else{
+          return console.log('Alert 생성');
+        }
+        })
+    }else{
+      return '존재합니다.';
+    }
+  })
+}
+
  const init = async (result) => {
   let check = null;
   check = result._code.codes;
@@ -82,7 +136,9 @@ const _main = (req,res,next) =>{
     if(order){
       User.findOne({ _id: order })
       .then((result) =>{
+        
         init(result).then((r) => {console.log("r:",r);
+        init_alert(result).then((r) => {console.log("r:",r);
         init_calendar(result).then((r)=>{
           console.log("r:",r);
           let _img = null;
@@ -102,7 +158,6 @@ const _main = (req,res,next) =>{
             if(result){
               _img = result.wallpaperSchema.src;
             }
-            next();
           })
           User.findOne({ 'id' : _oppentEmail })
           .then((r)=>{
@@ -124,7 +179,8 @@ const _main = (req,res,next) =>{
           }).catch((err) => {
             console.log(err);
           });
-        })  
+        })
+      })  
       }) 
       })
     }else{
@@ -167,11 +223,12 @@ const _main = (req,res,next) =>{
   limits:{fileSize: 1000000},
 });
 
-const _setbackground =(req,res) => {
+const _setbackground =(req,res,next) => {
   console.log("req.file:", req.file);
     const file = req.file;
     if(file){
       const order = req.user._id;
+      const shared_code = req.user._code.codes;
       const _filename = req.file.filename;
       const _originalname = req.file.originalname;
       const _size = req.file.size;
@@ -189,6 +246,19 @@ const _setbackground =(req,res) => {
               if(result.wallpaperSchema!==null){
                 _fsRemove(result.wallpaperSchema.src);
               }
+              
+              // Alert 업데이트 
+              Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 1, crud:1}}},(err,result)=>{
+                    if(err) throw new Error();
+                    else {
+                      if(result.ok===1){
+                        console.log("Alert_wallPaper 수정 완료");
+                        _alertFindOne(shared_code,req,next);
+                      }
+                    }
+                });
+
+              // Wallpaper 업데이트 
               Album.updateOne(query,{$set:{wallpaperSchema: {size:_size, 
                                     originalname:_originalname, 
                                     src:_filename

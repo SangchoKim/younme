@@ -54,115 +54,115 @@ const updatecalendar = require('../etc/method/calendar').updatecalendar;
 //       }
 //     })
 // })
-router.get("/home", (req,res) => {
-  getHome(req,res);
+router.get("/home", (req,res,next) => {
+  getHome(req,res,next);
 })
 
 
-router.post("/home", (req,res) => {
-  postHome(req,res);
+router.post("/home", (req,res,next) => {
+  postHome(req,res,next);
 })
 
 
 
-router.post("/first", (req,res) => {  
-  first_signUp(req,res);
+router.post("/first", (req,res,next) => {  
+  first_signUp(req,res,next);
 })
 
-router.post("/secondCodeSave", (req,res) => {
-  secondCodeSave(req,res);
+router.post("/secondCodeSave", (req,res,next) => {
+  secondCodeSave(req,res,next);
 })
 
-router.post("/second", (req,res) => {
-  second_signUp(req,res); 
+router.post("/second", (req,res,next) => {
+  second_signUp(req,res,next); 
 })
 
-router.post("/backtofirst", (req,res) => {
-  backtofirst(req,res);
+router.post("/backtofirst", (req,res,next) => {
+  backtofirst(req,res,next);
 })
 
-router.post("/third", (req,res) => {
-  third_signUp(req,res);
+router.post("/third", (req,res,next) => {
+  third_signUp(req,res,next);
   
 })
 
-router.post("/backtosecond", (req,res) => {
-  backtosecond(req,res);
+router.post("/backtosecond", (req,res,next) => {
+  backtosecond(req,res,next);
 })
 
 
 router.post('/login', passport.authenticate('local', {
     failureRedirect: '/home', failureFlash:true,   
-  }), (req, res) => {
+  }), (req, res,next) => {
     console.log('성공');
-    checkLogin(req,res);
+    checkLogin(req,res,next);
   });
 
 
-  router.get("/main", (req,res) => {
+  router.get("/main", (req,res,next) => {
     const _momorial = req.query.momorial;
     if(_momorial){
       console.log(_momorial);
-      menorialMethod(req,res);
+      menorialMethod(req,res,next);
     }else{
-      mainMethod(req,res);
+      mainMethod(req,res,next);
     }
   }) 
 
-  router.post("/updatealbum", modiAlbum.single("myImage") , (req,res) => {
-    updatealbum(req,res);
+  router.post("/updatealbum", modiAlbum.single("myImage") , (req,res,next) => {
+    updatealbum(req,res,next);
   })
 
 
-  router.post("/setbackground", upload.single("myImage") , (req,res) => {
-    setbackground(req,res);
+  router.post("/setbackground", upload.single("myImage") , (req,res,next) => {
+    setbackground(req,res,next);
   })
 
-  router.post("/setalbum", uploadAlbum.single("myImages") , (req,res) => {
-    setalbum(req,res);
+  router.post("/setalbum", uploadAlbum.single("myImages") , (req,res,next) => {
+    setalbum(req,res,next);
   })
 
-  router.get("/mypage", (req,res) => {
-    mypage(req,res);
+  router.get("/mypage", (req,res,next) => {
+    mypage(req,res,next);
   });
 
-  router.get("/changeGender", (req,res) =>{
-    changeGender(req,res);
+  router.get("/changeGender", (req,res,next) =>{
+    changeGender(req,res,next);
   });
 
   
 
-  router.post("/changeinfo", (req,res) =>{
-    changeinfo(req,res);
+  router.post("/changeinfo", (req,res,next) =>{
+    changeinfo(req,res,next);
   });
 
-  router.post("/setcalendar", (req,res) =>{
-    setcalendar(req,res);
+  router.post("/setcalendar", (req,res,next) =>{
+    setcalendar(req,res,next);
   });
 
-  router.get("/readcalendar", (req,res) =>{
-    readcalendar(req,res);
+  router.get("/readcalendar", (req,res,next) =>{
+    readcalendar(req,res,next);
   });
 
-  router.get("/deletecalendar", (req,res) =>{
-    deletecalendar(req,res);
+  router.get("/deletecalendar", (req,res,next) =>{
+    deletecalendar(req,res,next);
   });
 
-  router.patch("/updatecalendar", (req,res) =>{
-    updatecalendar(req,res);
+  router.patch("/updatecalendar", (req,res,next) =>{
+    updatecalendar(req,res,next);
   });
 
-  router.post("/changebirth", (req,res) =>{
-    changebirth(req,res);
+  router.post("/changebirth", (req,res,next) =>{
+    changebirth(req,res,next);
     
   });
 
-  router.get("/logout", (req,res) =>{ 
-    logout(req,res);
+  router.get("/logout", (req,res,next) =>{ 
+    logout(req,res,next);
 });
 
-router.get("/album", (req,res) =>{ 
-  albumRead(req,res);
+router.get("/album", (req,res,next) =>{ 
+  albumRead(req,res,next);
 });
 
 router.get('/facebook', passport.authenticate('facebook', {

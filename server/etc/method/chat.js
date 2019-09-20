@@ -1,5 +1,6 @@
 const User = require('../../model/user');
 const Chat = require('../../model/chat');
+const Alert = require('../../model/alert');
 const multer = require('multer');
 const fs = require('fs');
 const moment = require('moment');
@@ -44,12 +45,55 @@ const _storageChat = multer({
   limits:{fileSize: 1000000},
 });
 
+const _alertFindOne = async(join_code, req, next) => {
+  try {
+    const order = req.user._id;
+    const oppentEmail = req.user._code.oppentEmail;
+
+    const userData = await User.findOne({'_id':order});
+    const oppentData = await User.findOne({'id':oppentEmail}); 
+    const alertData = await Alert.findOne({"_code":parseInt(join_code)}); 
+  if(alertData){
+    console.log('Alert_데이터가 존재합니다.');
+    const index = alertData.dataSchema.length - 1;
+    const _sendData = await {
+                            _code:alertData._code,
+                            number:alertData.dataSchema[index].number,
+                            crud:alertData.dataSchema[index].crud,
+                            name:userData.name,
+                            oppentName:oppentData.name,
+                            cratedAt:alertData.dataSchema[index].cratedAt,
+                            }
+                            
+    req.app.get('io').of('/alert').to(join_code).emit('Alert_send', _sendData); // 키, 값                     
+  }else{
+    console.log('찾는 Alert data가 존재하지 않습니다.');
+  }
+  } catch (error) {
+    console.error(error);
+    next();
+  }
+}
+
 const _chatInfo = async(req,res,next) => {
     try {
       const shared_code = req.user._code.codes;
       const {uuid,comment,sender,getter,reg_time} = req.body;
       const query = {'_code':shared_code};
       console.log('chatMessage 준비',shared_code,comment,sender,getter);
+
+       // Alert 업데이트 
+      Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+        if(err) throw new Error();
+        else {
+          if(result.ok===1){
+            console.log("Alert_채팅 삽입 코드(메시지) 수정 완료");
+            _alertFindOne(shared_code,req,next);
+           
+          }
+        }
+      });
+
       Chat.updateOne(query,{$addToSet:{'dataSchema': 
               {'sender':sender, 
               'getter':getter,
@@ -67,7 +111,7 @@ const _chatInfo = async(req,res,next) => {
                   getter:getter,
                   sender:sender,
                 } 
-                // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
+                console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
                 // console.log(req.app.get('io').of('/chat').sockets);
                 req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
                 res.json({results:1});
@@ -87,6 +131,18 @@ const _chatPhoto = async(req,res,next) => {
     console.log('chatPhoto 준비',shared_code,originalname,filename,size);
     const image = {'size':size,'filename':filename,'originalname':originalname};
     const query = {'_code':shared_code};
+
+     // Alert 업데이트 
+     Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_채팅 삽입 코드(사진) 수정 완료");
+          _alertFindOne(shared_code,req,next);
+        }
+      }
+    });
+
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
@@ -124,6 +180,18 @@ const _chatCamera = async(req,res,next) => {
     console.log('chatPhoto 준비',shared_code,originalname,filename,size);
     const image = {'size':size,'filename':filename,'originalname':originalname};
     const query = {'_code':shared_code};
+
+     // Alert 업데이트 
+     Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_채팅 삽입 코드(카메라) 수정 완료");
+          _alertFindOne(shared_code,req,next);
+        }
+      }
+    });
+
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
@@ -159,6 +227,18 @@ const _chatGif = async(req,res,next) => {
     console.log('chatGif 준비',shared_code,gifKey,sender,getter);
     const image = {'size':0,'gifname':gifKey,'originalname':gifKey};
     const query = {'_code':shared_code};
+
+     // Alert 업데이트 
+     Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_채팅 삽입 코드(이모티콘) 수정 완료");
+          _alertFindOne(shared_code,req,next);
+        }
+      }
+    });
+
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
@@ -196,6 +276,18 @@ const _chatVideo = async(req,res,next) => {
     console.log('chatVideo 준비',shared_code,originalname,filename,size);
     const image = {'size':size,'videoName':filename,'originalname':originalname};
     const query = {'_code':shared_code};
+
+     // Alert 업데이트 
+     Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_채팅 삽입 코드(비디오) 수정 완료");
+          _alertFindOne(shared_code,req,next);
+        }
+      }
+    });
+
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
@@ -231,6 +323,18 @@ const _chatAlbum = async(req,res,next) => {
     console.log('chatAlbum 준비',shared_code,imageInfo,sender,getter);
     const image = imageInfo;
     const query = {'_code':shared_code};
+
+    // Alert 업데이트 
+    Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_채팅 삽입 코드(공유앨범) 수정 완료");
+          _alertFindOne(shared_code,req,next);
+        }
+      }
+    });
+    
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
@@ -266,6 +370,18 @@ const _chatvoiceRecord = async(req,res,next) => {
     console.log('chatVoiceRecord 준비',shared_code,originalname,filename,size);
     const image = {'size':size,'voiceRecordname':filename,'originalname':originalname};
     const query = {'_code':shared_code};
+
+    // Alert 업데이트 
+    Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 4, crud:1}}},(err,result)=>{
+      if(err) throw new Error();
+      else {
+        if(result.ok===1){
+          console.log("Alert_채팅 삽입 코드(녹음) 수정 완료");
+          _alertFindOne(shared_code,req,next);
+        }
+      }
+    });
+
     Chat.updateOne(query,{$addToSet:{'dataSchema': 
             {'sender':sender, 
             'getter':getter,
