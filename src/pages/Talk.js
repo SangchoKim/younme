@@ -2,9 +2,49 @@ import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import Body from '../components/M_body'   
 import { connect } from 'react-redux';
+import MediaHanler from '../lib/Mediahandier';
 
 class Talk extends PureComponent{
   
+  constructor(){
+    super();
+
+    this.state = {
+      modalIsOpen:false,
+      hasMedia: false,
+      otherUserId: null,
+      stream:null,
+    }
+
+    this.mediaHanler = new MediaHanler();
+  } 
+  
+  _modalTalk = async() => {
+     this.setState(prev=>({
+      ...prev,
+      modalIsOpen: !this.state.modalIsOpen
+    }));
+
+    if(this.state.hasMedia===false){
+      this.mediaHanler.getPermissions()
+      .then((_stream) => {
+        this.setState(prev=>({
+          ...prev,
+          hasMedia: true,
+          stream:_stream
+        }))
+      })
+    }else{
+      await this.state.stream.getTracks().forEach(track => track.stop());
+      await this.setState(prev=>({
+        ...prev,
+        hasMedia: false,
+        stream:null
+      }))
+    }
+  }
+
+
   render(){
     return(
       <React.Fragment>  
@@ -19,7 +59,9 @@ class Talk extends PureComponent{
           backIcon={this.props.backIcon}
           caretDown={this.props.caretDown}
           mode={this.props.mode}
-          
+          modalTalk={this._modalTalk}
+          modalIsOpen={this.state.modalIsOpen}
+          stream={this.state.stream}
         />
         <Body 
            mode={this.props.mode}

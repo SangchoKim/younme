@@ -1,4 +1,4 @@
-import React, { PureComponent, createRef } from 'react';
+import React, { PureComponent} from 'react';
 import {MDBRow,MDBCol,MDBCard,MDBBtn,MDBIcon,MDBInput,MDBListGroup,MDBListGroupItem} from 'mdbreact';
 import uuids from 'uuid/v1';
 import moment from 'moment';
@@ -32,8 +32,6 @@ const layout = {
 
 class Talk_body extends PureComponent{
   _isMounted = false;
-
-
   constructor(props){
     super(props)
     this.state={
@@ -75,7 +73,6 @@ class Talk_body extends PureComponent{
       length:null,
       modal8:false,
     }
-    this.myRef = createRef();
   }
 
     toggle = nr => () => {
@@ -105,7 +102,7 @@ class Talk_body extends PureComponent{
         lastId = logs[logs.length-1].cratedAt;
       };
       console.log("_approchServer");
-      fetch(`/io/inituser?lastId=${lastId}&limit=${limit}`,{method: "GET",
+      await fetch(`/io/inituser?lastId=${lastId}&limit=${limit}`,{method: "GET",
                             headers: {
                               'Content-Type': 'application/json',
                               'Accept': 'application/json'
@@ -138,11 +135,15 @@ class Talk_body extends PureComponent{
             length:_length,
           }));
           
-        socket_Chat.emit("joinRoom",_code,name);  
+        socket_Chat.emit("joinRoom",_code,name);
         }else if(res.result===5){
           alert('User 정보 Read 실패');
         }
       })
+       if(await limit===10){
+        document.documentElement.scrollTop = parseInt( document.documentElement.scrollHeight) - parseInt(document.documentElement.clientHeight);
+        console.log( document.documentElement.scrollTop);
+      } 
     }
 
     onScroll = () => {
@@ -150,8 +151,8 @@ class Talk_body extends PureComponent{
       // window.scrollY = 페이지의 가장 위쪽에 위치
       // document.documentElement.clientHeight = 페이지 위쪽부터 페이지 밑쪽까지
       // document.documentElement.scrollHeight = 페이지 가장 위쪽에서 가장 밑쪽까지
-      console.log(parseInt(window.scrollY)+document.documentElement.clientHeight, document.documentElement.scrollHeight);
-      if(parseInt(window.scrollY) + parseInt(document.documentElement.clientHeight) === parseInt(document.documentElement.scrollHeight)-1){
+      console.log(parseInt(window.scrollY) , document.documentElement.clientHeight, document.documentElement.scrollHeight);
+      if(parseInt(window.scrollY)===0){
         let {num,length} = this.state;
         if(length>=num){
           num = num + 10;
@@ -166,16 +167,20 @@ class Talk_body extends PureComponent{
        
     };
 
+    componentWillUnmount() {
+      this._isMounted = false;
+      window.removeEventListener('scroll',this.onScroll);
+      document.documentElement.scrollTop = 0;
+    }
+
   
     componentDidMount(){
-      // console.log('this.myRef.current',document.documentElement.scrollHeight)
-      // window.scrollY = document.documentElement.scrollHeight-300;
-      window.addEventListener('scroll', this.onScroll);
+        window.addEventListener('scroll', this.onScroll);
          this._isMounted = true;
          
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer(10);
-
+         
           socket_Chat.on('connect',()=>{
             console.log('client-Sokect 접속 됨'); 
          });
@@ -189,6 +194,7 @@ class Talk_body extends PureComponent{
             }))
           }
         });
+        
           
           // 소켓 IO 페이지에 접근했을때 
           const {log} = this.state;
@@ -323,10 +329,7 @@ class Talk_body extends PureComponent{
             }        
           })
     }
-    componentWillUnmount() {
-      this._isMounted = false;
-      window.removeEventListener('scroll',this.onScroll);
-    }
+    
     
 
     _onClick = async(e) => {
@@ -710,7 +713,7 @@ class Talk_body extends PureComponent{
             <React.Fragment>
             {this.props.mode==="talk"&&
             // Talk body 부분 
-            <MDBRow style={this.props.font} ref={this.myRef} >
+            <MDBRow style={this.props.font} ref={(refs)=>{this.box = refs}}>
               <MDBCol md="1" >
               </MDBCol>
               <MDBCol md="10" >
@@ -718,9 +721,9 @@ class Talk_body extends PureComponent{
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
                     <MDBListGroup>
                       <MDBListGroupItem className="blue border-default" >
-                       {socket_id===name?<span className="text-info">{name}</span>:<span>{name}</span>}
+                       {socket_id===name?<span className="text-danger">{name}</span>:<span>{name}</span>}
                        <MDBIcon icon="heart"/>  
-                       {socket_id===oppentName?<span className="text-info">{name}</span>:<span>{oppentName}</span>}
+                       {socket_id===oppentName?<span className="text-danger">{name}</span>:<span>{oppentName}</span>}
                       </MDBListGroupItem>
                     </MDBListGroup>
                     <MDBIcon far icon="grin-hearts fa-5x fa-spin" />
@@ -905,10 +908,6 @@ class Talk_body extends PureComponent{
                   <MDBInput 
                     input="text"
                     label="메세지를 입력해주세요"
-                    group
-                    validate
-                    error="wrong"
-                    success="right"
                     name ="message"
                     value = {message}
                     onChange = {this._onchange}
@@ -916,7 +915,7 @@ class Talk_body extends PureComponent{
                 </div>
               </MDBCol>
               <MDBCol>
-                <MDBBtn outline color="light-blue" onClick={this._onClick}>전송</MDBBtn>
+                <MDBBtn  outline color="light-blue" onClick={this._onClick}>전송</MDBBtn>
               </MDBCol>
             </MDBRow>
             }

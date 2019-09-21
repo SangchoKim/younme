@@ -166,7 +166,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
       else {
         if(result.ok===1){
           console.log("Alert_캘린더 삽입 코드 수정 완료");
-          _alertFindOne(r,req,next);
+          _alertFindOne(r._code,req,next);
         }
       }
     });
@@ -199,7 +199,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
       else {
         if(result.ok===1){
           console.log("Alert_캘린더 삽입 코드 수정 완료");
-          _alertFindOne(r,req,next);
+          _alertFindOne(r._code,req,next);
         }
       }
     });

@@ -459,14 +459,12 @@ const _initUser = async(req,res,next) => {
           console.log("채팅테이블info:",chatss.dataSchema[0]);
           let _length = null;
           if(chatss){
-            const min = limit - limit;
             const max = limit;
             _length = chatss.dataSchema.length;
-            if(_length -1 <=limit){
-              const m = chatss.dataSchema.length;
-              chatss = chatss.dataSchema.slice(min,m);
+            if(_length < limit){
+              chatss = chatss.dataSchema;
             }else{
-              chatss = chatss.dataSchema.slice(min,max);
+              chatss = chatss.dataSchema.slice((_length)- max,_length);
             }
             // chatss = chatss.dataSchema;
             console.log("_chat_info",chatss);

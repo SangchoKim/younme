@@ -1,4 +1,5 @@
 import React from 'react';
+import { MDBContainer, MDBAlert } from 'mdbreact';
 import { Switch,Route } from 'react-router-dom';
 import { Add } from '../pages';
 import { First } from '../pages';
@@ -19,6 +20,11 @@ const socket_Alert = SocketIo.connect(`http://localhost:5000/alert`);
 
 
 class App extends React.Component {
+
+    state = {
+        notification:null,
+        visible : false 
+    }
 
     componentDidMount(){
         socket_Alert.on('connect',()=>{
@@ -71,14 +77,25 @@ class App extends React.Component {
                   }else{
                     notification = `에러가 발생하였습니다.`
                   }
-                  await alert(notification);
+                  await this.setState({visible:true,notification:notification,},()=>{
+                     window.setTimeout(()=>{
+                      this.setState({visible:false,notification:null})
+                    },2000)
+                  });
             }
           })   
     }
 
     render() {
+        const notification = this.state.notification;
         return (
-                <Switch>>
+                <React.Fragment>
+                    {notification!==null&&    
+                        <MDBAlert color="primary" >
+                            {notification}
+                        </MDBAlert>                       
+                    } 
+                <Switch>
                     <Route exact path="/" component={Add}/>
                     <Route path="/first" component={First}/>
                     <Route path="/second" component={Second}/>
@@ -92,6 +109,7 @@ class App extends React.Component {
                     <Route path="/mypage" component={Mypage}/>
                     <Route path="/calendar" component={Calendar}/>
                 </Switch>
+                </React.Fragment>
             
         );
     }

@@ -4,8 +4,9 @@ import { Link  } from'react-router-dom';
 import Albumheader from './Album_header'
 import Calendarheader from './Calendar_header'
 import Albummodal from './Album_modal'
-// import Talkmodal from './Talk_modal'
+import TalkHeader from './Talk_header'
 import Calendarmodal from './Calendar_modal'
+import TalkModalAbove from './Talk_modal_Above'
 
 const font = {
     color:"black",
@@ -100,11 +101,19 @@ class M_nav extends PureComponent{
                         t={this.props.t}
                         rightIcon ={this.props.rightIcon}
                       />
-                      {this.props.mode!=="calendar"&&this.props.mode!=="album"&&
+                      {this.props.mode!=="calendar"&&this.props.mode!=="album"&&this.props.mode!=="talk"&&
                       <MDBNavItem >
                         <Link to="#"><MDBIcon icon={this.props.rightIcon} /><br></br>{this.props.update}</Link>
                      </MDBNavItem> 
-                      }             
+                      }
+                      {this.props.mode==="talk"&&
+                       <TalkHeader
+                        mode={this.props.mode}
+                        modalTalk={this.props.modalTalk}
+                        rightIcon ={this.props.rightIcon}
+                        update ={this.props.update}
+                       />
+                      }              
                     </MDBNavbarNav>
                   </MDBCollapse>
                   <Albummodal
@@ -125,13 +134,13 @@ class M_nav extends PureComponent{
                     capture={this.props.capture}
                     onClickRetake={this.props.onClickRetake}
                   />
-                  {/* <Talkmodal
+                  <TalkModalAbove
                     mode={this.props.mode}
-                    modal8={this.state.modal8}
-                    modal={modal}
+                    modalTalk={this.props.modalTalk}
+                    modalIsOpen={this.props.modalIsOpen}
                     caretDown={this.props.caretDown}
-                    toggle={this.toggle(8)}
-                  /> */}
+                    stream={this.props.stream}
+                  />
                  <Calendarmodal
                    mode={this.props.mode}
                    modal={this.props.modal}
