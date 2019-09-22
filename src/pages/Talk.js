@@ -14,6 +14,7 @@ class Talk extends PureComponent{
       hasMedia: false,
       otherUserId: null,
       stream:null,
+      userSteam:null,
     }
 
     this.mediaHanler = new MediaHanler();

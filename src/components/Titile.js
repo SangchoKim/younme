@@ -20,9 +20,11 @@ const layout ={
   disPlay: "flex",
   flexDirection: "row",
   justifyContent: "center",
-  color:"white",
+  color:"#e0f7fa",
   fontSize:"15px",
-  alignItems :"center"
+  alignItems :"center",
+  width:200,
+  
 }
 
 const modal ={
@@ -83,8 +85,8 @@ class M_nav extends PureComponent{
                       <strong>You&Me</strong>
                     </div>      
                   <MDBNavbarToggler onClick={this.toggleCollapse} />
-                  <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-                    <MDBNavbarNav style={layout} className="text-center">
+                  <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar className=" fixed-top navbar-light bg-white"> 
+                      <MDBNavbarNav style={layout} className="text-center">
                       <MDBNavItem>
                         <Link to={this.props.backUrl}><MDBIcon icon={this.props.backIcon} /><br></br>{this.props.back}</Link>
                       </MDBNavItem>
@@ -115,6 +117,7 @@ class M_nav extends PureComponent{
                        />
                       }              
                     </MDBNavbarNav>
+                      
                   </MDBCollapse>
                   <Albummodal
                     mode={this.props.mode}

@@ -14,6 +14,7 @@ module.exports = (io, app, sessionMiddleware) => {
   // 소켓 -> 네임스페이스 필수
   // io.of('/') -> 기본
   const initChat = io.of('/chat');
+  const initVideoChat = io.of('/videochat');
   const initAlert = io.of('/alert');
   
   io.use(passportSocketIo.authorize({
@@ -66,7 +67,7 @@ module.exports = (io, app, sessionMiddleware) => {
         console.log(name + ' join a ' + _code);
         console.log('rooms',initChat.adapter.rooms);
         initChat.to(_code).emit('joinedRoom', _code, name);
-      })
+      });
 
       socket.on('error',(error)=>{
         console.error('에러발생',error);
@@ -75,6 +76,57 @@ module.exports = (io, app, sessionMiddleware) => {
       socket.on('disconnect',()=>{
         console.log('initChat 접속 종료');
       })
+    });
+
+    
+    // 화상통화 
+    initVideoChat.on('connection', (socket) => { // 채팅 소켓 연결 시
+      const join_code = socket.request.user._code.codes;
+      const req = socket.request;
+      let clients = 0;
+      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      console.log('Server-Sokect_VideoChat 접속 됨', ip, socket.id, join_code);
+      socket.join(join_code);
+
+      // socket.on('joinRoom', (_code,name) => {
+      //   console.log(name + ' join a ' + _code);
+      //   console.log('rooms',initChat.adapter.rooms);
+      //   initChat.to(_code).emit('joinedRoom', _code, name);
+      // });
+
+      const SendOffer = (offer) => {
+        console.log('SendOffer',offer);
+        initVideoChat.to(join_code).emit("BackOffer", offer);
+      }
+
+      const SendAnswer = (data) => {
+        console.log('SendAnswer',data);
+        initVideoChat.to(join_code).emit("BackAnswer", data);
+      }
+
+      socket.on('NewClient', ()=>{
+        console.log('NewClient');
+        if(clients<2){
+          initVideoChat.to(join_code).emit('CreatePeer');
+        }else{
+          initVideoChat.to(join_code).emit('SessionActive');
+        }
+      })
+
+      socket.on('Offer',SendOffer);
+      socket.on('Answer',SendAnswer);
+
+      socket.on('error',(error)=>{
+        console.error('에러발생',error);
+      })
+
+      socket.on('disconnect',()=>{
+        console.log('initChat 접속 종료');
+        if(clients>0)
+          clients--;
+      })
+
+      
     });
   };
 
