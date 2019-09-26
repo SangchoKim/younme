@@ -3,9 +3,12 @@ const STATEMESSAGE = 'counter/STATEMESSAGE';
 const GENDER = 'counter/GENDER';
 const BIRTHDAY = 'counter/BIRTHDAT';
 const MOVEPAGE = 'counter/onMoveToPage';
-
+export const MYPAGE_REQUEST = 'MYPAGE_REQUEST';
+export const MYPAGE_FAIL = 'MYPAGE_FAIL';
+export const MYPAGE_SUCCESS = 'MYPAGE_SUCCESS';
 // 액션 생성 함수를 만듭니다.
 // 이 함수들은 나중에 다른 파일에서 불러와야 하므로 내보내줍니다.
+export const mypageRequest = () => ({ type: MYPAGE_REQUEST,payload:null});
 export const popUpstateMessage = (_email,_name,_birthday,_gender) => ({ type: STATEMESSAGE, payload:{_email,_name,_birthday,_gender } });
 export const popUpGender = (_email,_name,_birthday,_gender) => ({ type: GENDER ,payload:{_email,_name,_birthday,_gender }});
 export const popUpBirthday = (_email,_name,_birthday,_gender) => ({ type: BIRTHDAY,payload:{_email,_name,_birthday,_gender } });
@@ -29,7 +32,7 @@ const initialState = {
       modalFooter:{confirm:'확인'},
       user_info:{email:'',name:'',birthday:'',gender:''},
       mode:{stateMessage:'stateMessage',gender:'gender',birthday:'birthday'},
-      
+      mypageState:'isReady',
   };
 
   
@@ -39,7 +42,15 @@ export default function reducer(state = initialState, action) {
     // 리듀서 함수에서는 액션의 타입에 따라 변화된 상태를 정의하여 반환합니다.
     // state = initialState 이렇게 하면 initialState 가 기본 값으로 사용됩니다.
     // console.log(action.type);
-    switch(action.type) {    
+    switch(action.type) {
+      case MYPAGE_REQUEST:
+        return state;
+      case MYPAGE_SUCCESS:
+        return ;
+      case MYPAGE_FAIL:
+        console.log(action.data);
+        return Object.assign({},state,{
+        mypageState:'isSuccess'});       
       case STATEMESSAGE:
         return Object.assign({},state,{ Title:{
           title:"마이페이지",

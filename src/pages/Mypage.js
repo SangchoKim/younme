@@ -1,9 +1,10 @@
 import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import Pmain from '../components/P_img'
+import Lottie from 'lottie-react-web';
 import { connect } from 'react-redux';
 import * as MypageAction from '../store/modules/Mypage';
-
+import Loding from '../lotties/61-octopus.json';
 
 let _email = '';
 let _name = '';
@@ -27,6 +28,8 @@ class Mypage extends PureComponent{
   }
 
   componentDidMount = () => {
+    const {mypageRequest} = this.props;
+    mypageRequest();
     fetch("/api/mypage",{method: "get",
                         headers: {
                           'Accept': 'application/json',
@@ -133,6 +136,8 @@ class Mypage extends PureComponent{
 
   render(){
 
+    const {mypageState} = this.props;
+    console.log(mypageState);
     let _title , _comment = null;
     if(this.props.modes ==='stateMessage'){
       _title = this.props.title1;
@@ -144,7 +149,17 @@ class Mypage extends PureComponent{
     }
 
     return(
-      <React.Fragment>  
+      <React.Fragment>
+        {mypageState==="isReady"&&
+           <Lottie
+           options={{
+             animationData:Loding,
+             loop: true,
+             autoplay: true,
+           }}/>
+        }
+        {mypageState==="isSuccess"&&
+        <React.Fragment>
         <Titile 
           title={this.props.title}
           back={this.props.back}
@@ -175,6 +190,8 @@ class Mypage extends PureComponent{
           changeB ={this._onChangebirth}
           birthday = {this.state.user_info.birthday}
         />
+         </React.Fragment>
+        }  
       </React.Fragment>
     )
   }
@@ -182,7 +199,7 @@ class Mypage extends PureComponent{
     
 // props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
-  
+  mypageState: state.Mypage.mypageState,
   title: state.Mypage.Title.title,
   back: state.Mypage.Title.back,
   update: state.Mypage.Title.update,  
@@ -209,6 +226,7 @@ const mapStateToProps = (state) => ({
 
 // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
+  mypageRequest: () => dispatch(MypageAction.mypageRequest()),
   stateMessage: () => dispatch(MypageAction.popUpstateMessage(_email,_name,_birthday,_gender)),
   gender: () => dispatch(MypageAction.popUpGender(_email,_name,_birthday,_gender)),
   birthday: () => dispatch(MypageAction.popUpBirthday(_email,_name,_birthday,_gender))

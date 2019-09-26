@@ -1,20 +1,17 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import Main from '../components/Main';
 import SignUp from '../components/SignUp';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 
-class Add extends PureComponent{
+class Add extends PureComponent {
 
-    render(){
-        return(
+    render() {
+        return (
             <React.Fragment>
-                <Main />
-                <SignUp 
-                    history={this.props.history}
-                    location={this.props.location} 
-                />
+                <Main/>
+                <SignUp history={this.props.history} location={this.props.location}/>
             </React.Fragment>
         )
 
@@ -23,5 +20,3 @@ class Add extends PureComponent{
 }
 
 export default Add;
-
-
