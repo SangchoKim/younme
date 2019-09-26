@@ -28,32 +28,7 @@ const setcalendar = require('../etc/method/calendar').setcalendar;
 const readcalendar = require('../etc/method/calendar').readcalendar;
 const deletecalendar = require('../etc/method/calendar').deletecalendar;
 const updatecalendar = require('../etc/method/calendar').updatecalendar;
-// const upload = multer({
-//   storage: multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, '../../src/img/uploads/');
-//     },
-//     filename: function (req, file, cb) {
-//       cb(null, new Date().valueOf() + path.extname(file.originalname));
-//     }
-//   }),
-// });
-// // insert 방식
-// router.post("/first", (req,res) => {
-//     const user = new User();
-//     user.id = req.body.email;
-//     user.password = req.body.password;
-//     user.save((err)=>{
-//       if(err){
-//         console.error(err);
-//         res.json({result: 0});
-//         return;
-//       }else{
-//         console.log('회원가입 Insert 성공')
-//         res.json({result: 1}); 
-//       }
-//     })
-// })
+
 router.get("/home", (req,res,next) => {
   getHome(req,res,next);
 })

@@ -63,12 +63,9 @@ class Calendar_modal extends PureComponent{
     await this._setSubMemo();
   }
     render(){
-
       let {sub,memo} = this.state;
-
         return(
-            <React.Fragment>
-               {this.props.mode==="calendar"&&
+            <React.Fragment>    
                       <MDBModal isOpen={this.props.modal} toggle={this.props.t}>
                         <CalendarTitle t={this.props.t}  />
                         <MDBModalBody>
@@ -130,12 +127,9 @@ class Calendar_modal extends PureComponent{
                     <MDBBtn type="submit" color="primary" onClick={this.onClick}>등록</MDBBtn>
                 </MDBModalFooter>
             </MDBModal>      
-                }
             </React.Fragment>
         )
     }
-
-
 }
 
 // props 값으로 넣어 줄 상태를 정의해줍니다.

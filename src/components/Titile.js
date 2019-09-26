@@ -58,8 +58,6 @@ class M_nav extends PureComponent{
       switch2: false
     };
 
- 
-
   onClick = () => {
     this.setState({
       collapse: !this.state.collapse,
@@ -73,10 +71,7 @@ class M_nav extends PureComponent{
     });
   }
 
- 
-
   render(){
-    
     return(
       <React.Fragment>  
        <MDBNavbar dark expand="md" style={font} >
@@ -93,20 +88,24 @@ class M_nav extends PureComponent{
                       <MDBNavItem >
                         <Link to="#"><MDBIcon icon={this.props.mainIcon} /><br></br>{this.props.title}</Link>
                       </MDBNavItem>
-                      <Albumheader
-                        mode={this.props.mode}
-                        toggle8={this.props.toggle}
-                        rightIcon ={this.props.rightIcon}
-                      />
-                      <Calendarheader
-                        mode={this.props.mode}
-                        t={this.props.t}
-                        rightIcon ={this.props.rightIcon}
-                      />
+                      {this.props.mode==="album"&&
+                        <Albumheader
+                          mode={this.props.mode}
+                          toggle8={this.props.toggle}
+                          rightIcon ={this.props.rightIcon}
+                        />
+                      }
+                      {this.props.mode==="calendar"&&
+                        <Calendarheader
+                          mode={this.props.mode}
+                          t={this.props.t}
+                          rightIcon ={this.props.rightIcon}
+                        />
+                      }
                       {this.props.mode!=="calendar"&&this.props.mode!=="album"&&this.props.mode!=="talk"&&
-                      <MDBNavItem >
-                        <Link to="#"><MDBIcon icon={this.props.rightIcon} /><br></br>{this.props.update}</Link>
-                     </MDBNavItem> 
+                        <MDBNavItem >
+                          <Link to="#"><MDBIcon icon={this.props.rightIcon} /><br></br>{this.props.update}</Link>
+                        </MDBNavItem> 
                       }
                       {this.props.mode==="talk"&&
                        <TalkHeader
@@ -117,48 +116,49 @@ class M_nav extends PureComponent{
                        />
                       }              
                     </MDBNavbarNav>
-                      
                   </MDBCollapse>
-                  <Albummodal
-                    mode={this.props.mode}
-                    modal8={this.props.modal8}
-                    toggle8={this.props.toggle}
-                    setData={this.props.setData}
-                    show={this.props.show}
-                    modal={modal}
-                    onClick={this.props.onClick}
-                    setting={this.props.setting}
-                    onChangePhoto={this.props.onChangePhoto}
-                    file={this.props.file}
-                    setRef={this.props.setRef}
-                    imageName={this.props.imageName}
-                    onChangeCamera={this.props.onChangeCamera}
-                    imageData={this.props.imageData}
-                    capture={this.props.capture}
-                    onClickRetake={this.props.onClickRetake}
-                  />
-                  <TalkModalAbove
-                    mode={this.props.mode}
-                    modalTalk={this.props.modalTalk}
-                    modalIsOpen={this.props.modalIsOpen}
-                    caretDown={this.props.caretDown}
-                    stream={this.props.stream}
-                  />
+                  {this.props.mode==="album"&&
+                    <Albummodal
+                      mode={this.props.mode}
+                      modal8={this.props.modal8}
+                      toggle8={this.props.toggle}
+                      setData={this.props.setData}
+                      show={this.props.show}
+                      modal={modal}
+                      onClick={this.props.onClick}
+                      setting={this.props.setting}
+                      onChangePhoto={this.props.onChangePhoto}
+                      file={this.props.file}
+                      setRef={this.props.setRef}
+                      imageName={this.props.imageName}
+                      onChangeCamera={this.props.onChangeCamera}
+                      imageData={this.props.imageData}
+                      capture={this.props.capture}
+                      onClickRetake={this.props.onClickRetake}
+                    />
+                  }
+                  {this.props.mode==="talk"&&
+                    <TalkModalAbove
+                      mode={this.props.mode}
+                      modalTalk={this.props.modalTalk}
+                      modalIsOpen={this.props.modalIsOpen}
+                      caretDown={this.props.caretDown}
+                      stream={this.props.stream}
+                    />
+                  }
+                  {this.props.mode==="calendar"&& 
                  <Calendarmodal
                    mode={this.props.mode}
                    modal={this.props.modal}
                    t={this.props.t}
                    list1={list1}
-                 />  
+                 />
+                }  
                 </MDBContainer>
               </MDBNavbar> 
       </React.Fragment>
     );
   };
-
-  
 }
-
-  
 
 export default M_nav;  

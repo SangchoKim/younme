@@ -4,7 +4,6 @@ import ReactMics from '../lib/reactMics';
 
 class TalkModalVoice extends PureComponent{
 
-
     render(){
         return(
             <React.Fragment>

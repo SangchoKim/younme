@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import {MDBModalHeader} from 'mdbreact';
 
-
 class Calendar_title extends PureComponent{
 
     render(){
@@ -11,8 +10,6 @@ class Calendar_title extends PureComponent{
             </React.Fragment>
         )
     }
-
-
 }
 
 export default Calendar_title;

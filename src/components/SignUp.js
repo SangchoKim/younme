@@ -4,7 +4,6 @@ import {MDBContainer,MDBBtn,MDBModal,MDBModalBody,MDBModalHeader,MDBModalFooter,
 import'./App.css';
 import { Link  } from'react-router-dom';
 
-
 const font = {
   color:"black",
   fontWeight:"bold",
@@ -21,8 +20,6 @@ class SignUp extends PureComponent {
     password:''
   }
 
-  
-  
   toggle = () => {
     this.setState({
       modal: !this.state.modal
@@ -158,6 +155,5 @@ SignUp.propTypes = {
 SignUp.defaultProps = {
   name: 'You&Me 시작하기'
 };
-
 
 export default SignUp;

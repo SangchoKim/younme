@@ -11,15 +11,12 @@ const font = {
   }
 
 class Album_img extends PureComponent{
-
     state = {
         isOpen: false,
         photoIndex: 0,
           }
-
     render(){
         const { photoIndex, isOpen } = this.state;
-
         return(
             <React.Fragment>
           {this.props.mode==="album"&&!this.props.defautImgeHave&&!this.props.imageNameShow&&!this.props.imageNameCheck&&
@@ -43,7 +40,6 @@ class Album_img extends PureComponent{
                                 <MDBBtn id={`/uploadsAlbum/${image}`} color="danger" size="sm" className="" name="delete" onClick={this.props.onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
                               </div>
                             </div>
-                            
                             </MDBCol>
                       })}
                       </MDBRow> 
@@ -75,8 +71,6 @@ class Album_img extends PureComponent{
             </React.Fragment>
         )
     }
-
-
 }
 
 // props 값으로 넣어 줄 상태를 정의해줍니다.

@@ -12,10 +12,7 @@ const font = {
 
 class Second extends PureComponent{ 
 
-
-
-  componentDidMount (){
-      
+  componentDidMount (){      
       console.log("mycode:",this.props.code);
       fetch("/api/secondCodeSave",{method: "POST",
       headers: {
@@ -36,15 +33,6 @@ class Second extends PureComponent{
           this.props._setState(this.props.code,false);
         } 
       })
-
-      // console.log("props.location:",this.props.location);
-      // if(this.props.location.state){
-      //   const _mycode = this.props.location.state.mycode;
-      //   this.props._setState(_mycode,true);
-      //   console.log("reloadMycode:",_mycode);
-      // }else{
-      //   this.props._setState(this.props.code,false);
-      // }
     }
 
     render(){

@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
-import {MDBBtn,MDBIcon,MDBRow,MDBCol,MDBCard} from 'mdbreact';
-
-
+import {MDBRow,MDBCol} from 'mdbreact';
+import TalkModalAlbumShardAlbum from './TalkModalAlbum_ShardAlbum';
+import TalkModalAlbumShardAlbumChoice from './TalkModalAlbum_ShardAlbum_Choice';
+import TalkModalAlbumShardAlbumFirstBtn from './TalkModalAlbum_ShardAlbum_FirstBtn';
+import TalkModalAlbumShardAlbumSecondBtn from './TalkModalAlbum_ShardAlbum_SecondBtn';
 class TalkModalAlbum extends PureComponent{
 
     render(){
-      console.log('this.props.imgUrls',this.props.imgUrls);
         return(
             <React.Fragment>
               <form onSubmit={this.props.setAlbumData}>
@@ -15,21 +16,11 @@ class TalkModalAlbum extends PureComponent{
                         <h3>공유 앨범</h3>
                       </div>
                       <hr color="#000000" />
-                  </MDBCol> 
-                {this.props.imgUrls.map((image,index) => {
-                    return (
-                        <MDBCol md="2" key={image + index + Date()}>
-                          <div className="view overlay">
-                            <img src={`/uploadsAlbum/${image}`}  onClick={() => this.setState({ isOpen: true })} 
-                            alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>
-                              <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={`/uploadsAlbum/${image}`} name={image} color="primary" size="sm" className="" onClick={this.props.onAlbumChoice}><MDBIcon icon="check fa-2x" /><br></br>선택</MDBBtn>
-                              </div>
-                          </div>
-                        </MDBCol>
-                      )
-                    })
-                    }
+                  </MDBCol>
+                  <TalkModalAlbumShardAlbum
+                    imgUrls = {this.props.imgUrls}
+                    onAlbumChoice = {this.props.onAlbumChoice}
+                  /> 
                     {this.props.isChoice&&this.props.albumFile&&
                     <MDBRow>
                       {this.props.albumFile.length>=1&&
@@ -40,44 +31,28 @@ class TalkModalAlbum extends PureComponent{
                             </div>
                         </MDBCol>
                       }
-                      {this.props.albumFile.map((data,index)=>{
-                        console.log('data',data);
-                        return(
-                            <MDBCol md="2" key={data + index + Date()}>
-                              <div className="text-center mt-3 view overlay">
-                                <MDBCard>
-                                  <img src={data.imagePath} alt='' width="500" height="auto"></img>
-                                  <div className="mask flex-center rgba-green-slight">
-                                    <MDBBtn id={data.imagePath} name='unselected' color="default" size="sm" className="" onClick={this.props.onAlbumChoice}><MDBIcon icon="check fa-2x" /><br></br>취소</MDBBtn>
-                                  </div>
-                                </MDBCard>
-                              </div>
-                            </MDBCol>
-                          ) 
-                        })
-                      }
+                      <TalkModalAlbumShardAlbumChoice
+                        albumFile = {this.props.albumFile}
+                        onAlbumChoice = {this.props.onAlbumChoice}
+                      />
+                     
                       {this.props.albumFile.length>=1&&
-                       <MDBCol md="12" >
-                              <div className="text-center">
-                                  <MDBBtn name="back" color="danger" onClick={this.props.onClick}>뒤로</MDBBtn>
-                                  <MDBBtn type="submit" name="submit" color="info" >보내기</MDBBtn>
-                              </div> 
-                        </MDBCol>
+                        <TalkModalAlbumShardAlbumFirstBtn
+                          onClick = {this.props.onClick}
+                        />
                       }
                       </MDBRow>
                     }
                   </MDBRow>
                   {this.props.albumFile.length===0&&
-                  <div className="text-center">
-                      <MDBBtn name="back" color="danger" onClick={this.props.onClick}>뒤로</MDBBtn>
-                  </div>
+                    <TalkModalAlbumShardAlbumSecondBtn
+                      onClick = {this.props.onClick}
+                    />
                   } 
                 </form>  
           </React.Fragment>
         )
     }
-
-
 }
 
 export default TalkModalAlbum;

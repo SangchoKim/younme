@@ -1,10 +1,7 @@
-const uuids = require('uuid/v1');
 const cookieParser = require('cookie-parser');
 const passportSocketIo = require('passport.socketio');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const Alert = require('../model/alert'); 
-const uid = uuids();
 
  
 module.exports = (io, app, sessionMiddleware) => {
@@ -34,13 +31,11 @@ module.exports = (io, app, sessionMiddleware) => {
     const join_code = socket.request.user._code.codes;
     const req = socket.request;
 
-      // for (let room of initAlert.adapter.rooms) {
         if(join_code===initAlert.adapter.rooms){
           console.log('이미 조인되어 있는 룸이 존재합니다.');
         }else{
           await socket.join(join_code);     
         }
-      // }
     
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log('Server-Sokect_Alert 접속 됨', ip, socket.id, join_code);
@@ -87,12 +82,6 @@ module.exports = (io, app, sessionMiddleware) => {
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       console.log('Server-Sokect_VideoChat 접속 됨', ip, socket.id, join_code);
       socket.join(join_code);
-
-      // socket.on('joinRoom', (_code,name) => {
-      //   console.log(name + ' join a ' + _code);
-      //   console.log('rooms',initChat.adapter.rooms);
-      //   initChat.to(_code).emit('joinedRoom', _code, name);
-      // });
 
       const SendOffer = (offer) => {
         console.log('SendOffer',offer);

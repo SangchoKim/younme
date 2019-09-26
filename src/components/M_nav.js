@@ -3,8 +3,6 @@ import {MDBNavbar,MDBContainer,MDBNavbarToggler,MDBCollapse, MDBNavbarNav, MDBNa
 import { Link  } from'react-router-dom';
 import { Button } from '@material-ui/core';
 
-
-
 const font = {
     color:"black",
     fontWeight:"bold",
@@ -29,10 +27,9 @@ class M_nav extends PureComponent{
       collapse: false,
       isWideEnough: false,
     };
-    this.onClick = this.onClick.bind(this);
   }
 
-  onClick() {
+  onClick = () => {
     this.setState({
       collapse: !this.state.collapse,
     });
@@ -42,7 +39,6 @@ class M_nav extends PureComponent{
     const url = '/talk';
     this.props.history.push({
       pathname: url,
-      states: { join_code:"2678",},
     })
   }
 
@@ -64,7 +60,7 @@ class M_nav extends PureComponent{
                         <Link to="/album"><MDBIcon icon="image fa-2x" /><br></br>앨범</Link>
                       </MDBNavItem>
                       <MDBNavItem >
-                        <Button onClick={this._onClick}><MDBIcon icon="sms fa-3x"  /><br></br></Button>
+                        <Button onClick={this._onClick}><MDBIcon icon="sms fa-3x"/><br></br></Button>
                       </MDBNavItem>
                       <MDBNavItem>
                         <Link to="/alert"><MDBIcon icon="bell fa-2x" /><br></br>알림</Link><MDBBadge pill color="danger">5</MDBBadge>

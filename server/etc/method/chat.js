@@ -2,7 +2,6 @@ const User = require('../../model/user');
 const Chat = require('../../model/chat');
 const Alert = require('../../model/alert');
 const multer = require('multer');
-const fs = require('fs');
 const moment = require('moment');
 const path = require('path');
 const uuids = require('uuid/v1');
@@ -78,7 +77,7 @@ const _alertFindOne = async(join_code, req, next) => {
 const _chatInfo = async(req,res,next) => {
     try {
       const shared_code = req.user._code.codes;
-      const {uuid,comment,sender,getter,reg_time} = req.body;
+      const {comment,sender,getter,reg_time} = req.body;
       const query = {'_code':shared_code};
       console.log('chatMessage 준비',shared_code,comment,sender,getter);
 
@@ -112,7 +111,6 @@ const _chatInfo = async(req,res,next) => {
                   sender:sender,
                 } 
                 console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
-                // console.log(req.app.get('io').of('/chat').sockets);
                 req.app.get('io').of('/chat').to(shared_code).emit('message', do_sendData ); // 키, 값
                 res.json({results:1});
               })
@@ -160,8 +158,6 @@ const _chatPhoto = async(req,res,next) => {
                 getter:getter,
                 sender:sender,
               } 
-              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
-              // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('photo', do_sendData ); // 키, 값
               res.json({results:1});
             })
@@ -209,8 +205,6 @@ const _chatCamera = async(req,res,next) => {
                 getter:getter,
                 sender:sender,
               } 
-              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
-              // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('camera', do_sendData ); // 키, 값
               res.json({results:1});
             })
@@ -256,8 +250,6 @@ const _chatGif = async(req,res,next) => {
                 getter:getter,
                 sender:sender,
               } 
-              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
-              // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('gif', do_sendData ); // 키, 값
               res.json({results:1});
             })
@@ -305,8 +297,6 @@ const _chatVideo = async(req,res,next) => {
                 getter:getter,
                 sender:sender,
               } 
-              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
-              // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('video', do_sendData ); // 키, 값
               res.json({results:1});
             })
@@ -399,8 +389,6 @@ const _chatvoiceRecord = async(req,res,next) => {
                 getter:getter,
                 sender:sender,
               } 
-              // console.log('rooms',req.app.get('io').of('/chat').adapter.rooms);
-              // console.log(req.app.get('io').of('/chat').sockets);
               req.app.get('io').of('/chat').to(shared_code).emit('voiceRecord', do_sendData ); // 키, 값
               res.json({results:1});
             })
@@ -417,7 +405,6 @@ const _initUser = async(req,res,next) => {
     const e = req.user._code.oppentEmail;
     const _code = req.user._code.codes;
     let chatss = [];
-    let _chat_info = null;
     console.log('limit',limit);
     if (await order){
         const r = await User.findOne({"id":e});
@@ -448,7 +435,6 @@ const _initUser = async(req,res,next) => {
         ).catch((err) => {
           console.error(err);
         })
-        // const chatss = await _getChat(_code,next);
         setTimeout(() => {
          User.findOne({_id:order})
         .then((result) => { 
@@ -466,7 +452,6 @@ const _initUser = async(req,res,next) => {
             }else{
               chatss = chatss.dataSchema.slice((_length)- max,_length);
             }
-            // chatss = chatss.dataSchema;
             console.log("_chat_info",chatss);
           }
             res.json({results:1,

@@ -21,8 +21,7 @@ class Memory_secondBody extends PureComponent{
   render(){
     return(
       <React.Fragment >
-       
-      <MDBContainer>
+        <MDBContainer>
             <MDBRow style={font}>
                 <MDBCol md="2" >
                 </MDBCol> 

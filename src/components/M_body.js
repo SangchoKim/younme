@@ -6,8 +6,6 @@ import Mainheader from './Main_header'
 import Albumbody from './Album_body'
 import Talkbody from './Talk_body'
 import Mainbody from './Main_body'
-import ScrollToBottom from 'react-scroll-to-bottom';
-
 
 const font = {
     color:"black",
@@ -66,8 +64,6 @@ class M_body extends PureComponent{
   }
 
  
- 
-
   m = () => {
     this.props.check && this.setState({images:this.props.imgUrls});
   }
@@ -100,7 +96,6 @@ class M_body extends PureComponent{
           />
           }
           {this.props.mode==="talk"&&
-          // <ScrollToBottom>
            <Talkbody
              font = {font}
              mode={this.props.mode}
@@ -108,7 +103,6 @@ class M_body extends PureComponent{
             location={this.props.location}
             history={this.props.history} 
            />
-          // </ScrollToBottom>
             }
           {this.props.mode==="main"&&
            <Mainbody

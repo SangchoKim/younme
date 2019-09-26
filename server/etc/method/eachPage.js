@@ -192,7 +192,6 @@ const _main = (req,res,next) =>{
   const _getHome =(req,res) => {
     console.log(req.session);
     const _fMsg = req.flash();
-    // console.log(_fMsg);
     if(_fMsg){
       res.json({result:2, fMsg:_fMsg});
     }else{

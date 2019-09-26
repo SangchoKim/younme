@@ -259,8 +259,6 @@ class Talk_modal_bottom extends PureComponent{
             </React.Fragment>
         )
     }
-
-
 }
 
 export default Talk_modal_bottom;

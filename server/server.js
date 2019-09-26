@@ -28,25 +28,6 @@ const sessionMiddleware = session({
   name:'shelley',
   store: new FileStore()
 });
-// const https = require('https');
-// const lex = require('greenlock-express').create({
-//   version: 'draft-11', // 버전2
-//   configDir: './etc/letsencrypt', // 또는 ~/letsencrypt/etc
-//   server: 'https://acme-staging-v02.api.letsencrypt.org/directory',
-//   approveDomains: (opts, certs, cb) => {
-//     if (certs) {
-//       opts.domains = ['localhost:3000'];
-//     } else {
-//       opts.email = 'wjdrms1919@gmail.com';
-//       opts.agreeTos = true;
-//     }
-//     cb(null, { options: opts, certs });
-//   },
-//   renewWithin: 81 * 24 * 60 * 60 * 1000,
-//   renewBy: 80 * 24 * 60 * 60 * 1000,
-// });
-
-// https.createServer(lex.httpsOptions, lex.middleware(app)).listen(process.env.SSL_PORT || 443);
 
 dotenv.config();
 app.use(morgan('dev'));

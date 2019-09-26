@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import {MDBContainer ,MDBRow,MDBCol,MDBListGroup,MDBListGroupItem, MDBCard,MDBIcon} from 'mdbreact';
+import {MDBContainer ,MDBRow,MDBCol,MDBListGroup,MDBListGroupItem, MDBCard} from 'mdbreact';
 
 const font = {
     color:"black",
@@ -14,13 +14,11 @@ const font = {
   justifyContent: 'space-between',
  }
 
-
 class Memory_firstBody extends PureComponent{
   render(){
     return(
-      <React.Fragment >
-       
-      <MDBContainer>
+      <React.Fragment > 
+        <MDBContainer>
             <MDBRow style={font}>
                 <MDBCol md="2" >
                 </MDBCol> 

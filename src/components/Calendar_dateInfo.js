@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
-import {MDBRow,MDBInput,MDBBtn,MDBCol,MDBCard,MDBListGroupItem,MDBListGroup,MDBCardHeader,MDBCardBody,MDBCardFooter,MDBIcon} from 'mdbreact';
+import {MDBRow,MDBCol} from 'mdbreact';
 import { connect } from 'react-redux';
 import * as calendarAction from '../store/modules/Calendar';
-import DataRangePicker from '../lib/UpdateDataRangePicker';
-import TimeInputLiv from '../lib/UpdateTimeInputLiv';
+import CalendarDateInfoMap from './Calendar_dateInfo_map';
 
 const font = {
     color:"black",
@@ -17,14 +16,6 @@ const font = {
     flexDirection: "row",
     justifyContent: 'space-between',
    }
-
-   const list2 = {
-    display: 'flex',
-    flexDirection: "row",
-    justifyContent: 'space-between',
-    alignItems:'center'
-   }
-
 
 class Calendar_dateInfo extends PureComponent{
 
@@ -156,9 +147,8 @@ class Calendar_dateInfo extends PureComponent{
       }
 
     render(){
-
-        const {isOpen, result}= this.props;
-        let  {mode,sub,setIniailSub,setIniailMemo,memo}= this.state;
+        const {isOpen}= this.props;
+        let  {mode}= this.state;
         return(
             <React.Fragment>
             {isOpen&&   
@@ -167,114 +157,16 @@ class Calendar_dateInfo extends PureComponent{
                 </MDBCol>
                 <MDBCol md="10" >
                     <MDBRow style={font}>
-                    {result.map((result)=>{
-                        return(
-                        <MDBCol md="4" key={result._id} >   
-                        <MDBCard className="mt-2" >
-                        {mode==="ready"&& isOpen
-                            ?
-                        <MDBCardHeader>
-                        <MDBInput
-                           name="sub"
-                           type="text"
-                           value={setIniailSub?result.title:sub}
-                           onChange={this._onchange} 
-                        />
-                        </MDBCardHeader>
-                            :
-                        <MDBCardHeader>{result.title}</MDBCardHeader>
-                            }           
-                        <MDBCardBody>  
-                            <MDBListGroup className="border-dark"> 
-                            <MDBCardHeader>날짜</MDBCardHeader>
-                            {mode==="ready"&& isOpen
-                                ?         
-                                <DataRangePicker 
-                                    s_date={result.s_date}
-                                    e_date={result.e_date}
-                                    dateChange={this._dateChange}
-                                />            
-                                :
-                            <MDBListGroupItem style={list1}>   
-                                    <React.Fragment >
-                                        <div className="ml-2">{result.s_date}</div>
-                                        <div className="ml-2">{result.e_date}</div>
-                                    </React.Fragment >
-                                </MDBListGroupItem>
-                            }
-                            </MDBListGroup>
-                            <MDBListGroup className="border-dark">
-                                <MDBCardHeader>시간</MDBCardHeader>
-                                {mode==="ready"&& isOpen
-                                ?
-                                <MDBListGroupItem style={list1}> 
-                                    <TimeInputLiv
-                                        timeName={'startTime'}
-                                        timeChange={this._timeChange}
-                                        timeVal={result.s_time}
-                                    />
-                                    <TimeInputLiv
-                                        timeName={'endTime'}
-                                        timeChange={this._timeChange}
-                                        timeVal={result.e_time}
-                                    />
-                                </MDBListGroupItem>
-                                :
-                                <MDBListGroupItem style={list1}> 
-                                    <React.Fragment >
-                                        <div className="ml-2">{result.s_time}</div>
-                                        <div className="ml-2">{result.e_time}</div>
-                                    </React.Fragment >
-                                </MDBListGroupItem>
-                                }
-                            </MDBListGroup>
-                            <MDBListGroup className="border-dark">
-                                <MDBCardHeader>메모</MDBCardHeader> 
-                                <MDBListGroupItem style={list1}>
-                                {mode==="ready"&& isOpen
-                                 ?
-                                <MDBInput
-                                    name="memo"
-                                    type="textarea"
-                                    maxLength="500"
-                                    value={setIniailMemo?result.memo:memo}
-                                    onChange={this._onchange}
-                                /> 
-                                :    
-                                <React.Fragment >
-                                    <div className="ml-2">{result.memo}</div>
-                                </React.Fragment >
-                                }
-                                </MDBListGroupItem>
-                            </MDBListGroup>
-                            <MDBListGroup className="border-dark"> 
-                                <MDBCardHeader>작성자</MDBCardHeader>
-                                <MDBListGroupItem style={list1}> 
-                                    <React.Fragment >
-                                        <div className="ml-2">{result.author}</div>
-                                    </React.Fragment >
-                                </MDBListGroupItem>
-                            </MDBListGroup>
-                        </MDBCardBody> 
-                         <MDBCardFooter>
-                         {mode==="ready"&& isOpen
-                         ?
-                         <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={result._id} color="info" size="sm" name="update" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
-                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
-                          </div>  
-                         :
-                          <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={result.id}  color="indigo" size="sm" name="ready" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
-                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
-                          </div>  
-                          }
-                         </MDBCardFooter>
-                        </MDBCard>
-                        </MDBCol>
-                        
-                        ) 
-                    })}    
+                        <CalendarDateInfoMap
+                        result = {this.props.result}
+                        isOpen = {this.props.isOpen}
+                        mode = {this.state.mode}
+                        setIniailSub = {this.state.setIniailSub}
+                        setIniailMemo = {this.state.setIniailMemo}
+                        list1 = {list1}
+                        memo = {this.state.memo}
+                        sub = {this.state.sub}
+                        />    
                     </MDBRow>  
                 </MDBCol>   
                </MDBRow>
@@ -286,18 +178,16 @@ class Calendar_dateInfo extends PureComponent{
                 }
                 {!isOpen&&
                    <MDBRow style={font}>
-                   <MDBCol md="1" >
-                   </MDBCol>
-                   <MDBCol md="10" className="black-text" >
-                    <h1>해당하는 일정이 없습니다. 일정을 등록해주세요</h1>
-                   </MDBCol>
+                        <MDBCol md="1" >
+                        </MDBCol>
+                        <MDBCol md="10" className="black-text" >
+                            <h1>해당하는 일정이 없습니다. 일정을 등록해주세요</h1>
+                        </MDBCol>
                    </MDBRow> 
                 }
             </React.Fragment>
         )
     }
-
-
 }
 
 // props 값으로 넣어 줄 상태를 정의해줍니다.

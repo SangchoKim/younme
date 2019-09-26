@@ -130,21 +130,6 @@ const _albumRead = (req,res,next) =>{
           })
   }
 
-  const _fsModify = (img) => {
-    const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
-    console.log("directory:",directory);
-    fs.readdir(directory, (err, files) => {
-      if (err) throw err;
-      for (const file of files) {
-        if(file===img)
-        fs.writeFile(path.join(directory, file), err => {
-          if (err) throw err;
-          else console.log('FS_이미지 수정 성공');
-        });
-      }
-    });
-  }
-
   const _fsRemove = async(img,order,res) => {
     const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
     console.log("directory:",directory);

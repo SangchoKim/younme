@@ -62,11 +62,12 @@ class Talk_modal_Above extends PureComponent{
 
       // for peer of type init
       const MakePeer = () => {
-        console.log('signal');
+        console.log('MakePeer');
         client.gotAnswer = false;
         let peer = InitPeer('init');
         peer.on('signal', (data) => {
           if(!client.gotAnswer){
+            console.log('MakePeer_signal');
             socket_Chat.emit('Offer', data);
           }
         })
@@ -76,8 +77,9 @@ class Talk_modal_Above extends PureComponent{
        // for peer of type not init
        const FrontAnswer = (offer) => {
           let peer = InitPeer('notInit');
+          console.log('FrontAnswer');
           peer.on('signal', (data) => {
-            console.log('signal',data);
+            console.log('FrontAnswer_signal',data);
             socket_Chat.emit('Answer', data);
           })
           
@@ -149,7 +151,6 @@ class Talk_modal_Above extends PureComponent{
 
         return(
             <React.Fragment>
-               {this.props.mode==="talk"&&
                       <MDBModal size="lg" isOpen={this.props.modalIsOpen} toggle={this.props.modalTalk}>
                         <MDBModalHeader>
                           <h1>영상통화</h1>
@@ -173,7 +174,6 @@ class Talk_modal_Above extends PureComponent{
                     <MDBBtn color="secondary" onClick={this.props.modalTalk}>닫기</MDBBtn>
                 </MDBModalFooter>
             </MDBModal>      
-                }
             </React.Fragment>
         )
     }

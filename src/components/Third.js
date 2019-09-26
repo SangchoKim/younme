@@ -1,7 +1,6 @@
 import React,{PureComponent} from 'react';
 import {MDBContainer,MDBCard ,MDBRow,MDBCol,MDBInput, MDBCardBody, MDBBtn, MDBIcon, MDBFooter, MDBCardHeader } from 'mdbreact';
 import'./App.css';
-
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 
@@ -22,8 +21,6 @@ const sex ={
   flexDirection: "row",
   justifyContent: "center",
 }
-
-
 class Third extends PureComponent{ 
 
   render(){
@@ -71,7 +68,6 @@ class Third extends PureComponent{
                             onChange={this.props.onChange} 
                           />
                         </div>
-                        
                         <div style={left}>
                           <MDBInput
                             name="name"
