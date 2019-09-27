@@ -1,4 +1,6 @@
 const express = require('express');
+const os = require('os');
+const cluster = require('cluster');
 const app = express();
 const morgan = require('morgan');
 const db = require('./db.js');
@@ -16,6 +18,8 @@ const socketEvents = require('./socket/soket'); //
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv'); 
 const ColorHash = require('color-hash');
+
+const numCPUs = os.cpus().length;
 
 const sessionMiddleware = session({
   secret: process.env.COOKIE_SECRET,
@@ -60,8 +64,20 @@ app.use((req, res, next) => { // 404 처리 부분
   });
 
 const port = 5000;
-const server = app.listen(port, () => console.log('Server started on port', {port}));
 
-const io = SocketIo(server); // socket.io와 서버 연결하는 부분
-socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
+// if(cluster.isMaster){
+//   console.log('마스터 프로세스 아이디', process.pid);
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork();
+//   }
+//   cluster.on('exit',(worker,code,signal)=>{
+//     console.log(worker.process.pid,'워커가 종료되었습니다.');
+//   })
+// }else{
+  console.log(process.pid,'워커 실행');
+  const server = app.listen(port, () => console.log('Server started on port', {port}));
+  const io = SocketIo(server); // socket.io와 서버 연결하는 부분
+  socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
+// } 
+
 

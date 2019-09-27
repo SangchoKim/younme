@@ -6,6 +6,7 @@ import Talk from './Talk';
 import Mypage from './Mypage';
 import Calendar from './Calendar';
 import Mheader from './M_header';
+import Main from './Main';
 
 
 export default combineReducers({
@@ -15,5 +16,6 @@ export default combineReducers({
     Talk,
     Mypage,
     Calendar,
-    Mheader
+    Mheader,
+    Main
 });

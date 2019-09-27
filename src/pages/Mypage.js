@@ -1,15 +1,11 @@
 import React,{PureComponent} from 'react';
 import Titile from '../components/Titile'
 import Pmain from '../components/P_img'
-import Lottie from 'lottie-react-web';
+import Loding from '../components/Loding';
 import { connect } from 'react-redux';
 import * as MypageAction from '../store/modules/Mypage';
-import Loding from '../lotties/61-octopus.json';
 
-let _email = '';
-let _name = '';
-let _birthday = '';
-let _gender = '';
+
 class Mypage extends PureComponent{
   constructor(props){
     super(props);
@@ -17,58 +13,19 @@ class Mypage extends PureComponent{
       modalHeder:{title1:'상태 메시지',title2:'생일',title3:'성별'},
       modalBody:{comment1:'상태메시지를 입력해주세요',comment2:'상태메시지를 입력해주세요!' },
       modalFooter:{confirm:'확인'},
-      user_info:{email:''
-                ,name:''
-                ,birthday:''
-                ,gender:''
-                ,intro:''
-                ,oppentEmail:''},
       modes:'stateMessage'   
     };
   }
 
+  componentWillUnmount(){
+    const {mypageout} = this.props;
+    mypageout();
+  }
+
   componentDidMount = () => {
     const {mypageRequest} = this.props;
+    // 리덕스 사가 호출
     mypageRequest();
-    fetch("/api/mypage",{method: "get",
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json'
-                        }
-                        })
-    .then(res => res.json())
-    .then(res => {
-      console.log(res.result);
-      console.log(res.user_info);
-      if(res.result===1){
-      console.log('move to mypage');
-      const _name = res.user_info.name;
-      const _email = res.user_info.email;
-      const _birthday = res.user_info.birthday;
-      const _gender = res.user_info.gender;
-      const _oppentEmail = res.user_info.oppentEmail;
-      let _intro = res.user_info.intro;
-      if(_intro==='0'){
-        _intro = '상태메시지를 입력해주세요';
-      }
-      this.setState({
-        user_info:{
-          email:_email,
-          name:_name,
-          birthday:_birthday,
-          gender:_gender,
-          intro:_intro,
-          oppentEmail:_oppentEmail
-        }
-      })
-      console.log("email:", _email);
-      console.log("name:",_name);
-      console.log("birthday:",_birthday);
-      console.log("gender:",_gender);
-    }else{
-        console.log(res.error);
-      }
-     });
   }
 
   _onChangePage = (word) => {
@@ -81,64 +38,11 @@ class Mypage extends PureComponent{
     this.props.birthday();
   }
 
-  _onChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    console.log(name);
-    console.log(value);
-    this.setState(prevState => ({
-      user_info: {
-          ...prevState.user_info,
-          [name] : value
-       }
-     }));
-  }
-
-  _onChangebirth = (_day) => {
-    console.log(_day);
-    this.setState(prevState => ({
-      user_info: {
-          ...prevState.user_info,
-          birthday : _day
-       }
-     }));
-  }
-
-  _onChangeinfo = (_ex_) => {
-    console.log("changedInfo:",_ex_)
-   this.setState(prevState => ({
-    user_info: {
-        ...prevState.user_info,
-        intro:_ex_
-     }
-   }))
-  }
-
-  _onChangeGender = (_gender_) => {
-    console.log("changedGender:",_gender_)
-   this.setState(prevState => ({
-    user_info: {
-        ...prevState.user_info,
-        gender:_gender_
-     }
-   }))
-  }
-
-  _onChangebirth1 =  (_birthday_) => {
-    console.log("changedBirth:",_birthday_)
-   this.setState(prevState => ({
-    user_info: {
-        ...prevState.user_info,
-        birthday:_birthday_
-     }
-   }))
-  }
-
   render(){
-
     const {mypageState} = this.props;
     console.log(mypageState);
     let _title , _comment = null;
+
     if(this.props.modes ==='stateMessage'){
       _title = this.props.title1;
       _comment = this.props.comment1;
@@ -151,12 +55,10 @@ class Mypage extends PureComponent{
     return(
       <React.Fragment>
         {mypageState==="isReady"&&
-           <Lottie
-           options={{
-             animationData:Loding,
-             loop: true,
-             autoplay: true,
-           }}/>
+           <Loding />
+        }
+        {mypageState==="isFail"&&
+           <p>에러발생</p>
         }
         {mypageState==="isSuccess"&&
         <React.Fragment>
@@ -178,17 +80,12 @@ class Mypage extends PureComponent{
           comment = {_comment}
           confirm = {this.props.confirm}
           onChangePage={this._onChangePage}
-          email = {this.state.user_info.email}
-          name = {this.state.user_info.name}
-          gender = {this.state.user_info.gender}
-          oppentEmail = {this.state.user_info.oppentEmail}
-          intro = {this.state.user_info.intro}
-          _onChangeGender = {this._onChangeGender}
-          _onChangeinfo = {this._onChangeinfo}
-          _onChangebirth = {this._onChangebirth1}
-          onChange ={this._onChange}
-          changeB ={this._onChangebirth}
-          birthday = {this.state.user_info.birthday}
+          email = {this.props.email}
+          name = {this.props.name}
+          gender = {this.props.genders}
+          oppentEmail = {this.props.oppentEmail}
+          intro = {this.props.intros}
+          birthday = {this.props.birthdays}
         />
          </React.Fragment>
         }  
@@ -218,18 +115,20 @@ const mapStateToProps = (state) => ({
   modes: state.Mypage.mode,
   email: state.Mypage.user_info.email,
   name: state.Mypage.user_info.name,
-  birthday:state.Mypage.user_info.birthday,
-  gender:state.Mypage.user_info.gender
-  
+  birthdays:state.Mypage.user_info.birthday,
+  genders:state.Mypage.user_info.gender,
+  intros:state.Mypage.user_info.intro,
+  oppentEmail:state.Mypage.user_info.oppentEmail
 });
 
 
 // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
+  mypageout: () => dispatch(MypageAction.mypageout()),
   mypageRequest: () => dispatch(MypageAction.mypageRequest()),
-  stateMessage: () => dispatch(MypageAction.popUpstateMessage(_email,_name,_birthday,_gender)),
-  gender: () => dispatch(MypageAction.popUpGender(_email,_name,_birthday,_gender)),
-  birthday: () => dispatch(MypageAction.popUpBirthday(_email,_name,_birthday,_gender))
+  stateMessage: () => dispatch(MypageAction.popUpstateMessage()),
+  gender: () => dispatch(MypageAction.popUpGender()),
+  birthday: () => dispatch(MypageAction.popUpBirthday())
 })
 
     

@@ -67,8 +67,12 @@ const _mypage =(req,res) => {
     if(order){
       User.findAndModify({ _id: order },[], { $set: { intro: _info } }, {}, (err,user)=>{
         if(err) console.log(err);
-        else console.log("changedIntro", user);
-        res.json({result:1, intro:user.value.intro});
+        else 
+        User.findOne({ _id: order })
+        .then(results => {
+          res.json({result:1, intro:results.intro});
+        })
+        
       });
     }else{
       res.json({result:0});
@@ -81,8 +85,11 @@ const _mypage =(req,res) => {
     if(order){
       User.findAndModify({ _id: order },[], { $set: { birth: _birth } }, {},(err,user)=>{
         if(err) console.log(err);
-        else console.log("changedBirth", user);
-        res.json({result:1, birthday:user.value.birth});
+        else 
+        User.findOne({ _id: order })
+        .then(results => {
+          res.json({result:1, birthday:results.birth});
+        })
       });
     }else{
       res.json({result:0});

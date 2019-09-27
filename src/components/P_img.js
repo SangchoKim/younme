@@ -9,6 +9,9 @@ import mypageOppnentaccount from '../img/mypage_oppnentaccount.png'
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import moment from 'moment'
+import { connect } from 'react-redux';
+import * as MypageAction from '../store/modules/Mypage';
+
 
 const font = {
     color:"black",
@@ -53,15 +56,27 @@ class P_img extends PureComponent{
       ex: '',
       birthday:'',
       modal: false,
-      mode: ''
+      mode: '',
+      user_info:{email:''
+                ,name:''
+                ,birthday:''
+                ,gender:''
+                ,intro:''
+                ,oppentEmail:''
+            },
     };
 
   handleDayClick = (day) => {
     this.setState({ selectedDay: day });
     let _day = moment(day);
-    const d =_day.format('YYYY-MM-DD');
-    this.props.changeB(d);
-  }
+    const days =_day.format('YYYY-MM-DD');
+    this.setState(prevState => ({
+        user_info: {
+            ...prevState.user_info,
+            birthday : days
+        }
+    }));
+    }
   
   toggle = (e) => {
     console.log(e.target.id);
@@ -73,78 +88,48 @@ class P_img extends PureComponent{
     });
   }
 
+  _onChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(name);
+    console.log(value);
+    this.setState(prevState => ({
+      user_info: {
+          ...prevState.user_info,
+          [name] : value
+       }
+     }));
+  }
+
   onChangeGender = (e) => {
     e.preventDefault();
     const _gender = e.target.name;
+    const {mypageGenderRequest} = this.props;
     console.log("gender",_gender);
-    fetch(`/api/changeGender?gender=${_gender}`,{method: "get", 
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                              }
-                            })
-  .then(res => res.json())
-  .then(res => {
-    console.log(res.result);
-    if(res.result===1){
-      console.log('changed gender');
-      this.props._onChangeGender(res.gender);
-      this.setState({modal:!this.state.modal});
-    }else{
-      console.log('err');
-    }
-  })
+    mypageGenderRequest(_gender);
+    this.setState({modal:!this.state.modal});
   }
 
   onChangeinfo = (e) => {
     e.preventDefault();
-    const ex = this.props.intro;
+    const ex = this.state.user_info.intro;
+    const {mypageIntroRequest} = this.props;
     console.log("자기소개",ex);
-    fetch("/api/changeinfo",{method: "post", 
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({'info': ex})
-                            })
-  .then(res => res.json())
-  .then(res => {
-    console.log(res.result);
-    if(res.result===1){
-      console.log('changed info:',res.intro);
-      this.props._onChangeinfo(ex);
-      this.setState({modal:!this.state.modal});
-    }else{
-      console.log('err');
-    }
-  })
+    mypageIntroRequest(ex);
+    this.setState({modal:!this.state.modal});
   }
 
   onChangebirth = (e) => {
     e.preventDefault();
-    const birthday = this.props.birthday;
+    const birthday = this.state.user_info.birthday;
     console.log("생일:", birthday);
-    fetch("/api/changebirth",{method: "post", 
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({'birth': birthday})
-                            })
-  .then(res => res.json())
-  .then(res => {
-    console.log(res.result);
-    if(res.result===1){
-      console.log('changed birth:',res.birthday);
-      this.props._onChangebirth(birthday);
-      this.setState({modal:!this.state.modal});
-    }else{
-      console.log('err');
-    }
-  })
+    const {mypageBirtdayRequest} = this.props;
+    mypageBirtdayRequest(birthday);
+    this.setState({modal:!this.state.modal});
   }
 
   logout = (e) => {
+    e.preventDefault();
     console.log("logout");
     const url = '/';
     e.preventDefault();
@@ -187,8 +172,8 @@ class P_img extends PureComponent{
                                     error="wrong"
                                     success="right"
                                     maxLength="200"
-                                    value={this.props.intro}
-                                    onChange={this.props.onChange}/>
+                                    value={this.state.user_info.intro}
+                                    onChange={this._onChange}/>
                             </MDBCol>
                         </MDBRow>
                     </MDBModalBody>
@@ -377,9 +362,40 @@ class P_img extends PureComponent{
 }
 }
 
-P_img.defaultProps  = {
-  intro : '상태메시지를 입력해주세요'
 
-};
 
-export default P_img;  
+// props 값으로 넣어 줄 상태를 정의해줍니다.
+const mapStateToProps = (state) => ({
+  mypageState: state.Mypage.mypageState,
+  title: state.Mypage.Title.title,
+  back: state.Mypage.Title.back,
+  update: state.Mypage.Title.update,  
+  backUrl: state.Mypage.Title.backUrl,
+  updateUrl: state.Mypage.Title.updateUrl,
+  mainIcon: state.Mypage.Title.icon.main,
+  rightIcon: state.Mypage.Title.icon.update,
+  backIcon: state.Mypage.Title.icon.back,
+  caretDown: state.Mypage.Title.icon.caretDown,
+  mode: state.Mypage.Title.mode.show,
+  title1: state.Mypage.modalHeder.title1,
+  title2: state.Mypage.modalHeder.title2,
+  title3: state.Mypage.modalHeder.title3,
+  comment1: state.Mypage.modalBody.comment1,
+  confirm: state.Mypage.modalFooter.confirm,
+  modes: state.Mypage.mode,
+  email: state.Mypage.user_info.email,
+  name: state.Mypage.user_info.name,
+  birthdays:state.Mypage.user_info.birthday,
+  genders:state.Mypage.user_info.gender,
+  intros:state.Mypage.user_info.intro,
+  oppentEmail:state.Mypage.user_info.oppentEmail
+});
+  
+  // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
+  const mapDispatchToProps = (dispatch) => ({
+    mypageIntroRequest: (ex) => dispatch(MypageAction.mypageIntroRequest(ex)),
+    mypageBirtdayRequest: (day) => dispatch(MypageAction.mypageBirtdayRequest(day)),
+    mypageGenderRequest: (gender) => dispatch(MypageAction.mypageGenderRequest(gender)),
+  })
+
+export default  connect(mapStateToProps, mapDispatchToProps) (P_img);  

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import {MDBContainer,MDBBtn,MDBModal,MDBModalBody,MDBModalHeader,MDBModalFooter,MDBRow,MDBCol,MDBInput,MDBIcon} from 'mdbreact';
 import'./App.css';
 import { Link  } from'react-router-dom';
+import { connect } from 'react-redux';
+import * as MainAction from '../store/modules/Main';
 
 const font = {
   color:"black",
@@ -47,10 +49,11 @@ class SignUp extends PureComponent {
 
    getdata = (e) => {
     e.preventDefault();
-    const url = '/loading';
     const { email, password } = this.state;
-    console.log("email:",email);
-    console.log("password:",password);
+    const userInfo = {
+        email,password
+        }
+    const {mainRequest} = this.props;
     if(!email){
       alert('이메일을 입력해주세요');
       return;
@@ -59,35 +62,34 @@ class SignUp extends PureComponent {
       alert('비밀번호를 입력해주세요');
       return;
     }
-    fetch("/api/login",{method: "post",
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({'email':email,'password':password})})
-    .then(res => res.json())
-    .then((res) =>{
-      console.log(res.result);
-      if(res.result===1){
-      console.log('move to main');
-      // alert('You&ME에 접속합니다.');
-      this.props.history.push({
-        pathname: url,
-        state: { mycode: email}
-      });
-      }else if(res.result===2){
-        alert(res.fMsg.error[0]);
-      }else if(res.result===5){
-        console.log('상대방이 가입하기 전입니다.');
-        alert('상대방이 가입하기 전입니다.');
-      }else{
-        console.log('에러발생');
-      }
-     });
+    mainRequest(userInfo);
+    this.setState({
+      modal: !this.state.modal
+    });
   }
 
+  componentDidUpdate(){
+    const {mainState,result,errMessage} = this.props;
+    console.log(mainState,result);
+    if(mainState==="isSuccess"){
+      if(result ==='2'){
+        alert('로그인에 실패하였습니다. 다시 한번 더 시도해주세요!');
+      }else if(result ==='5'){
+        alert('상대방이 가입하기 전입니다.');
+      }else{
+        const url = '/loading';
+        this.props.history.push({
+              pathname: url,
+        });
+      }
+    }else if("isFail"){
+      console.log(errMessage);
+    }
+  }
     render() {
+
       const { password, email } = this.state;
+      
         return(
           <React.Fragment>
           <div className="_SignupButton">
@@ -156,4 +158,17 @@ SignUp.defaultProps = {
   name: 'You&Me 시작하기'
 };
 
-export default SignUp;
+// props 값으로 넣어 줄 상태를 정의해줍니다.
+const mapStateToProps = (state) => ({
+  mainState: state.Main.mainState,
+  errMessage: state.Main.errMessage,
+  result: state.Main.result,
+});
+
+
+// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
+const mapDispatchToProps = (dispatch) => ({
+  mainRequest: (userInfo) => dispatch(MainAction.mainRequest(userInfo)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
