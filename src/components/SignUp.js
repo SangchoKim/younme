@@ -77,7 +77,7 @@ class SignUp extends PureComponent {
       }else if(result ==='5'){
         alert('상대방이 가입하기 전입니다.');
       }else{
-        const url = '/loading';
+        const url = '/main';
         this.props.history.push({
               pathname: url,
         });
@@ -86,8 +86,13 @@ class SignUp extends PureComponent {
       console.log(errMessage);
     }
   }
-    render() {
 
+  componentWillUnmount(){
+    const {mainOut} = this.props;
+    mainOut();
+  }
+
+    render() {
       const { password, email } = this.state;
       
         return(
@@ -169,6 +174,7 @@ const mapStateToProps = (state) => ({
 // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
   mainRequest: (userInfo) => dispatch(MainAction.mainRequest(userInfo)),
+  mainOut: () => dispatch(MainAction.mainOut()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

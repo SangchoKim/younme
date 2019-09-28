@@ -33,73 +33,29 @@ class Calendar_dateInfo extends PureComponent{
 
     _onClick = async (e) => {
         e.preventDefault();
-
-      const {id,name} = e.target;
-     
-      setTimeout(() => {
+        const {id,name} = e.target;
         if(name==="update"){
-                const {startDate,endDate,startTime,endTime,sub,memo} = this.state;
-
-                console.log('_update_Calendar_dateInfo',id);
-                fetch('/api/updatecalendar', {method: "PATCH",
-                                           headers: {
-                                             'Accept': 'application/json',
-                                             'Content-Type': 'application/json'
-                                           },
-                                           body: JSON.stringify({'data':{
-                                            id:id,
-                                            startDate:startDate&&startDate,
-                                            endDate:endDate&&endDate,
-                                            startTime:startTime&&startTime,
-                                            endTime:endTime&&endTime,
-                                            sub:sub&&sub,
-                                            memo:memo&&memo,  
-                                           }})
-                                           })
-               .then(res => res.json())
-               .then(res=>{
-                 if(res.results===1){
-                   const {setCalendarRead} = this.props;
-                    console.log('캘린더Update 성공', res.data);
-                     this.setState((pre)=>({
-                        ...pre,
-                        setIniailSub:true,
-                        setIniailMemo:true,
-                        mode:'',
-                    })) 
-                    setCalendarRead(res.data);
-                 }else if(res.results===5){
-                   alert('캘린더Update 실패');
-                 }
-               })
-           
-           
+          const {startDate,endDate,startTime,endTime,sub,memo} = this.state;
+          const {updateCalendar} = this.props;
+          const data ={id,startDate,endDate,startTime,endTime,sub,memo};
+          window.confirm('정말로 수정 하시겠습니까?')&&
+          updateCalendar(data);
+          this.setState((pre)=>({
+            ...pre,
+            setIniailSub:true,
+            setIniailMemo:true,
+            mode:'',
+          })) 
         }else if(name==="ready"){
             const {mode} = this.state
             this.setState({mode:"ready"});
             console.log('_updateReady_Calendar_dateInfo',mode);
-
         }else if(name==="delete"){
+            const {deleteCalendar} = this.props;
             console.log('_delete_Calendar_dateInfo',id);
             window.confirm('정말로 삭제 하시겠습니까?')&&
-            fetch(`/api/deletecalendar?_id=${id}`, {method: "GET",
-                                       headers: {
-                                         'Accept': 'application/json',
-                                         'Content-Type': 'application/json'
-                                       }
-                                       })
-           .then(res => res.json())
-           .then(res=>{
-             if(res.results===1){
-               const {setCalendarRead} = this.props;
-                console.log('캘린더Delete 성공', res.data);
-                setCalendarRead(res.data);
-             }else if(res.results===5){
-               alert('캘린더Delete 실패');
-             }
-           })
-     }  
-        }, 100);
+            deleteCalendar(id);   
+        }  
     }
 
     _onchange = async(e) => {
@@ -107,21 +63,18 @@ class Calendar_dateInfo extends PureComponent{
         const name = e.target.name;
         const val = e.target.value;
         console.log('_onchange_calendar_modify',name,val);
-
         if(name==="sub"){
             await this.setState((pre)=>({
                 ...pre,
                 setIniailSub:false,
             }))  
         } 
-
         if(name==="memo"){
             await this.setState((pre)=>({
                 ...pre,
                 setIniailMemo:false,
             }))  
         } 
-
         await this.setState((pre)=>({
             ...pre,
             [name]: val
@@ -158,14 +111,18 @@ class Calendar_dateInfo extends PureComponent{
                 <MDBCol md="10" >
                     <MDBRow style={font}>
                         <CalendarDateInfoMap
-                        result = {this.props.result}
-                        isOpen = {this.props.isOpen}
-                        mode = {this.state.mode}
-                        setIniailSub = {this.state.setIniailSub}
-                        setIniailMemo = {this.state.setIniailMemo}
-                        list1 = {list1}
-                        memo = {this.state.memo}
-                        sub = {this.state.sub}
+                          result = {this.props.result}
+                          isOpen = {this.props.isOpen}
+                          mode = {this.state.mode}
+                          setIniailSub = {this.state.setIniailSub}
+                          setIniailMemo = {this.state.setIniailMemo}
+                          list1 = {list1}
+                          memo = {this.state.memo}
+                          sub = {this.state.sub}
+                          onchange = {this._onchange}
+                          dateChange = {this._dateChange}
+                          timeChange = {this._timeChange}
+                          onClick = {this._onClick}
                         />    
                     </MDBRow>  
                 </MDBCol>   
@@ -190,15 +147,13 @@ class Calendar_dateInfo extends PureComponent{
     }
 }
 
-// props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
     data: state.Calendar.data,
-  });
+});
   
-  // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
   const mapDispatchToProps = (dispatch) => ({
     deleteCalendar: (_id) => dispatch(calendarAction.deleteCalendar(_id)),
-    setCalendarRead: (data) => dispatch(calendarAction.setCalendarRead(data)),
+    updateCalendar: (data) => dispatch(calendarAction.updateCalendar(data)),
   })
       
   export default connect(mapStateToProps, mapDispatchToProps) (Calendar_dateInfo);

@@ -1,20 +1,36 @@
 
-// 액션 타입을 정의해줍니다.
 const SETCALENDARDATA = 'SETCALENDARDATA';
 const SETCALENDARTIME = 'SETCALENDARTIME';
 const SETSUBMEMO = 'SETSUBMEMO';
-const SETCALENDARREAD = 'SETCALENDARREAD';
-const DELETECALENDAR = 'DELETECALENDAR';
 
-// 액션 생성 함수를 만듭니다.
-// 이 함수들은 나중에 다른 파일에서 불러와야 하므로 내보내줍니다.
+export const CALENDAR_REQUEST = 'CALENDAR_REQUEST';
+export const CALENDAR_FAIL = 'CALENDAR_FAIL';
+export const CALENDAR_SUCCESS = 'CALENDAR_SUCCESS';
+
+export const CALENDAR_INSERT_REQUEST = 'CALENDAR_INSERT_REQUEST';
+export const CALENDAR_INSERT_FAIL = 'CALENDAR_INSERT_FAIL';
+export const CALENDAR_INSERT_SUCCESS = 'CALENDAR_INSERT_SUCCESS';
+
+export const CALENDAR_UPDATE_REQUEST = 'CALENDAR_UPDATE_REQUEST';
+export const CALENDAR_UPDATE_FAIL = 'CALENDAR_UPDATE_FAIL';
+export const CALENDAR_UPDATE_SUCCESS = 'CALENDAR_UPDATE_SUCCESS';
+
+export const CALENDAR_DELETE_REQUEST = 'CALENDAR_DELETE_REQUEST';
+export const CALENDAR_DELETE_FAIL = 'CALENDAR_DELETE_FAIL';
+export const CALENDAR_DELETE_SUCCESS = 'CALENDAR_DELETE_SUCCESS';
+
+
 export const setCalendarData = (startDate,endDate) => ({ type: SETCALENDARDATA, payload:{startDate:startDate,endDate:endDate}});
 export const setCalendarTime = (name, val) => ({ type: SETCALENDARTIME, payload:{name:name,val:val}});
 export const setSubMemo = (sub,memo) => ({ type: SETSUBMEMO,payload:{sub:sub,memo:memo}});
-export const setCalendarRead = (data) => ({ type: SETCALENDARREAD, payload:data});
-export const deleteCalendar = (_id) => ({ type: DELETECALENDAR, payload:_id});
 
-// 모듈의 초기 상태를 정의합니다.
+
+export const setCalendarReads = () => ({ type: CALENDAR_REQUEST, data:null});
+export const insertCalendar = (data) => ({ type: CALENDAR_INSERT_REQUEST, data:data});
+export const updateCalendar = (data) => ({ type: CALENDAR_UPDATE_REQUEST, data:data});
+export const deleteCalendar = (_id) => ({ type: CALENDAR_DELETE_REQUEST, data:_id});
+
+
 const initialState = {
       Title:{
         title:"캘린더",
@@ -34,12 +50,14 @@ const initialState = {
       order:'',
       data:[],
       _id:null,
+      comment:'',
+      calendarState:'isReady',
+      errMessage: null,
   };
 
-// 리듀서를 만들어서 내보내줍니다.
+
 export default function reducer(state = initialState, action) {
-    // 리듀서 함수에서는 액션의 타입에 따라 변화된 상태를 정의하여 반환합니다.
-    // state = initialState 이렇게 하면 initialState 가 기본 값으로 사용됩니다.
+    
     switch(action.type) {
       case SETCALENDARDATA:
         console.log(SETCALENDARDATA);
@@ -61,20 +79,87 @@ export default function reducer(state = initialState, action) {
             sub: action.payload.sub,
             memo: action.payload.memo,
           };
-        case SETCALENDARREAD:
-            console.log(SETCALENDARREAD,action.payload);
-        return {
-            ...state,
-            data: action.payload, 
-          };
-        case DELETECALENDAR:
-            console.log(DELETECALENDAR,action.payload);
-        return {
-            ...state,
-            _id:action.payload,
-            order:"DELETE", 
-          };
+        
+        case CALENDAR_REQUEST:
+            return {
+              ...state,
+              comment:'로딩중입니다.',
+              calendarState:'isReady',
+            };
+    
+          case CALENDAR_SUCCESS:
+            return (
+              {...state,
+                data: action.data.data,
+                calendarState:'isSuccess'
+              }
+            );
+          case CALENDAR_FAIL:
+            return {
+              ...state,
+              calendarState:'isFail',
+              errMessage:action.error,
+            };
+            
+          case CALENDAR_DELETE_REQUEST:
+              return {
+                ...state,
+                comment:'삭제중입니다.',
+                calendarState:'isReady',
+              };
+      
+            case CALENDAR_DELETE_SUCCESS:
+              return (
+                {...state,
+                  data: action.data.data,
+                  calendarState:'isSuccess'
+                }
+              );
+            case CALENDAR_DELETE_FAIL:
+              return {
+                ...state,
+                calendarState:'isFail',
+                errMessage:action.error,
+              };
+            case CALENDAR_INSERT_REQUEST:
+            return {
+              ...state,
+              comment:'저장중입니다.',
+              calendarState:'isReady',
+            };
+            case CALENDAR_INSERT_SUCCESS:
+              return (
+                {...state,
+                  data: action.data.data,
+                  calendarState:'isSuccess'
+                }
+              );
+            case CALENDAR_INSERT_FAIL:
+              return {
+                ...state,
+                calendarState:'isFail',
+                errMessage:action.error,
+              }; 
+            case CALENDAR_UPDATE_REQUEST:
+              return {
+                ...state,
+                comment:'업데이트 중 입니다.',
+                calendarState:'isReady',
+              };
+            case CALENDAR_UPDATE_SUCCESS:
+              return (
+                {...state,
+                  data: action.data.data,
+                  calendarState:'isSuccess'
+                }
+              );
+            case CALENDAR_UPDATE_FAIL:
+              return {
+                ...state,
+                calendarState:'isFail',
+                errMessage:action.error,
+              };    
       default:
-        return state; // 아무 일도 일어나지 않으면 현재 상태를 그대로 반환합니다.
+        return state; 
     }
   }

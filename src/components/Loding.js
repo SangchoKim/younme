@@ -13,9 +13,14 @@ const Loding = (props) => {
                     autoplay: true
                 }}/>
             <div className="col-12 text-center">
-              <h1><strong>로딩중입니다.....</strong></h1>
+              <h1><strong>{props.comment}</strong></h1>
             </div>
         </React.Fragment>
     )
 }
+
+Loding.defaultProps = {
+    comment:'로딩중입니다...',
+}
+
 export default Loding;

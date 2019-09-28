@@ -4,9 +4,9 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import Calendar_dateInfo from '../components/Calendar_dateInfo';
-class DataPicker extends PureComponent{
+import CalendarDateInfo from '../components/Calendar_dateInfo';
 
+class DataPicker extends PureComponent{
 
     state={
        date:null,
@@ -16,11 +16,9 @@ class DataPicker extends PureComponent{
       
     }
 
-   
-    
     _renderDay = (day) => {
-        const {data} = this.props;
-        const _date = data.map((d)=>{return d.s_date});
+        const {datas} = this.props;
+        const _date = datas.map((d)=>{return d.s_date});
         console.log("_renderDay_DataPicker",_date);
         return _date.some(_date => isSameDay(moment(_date),moment(day))); 
     }
@@ -29,10 +27,10 @@ class DataPicker extends PureComponent{
       setTimeout(() => {
       this.setState({date:d});
       const {date}= this.state;
-      const {data}= this.props;
+      const {datas}= this.props;
       const clickedDates = moment(date).format("YYYY-MM-DD");
-      console.log("_read_clickedDates",clickedDates,data);
-      this._readData(data,clickedDates).then((result)=>{
+      console.log("_read_clickedDates",clickedDates,datas);
+      this._readData(datas,clickedDates).then((result)=>{
           if(result.length!==0){
               this._set(true, result);
           }else{
@@ -71,24 +69,24 @@ class DataPicker extends PureComponent{
         return(
             <React.Fragment>
               <DayPickerSingleDateController 
-              date={this.state.date} // momentPropTypes.momentObj or null
-              onDateChange={this._read} // PropTypes.func.isRequired
-              focused={this.state.focused} // PropTypes.bool
-              onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
-              numberOfMonths={3}
-              daySize={50}
-              isDayHighlighted={this._renderDay}
-              isOutsideRange={date => date.isBefore(new Date(), 'day')}
-              calendarInfoPosition={"bottom"}
-              renderCalendarInfo={() => 
+                    date={this.state.date} // momentPropTypes.momentObj or null
+                    onDateChange={this._read} // PropTypes.func.isRequired
+                    focused={this.state.focused} // PropTypes.bool
+                    onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
+                    numberOfMonths={3}
+                    daySize={50}
+                    isDayHighlighted={this._renderDay}
+                    isOutsideRange={date => date.isBefore(new Date(), 'day')}
+                    calendarInfoPosition={"bottom"}
+                    renderCalendarInfo={() => 
                 (
-                <Calendar_dateInfo
-                  isOpen={this.state.isOpen}
-                  result={this.state.result}
-                  mode={this.props.mode}
-                  modal={this.props.modal}
-                  t={this.props.t}
-                />
+                    <CalendarDateInfo
+                    isOpen={this.state.isOpen}
+                    result={this.state.result}
+                    mode={this.props.mode}
+                    modal={this.props.modal}
+                    t={this.props.t}
+                    />
                 )}
           
              />
@@ -97,14 +95,14 @@ class DataPicker extends PureComponent{
     }
 }
 
-// props 값으로 넣어 줄 상태를 정의해줍니다.
-const mapStateToProps = (state) => ({
-    data: state.Calendar.data,
-  });
-  
-  // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
-  const mapDispatchToProps = (dispatch) => ({
 
-  })
+const mapStateToProps = (state) => ({
+    datas: state.Calendar.data,
+});
+  
+
+const mapDispatchToProps = (dispatch) => ({
+
+})
       
-  export default connect(mapStateToProps, mapDispatchToProps) (DataPicker);
+export default connect(mapStateToProps, mapDispatchToProps) (DataPicker);

@@ -8,6 +8,7 @@ class Calendar_dateInfo_map extends PureComponent{
     render(){
 
         const {isOpen, result, mode, setIniailSub, setIniailMemo, list1, memo, sub}= this.props;
+        
         return(
             <React.Fragment>
                     {result.map((result)=>{
@@ -21,7 +22,7 @@ class Calendar_dateInfo_map extends PureComponent{
                            name="sub"
                            type="text"
                            value={setIniailSub?result.title:sub}
-                           onChange={this._onchange} 
+                           onChange={this.props.onchange} 
                         />
                         </MDBCardHeader>
                             :
@@ -35,7 +36,7 @@ class Calendar_dateInfo_map extends PureComponent{
                                 <DataRangePicker 
                                     s_date={result.s_date}
                                     e_date={result.e_date}
-                                    dateChange={this._dateChange}
+                                    dateChange={this.props.dateChange}
                                 />            
                                 :
                             <MDBListGroupItem style={list1}>   
@@ -53,12 +54,12 @@ class Calendar_dateInfo_map extends PureComponent{
                                 <MDBListGroupItem style={list1}> 
                                     <TimeInputLiv
                                         timeName={'startTime'}
-                                        timeChange={this._timeChange}
+                                        timeChange={this.props.timeChange}
                                         timeVal={result.s_time}
                                     />
                                     <TimeInputLiv
                                         timeName={'endTime'}
-                                        timeChange={this._timeChange}
+                                        timeChange={this.props.timeChange}
                                         timeVal={result.e_time}
                                     />
                                 </MDBListGroupItem>
@@ -81,7 +82,7 @@ class Calendar_dateInfo_map extends PureComponent{
                                     type="textarea"
                                     maxLength="500"
                                     value={setIniailMemo?result.memo:memo}
-                                    onChange={this._onchange}
+                                    onChange={this.props.onchange}
                                 /> 
                                 :    
                                 <React.Fragment >
@@ -103,13 +104,13 @@ class Calendar_dateInfo_map extends PureComponent{
                          {mode==="ready"&& isOpen
                          ?
                          <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={result._id} color="info" size="sm" name="update" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
-                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
+                                <MDBBtn id={result._id} color="info" size="sm" name="update" onClick={this.props.onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
+                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this.props.onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
                           </div>  
                          :
                           <div className="mask flex-center rgba-green-slight">
-                                <MDBBtn id={result.id}  color="indigo" size="sm" name="ready" onClick={this._onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
-                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this._onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
+                                <MDBBtn id={result.id}  color="indigo" size="sm" name="ready" onClick={this.props.onClick} ><MDBIcon icon="marker fa-2x" /><br></br>수정</MDBBtn>
+                                <MDBBtn id={result._id} color="danger" size="sm" name ="delete" onClick={this.props.onClick}><MDBIcon icon="trash fa-2x" /><br></br>삭제</MDBBtn>
                           </div>  
                           }
                          </MDBCardFooter>
