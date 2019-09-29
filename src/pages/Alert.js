@@ -33,7 +33,6 @@ class Alert extends PureComponent{
   }
 }
     
-// props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
   title: state.Alert.Title.title,
   back: state.Alert.Title.back,
@@ -48,7 +47,6 @@ const mapStateToProps = (state) => ({
   alertIcon: state.Alert.Body.alert.icon
 });
 
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
 
 })

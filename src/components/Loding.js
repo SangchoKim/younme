@@ -1,20 +1,28 @@
 import React from 'react';
 import Lottie from 'lottie-react-web';
 import Lodings from '../lotties/61-octopus.json';
-
+import {MDBRow,MDBCol,MDBContainer} from 'mdbreact';
 const Loding = (props) => {
 
     return (
         <React.Fragment>
-            <Lottie
-                options={{
-                    animationData: Lodings,
-                    loop: true,
-                    autoplay: true
-                }}/>
-            <div className="col-12 text-center">
-              <h1><strong>{props.comment}</strong></h1>
-            </div>
+            <MDBContainer>
+                <MDBRow>
+                    <MDBCol md="2"></MDBCol>
+                    <MDBCol md="8">
+                        <Lottie
+                            options={{
+                                animationData: Lodings,
+                                loop: true,
+                                autoplay: true
+                            }}/>
+                    </MDBCol>
+                    <MDBCol md="2"></MDBCol>
+                    <MDBCol md="12" className="text-center">
+                        <h1><strong>{props.comment}</strong></h1>  
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
         </React.Fragment>
     )
 }

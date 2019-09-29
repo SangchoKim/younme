@@ -69,7 +69,7 @@ export default function reducer(state = initialState, action) {
       case MAIN_GETDATA_REQUEST:
           return {
             ...state,
-            comment:'로딩중입니다.',
+            comment:'데이터를 수집중입니다.',
             mainState:'isReady',
           };
 

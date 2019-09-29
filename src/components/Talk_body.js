@@ -6,6 +6,9 @@ import SocketIo from 'socket.io-client'; // 소켓
 import Talkmodalbottom from './Talk_modal_bottom'
 import {imageEncodeToBase64} from '../lib/imageEncoder'
 import TalkBodyDataMap from './TalkBodyDataMap'
+import * as TalkActions from '../store/modules/Talk';
+import Loding from '../components/Loding';
+import { connect } from 'react-redux';
 
 const socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
 
@@ -25,16 +28,7 @@ class Talk_body extends PureComponent{
     super(props)
     this.state={
       message:'',
-      log:[],
       socket_id:'',
-      user:{
-        name:'',
-        email:'',
-        intro:'',
-        oppentEmail:'',
-        oppentName:'',
-        _code:'',
-      },
       photo:{
         file: null,
         realfile: null,
@@ -58,8 +52,6 @@ class Talk_body extends PureComponent{
         record: false,
         recordedBlob: null,
       },
-      num:10,
-      length:null,
       modal8:false,
     }
   }
@@ -83,56 +75,13 @@ class Talk_body extends PureComponent{
       }))
     }
 
-    _approchServer = async(limit) =>{
-      const logs = this.state.log;
-      let lastId = null;
-      console.log("limit",limit);
-      if(logs.length>=1){
-        lastId = logs[logs.length-1].cratedAt;
-      };
-      console.log("_approchServer");
-      await fetch(`/io/inituser?lastId=${lastId}&limit=${limit}`,{method: "GET",
-                            headers: {
-                              'Content-Type': 'application/json',
-                              'Accept': 'application/json'
-                            }
-                          })
-      .then((res) => res.json())
-      .then((res) =>{
-        console.log('User 정보 확인', res.chat_info);
-        if(res.results===1){
-          const {name,email,intro,oppentEmail,oppentName,_code} = res.user_info;
-          let _chat_info = null;
-          let _length = null;
-          if(res.chat_info){
-            _chat_info = res.chat_info;
-          }
-          if(res.length){
-            _length = res.length;
-          }
-         this.setState(prev=>({
-            ...prev,
-            user:{
-                  name:name,
-                  email:email,
-                  intro:intro,
-                  oppentEmail:oppentEmail,
-                  oppentName:oppentName,
-                  _code:_code,
-                  },
-            log:_chat_info,
-            length:_length,
-          }));
-          
-        socket_Chat.emit("joinRoom",_code,name);
-        }else if(res.result===5){
-          alert('User 정보 Read 실패');
-        }
-      })
-       if(await limit===10){
+    _approchServer = (limit) =>{
+      const {chatDataRequest} = this.props;
+      if( limit===10){
         document.documentElement.scrollTop = parseInt( document.documentElement.scrollHeight) - parseInt(document.documentElement.clientHeight);
         console.log( document.documentElement.scrollTop);
       } 
+      chatDataRequest(limit);   
     }
 
     onScroll = () => {
@@ -142,18 +91,12 @@ class Talk_body extends PureComponent{
       // document.documentElement.scrollHeight = 페이지 가장 위쪽에서 가장 밑쪽까지
       console.log(parseInt(window.scrollY) , document.documentElement.clientHeight, document.documentElement.scrollHeight);
       if(parseInt(window.scrollY)===0){
-        let {num,length} = this.state;
+        let {num,length} = this.props;
         if(length>=num){
           num = num + 10;
-          this.setState((prev) => ({
-            ...prev,
-            num:num,
-          }))
-          console.log('제발',num,length);
           this._approchServer(num);
         }
         }
-       
     };
 
     componentWillUnmount() {
@@ -166,7 +109,6 @@ class Talk_body extends PureComponent{
     componentDidMount(){
         window.addEventListener('scroll', this.onScroll);
          this._isMounted = true;
-         
           // 처음에 Talk 페이지에 접근했을 때 
           this._approchServer(10);
          
@@ -695,12 +637,20 @@ class Talk_body extends PureComponent{
       }
 
     render(){
-      const {message,log,socket_id,length} = this.state;
-      console.log("TalkLog:",log,length);
-      const {name,email,oppentName} = this.state.user;
+      const {message,socket_id} = this.state;
+      const {talkState,length,log,name,email,oppentName} = this.props;
         return(
             <React.Fragment>
-            {this.props.mode==="talk"&&
+              {talkState==='isReady'&& this.props.mode==="talk" &&
+              <Loding 
+                comment={this.props.comment}
+              />
+              }
+              {talkState==="isFail"&&
+                <p>에러발생</p>
+              }
+              
+            {this.props.mode==="talk"&& talkState==='isSuccess'&&
             // Talk body 부분 
             <MDBRow style={this.props.font} ref={(refs)=>{this.box = refs}}>
               <MDBCol md="1" >
@@ -790,8 +740,27 @@ class Talk_body extends PureComponent{
             </React.Fragment>
         )
     }
-
-
 }
 
-export default Talk_body;
+const mapStateToProps = (state) => ({
+  num: state.Talk.num,
+  talkState: state.Talk.talkState,
+  comment: state.Talk.comment,
+  errMessage: state.Talk.errMessage,
+  name: state.Talk.user.name,
+  email: state.Talk.user.email,
+  intro: state.Talk.user.intro,
+  oppentEmail: state.Talk.user.oppentEmail,
+  oppentName: state.Talk.user.oppentName,
+  _code: state.Talk.user._code,
+  log: state.Talk.log,
+  length: state.Talk.length,
+});
+
+
+const mapDispatchToProps = (dispatch) => ({
+  chatDataRequest: (limit) => dispatch(TalkActions.chatDataRequest(limit)),
+  talkOut: () => dispatch(TalkActions.talkOut()),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps) (Talk_body);

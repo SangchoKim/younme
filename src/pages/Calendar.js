@@ -17,9 +17,13 @@ class Calendar extends PureComponent{
   }
 
   componentDidMount(){
-    
     const {setCalendarReads} = this.props;
     setCalendarReads();
+  }
+
+  componentWillUnmount(){
+    const {calendarOut} = this.props;
+    calendarOut();
   }
 
   _onsubmit = (e) => {
@@ -109,6 +113,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   setCalendarReads: () => dispatch(calendarAction.setCalendarReads()),
   insertCalendar: (data) => dispatch(calendarAction.insertCalendar(data)),
+  calendarOut: () => dispatch(calendarAction.calendarOut()),
 })
     
 export default connect(mapStateToProps, mapDispatchToProps) (Calendar);

@@ -19,6 +19,7 @@ export const CALENDAR_DELETE_REQUEST = 'CALENDAR_DELETE_REQUEST';
 export const CALENDAR_DELETE_FAIL = 'CALENDAR_DELETE_FAIL';
 export const CALENDAR_DELETE_SUCCESS = 'CALENDAR_DELETE_SUCCESS';
 
+export const CALENDAR_OUT = 'CALENDAR_OUT';
 
 export const setCalendarData = (startDate,endDate) => ({ type: SETCALENDARDATA, payload:{startDate:startDate,endDate:endDate}});
 export const setCalendarTime = (name, val) => ({ type: SETCALENDARTIME, payload:{name:name,val:val}});
@@ -29,6 +30,8 @@ export const setCalendarReads = () => ({ type: CALENDAR_REQUEST, data:null});
 export const insertCalendar = (data) => ({ type: CALENDAR_INSERT_REQUEST, data:data});
 export const updateCalendar = (data) => ({ type: CALENDAR_UPDATE_REQUEST, data:data});
 export const deleteCalendar = (_id) => ({ type: CALENDAR_DELETE_REQUEST, data:_id});
+
+export const calendarOut = () => ({ type: CALENDAR_OUT,data:null});
 
 
 const initialState = {
@@ -83,7 +86,7 @@ export default function reducer(state = initialState, action) {
         case CALENDAR_REQUEST:
             return {
               ...state,
-              comment:'로딩중입니다.',
+              comment:'데이터를 수집중입니다..',
               calendarState:'isReady',
             };
     
@@ -158,7 +161,13 @@ export default function reducer(state = initialState, action) {
                 ...state,
                 calendarState:'isFail',
                 errMessage:action.error,
-              };    
+              };
+              
+            case CALENDAR_OUT:
+              return {
+                ...state,
+                calendarState:'isReady',
+              }; 
       default:
         return state; 
     }
