@@ -1,8 +1,67 @@
+import SocketIo from 'socket.io-client'; // 소켓
+const socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
+
 export const TALK_REQUEST = 'TALK_REQUEST';
 export const TALK_FAIL = 'TALK_FAIL';
 export const TALK_SUCCESS = 'TALK_SUCCESS';
 
+export const SOCKET_ONMESSAGE = 'SOCKET_ONMESSAGE';
+export const MESSAGE_REQUEST = 'MESSAGE_REQUEST';
+export const MESSAGE_FAIL = 'MESSAGE_FAIL';
+export const MESSAGE_SUCCESS = 'MESSAGE_SUCCESS';
+
+export const SOCKET_ONPHOTO = 'SOCKET_ONPHOTO';
+export const PHOTO_REQUEST = 'PHOTO_REQUEST';
+export const PHOTO_FAIL = 'PHOTO_FAIL';
+export const PHOTO_SUCCESS = 'PHOTO_SUCCESS';
+
+export const SOCKET_ONCAMERA = 'SOCKET_ONCAMERA';
+export const CAMERA_REQUEST = 'CAMERA_REQUEST';
+export const CAMERA_FAIL = 'CAMERA_FAIL';
+export const CAMERA_SUCCESS = 'CAMERA_SUCCESS';
+
+export const SOCKET_ONGIF = 'SOCKET_ONGIF';
+export const GIF_REQUEST = 'GIF_REQUEST';
+export const GIF_FAIL = 'GIF_FAIL';
+export const GIF_SUCCESS = 'GIF_SUCCESS';
+
+export const SOCKET_ONVIDEO = 'SOCKET_ONVIDEO';
+export const VIDEO_REQUEST = 'VIDEO_REQUEST';
+export const VIDEO_FAIL = 'VIDEO_FAIL';
+export const VIDEO_SUCCESS = 'VIDEO_SUCCESS';
+
+export const SOCKET_ONALBUM = 'SOCKET_ONALBUM';
+export const ALBUM_REQUEST = 'ALBUM_REQUEST';
+export const ALBUM_FAIL = 'ALBUM_FAIL';
+export const ALBUM_SUCCESS = 'ALBUM_SUCCESS';
+
+export const SOCKET_ONRECORD = 'SOCKET_ONRECORD';
+export const RECORD_REQUEST = 'RECORD_REQUEST';
+export const RECORD_FAIL = 'RECORD_FAIL';
+export const RECORD_SUCCESS = 'RECORD_SUCCESS';
+
 export const TALK_OUTS = 'TALK_OUTS';
+
+export const onMessage = (message) => ({ type: SOCKET_ONMESSAGE,data:message});
+export const sendMessage = (data) => ({ type: MESSAGE_REQUEST,data:data});
+
+export const onPhoto = (data) => ({ type: SOCKET_ONPHOTO,data:data});
+export const sendPhoto = (data) => ({ type: PHOTO_REQUEST,data:data});
+
+export const onCamera = (data) => ({ type: SOCKET_ONCAMERA,data:data});
+export const sendCamera = (data) => ({ type: CAMERA_REQUEST,data:data});
+
+export const onGif = (data) => ({ type: SOCKET_ONGIF,data:data});
+export const sendGif = (data) => ({ type: GIF_REQUEST,data:data});
+
+export const onVideo = (data) => ({ type: SOCKET_ONVIDEO,data:data});
+export const sendVideo = (data) => ({ type: VIDEO_REQUEST,data:data});
+
+export const onAlbum = (data) => ({ type: SOCKET_ONALBUM,data:data});
+export const sendAlbum = (data) => ({ type: ALBUM_REQUEST,data:data});
+
+export const onRecord = (data) => ({ type: SOCKET_ONRECORD,data:data});
+export const sendRecord = (data) => ({ type: RECORD_REQUEST,data:data});
 
 export const chatDataRequest = (limit) => ({ type: TALK_REQUEST,data:limit});
 export const talkOut = () => ({ type: TALK_OUTS, data:null});
@@ -51,6 +110,7 @@ export default function reducer(state = initialState, action) {
 
       case TALK_SUCCESS:
         const {name,email,intro,oppentEmail,oppentName,_code} = action.data.user_info;
+        socket_Chat.emit('joinRoom',_code,name);
         let _chat_info = null;
         let _length = null;
         if(action.data.chat_info){
@@ -80,6 +140,139 @@ export default function reducer(state = initialState, action) {
           talkState:'isFail',
           errMessage:action.error,
         };
+      case SOCKET_ONMESSAGE:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case MESSAGE_REQUEST:
+        return {
+          ...state,
+        };
+      case MESSAGE_SUCCESS:
+        return {
+          ...state,
+        };
+      case MESSAGE_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };
+       case SOCKET_ONPHOTO:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case PHOTO_REQUEST:
+        return {
+          ...state,
+        };
+      case PHOTO_SUCCESS:
+        return {
+          ...state,
+        };
+      case PHOTO_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };
+      case SOCKET_ONCAMERA:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case CAMERA_REQUEST:
+        return {
+          ...state,
+        };
+      case CAMERA_SUCCESS:
+        return {
+          ...state,
+        };
+      case CAMERA_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };
+      case SOCKET_ONGIF:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case GIF_REQUEST:
+        return {
+          ...state,
+        };
+      case GIF_SUCCESS:
+        return {
+          ...state,
+        };
+      case GIF_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };
+      case SOCKET_ONVIDEO:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case VIDEO_REQUEST:
+        return {
+          ...state,
+        };
+      case VIDEO_SUCCESS:
+        return {
+          ...state,
+        };
+      case VIDEO_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };
+      case SOCKET_ONALBUM:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case ALBUM_REQUEST:
+        return {
+          ...state,
+        };
+      case ALBUM_SUCCESS:
+        return {
+          ...state,
+        };
+      case ALBUM_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };
+      case SOCKET_ONRECORD:
+        return {
+          ...state,
+          log:[...state.log, action.data],
+        }; 
+      case RECORD_REQUEST:
+        return {
+          ...state,
+        };
+      case RECORD_SUCCESS:
+        return {
+          ...state,
+        };
+      case RECORD_FAIL:
+        return {
+          ...state,
+          talkState:'isFail',
+          errMessage:action.error,
+        };                            
       case TALK_OUTS:
         return {
           ...state,

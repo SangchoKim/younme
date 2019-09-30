@@ -101,8 +101,9 @@ class Talk_body extends PureComponent{
 
     componentWillUnmount() {
       this._isMounted = false;
-      window.removeEventListener('scroll',this.onScroll);
       document.documentElement.scrollTop = 0;
+      window.removeEventListener('scroll',this.onScroll);
+      
     }
 
   
@@ -110,8 +111,10 @@ class Talk_body extends PureComponent{
         window.addEventListener('scroll', this.onScroll);
          this._isMounted = true;
           // 처음에 Talk 페이지에 접근했을 때 
+          
           this._approchServer(10);
-         
+          
+          
           socket_Chat.on('connect',()=>{
             console.log('client-Sokect 접속 됨'); 
          });
@@ -135,7 +138,7 @@ class Talk_body extends PureComponent{
           // 문자일때
           socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
             console.log('messageFromServer',data);
-            const add = { _id:data.uid,
+            const message = { _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
@@ -143,17 +146,15 @@ class Talk_body extends PureComponent{
                           cratedAt:data.reg_time,
                           };
             if(this._isMounted){
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+              const {onMessage} = this.props;
+              onMessage(message);
             }
           })
 
           // photo 일때 
           socket_Chat.on('photo', (data) => { // 서버로부터 photo 파일 들어옴
             console.log('PhotoFromServer',data);
-            const add = {  _id:data.uid,
+            const message = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
@@ -161,17 +162,15 @@ class Talk_body extends PureComponent{
                           cratedAt:data.reg_time,
                         };
             if(this._isMounted){
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+              const {onPhoto} = this.props;
+              onPhoto(message)
             }        
           })  
 
           // camera 일때 
           socket_Chat.on('camera', (data) => { // 서버로부터 photo 파일 들어옴
             console.log('CameraFromServer',data);
-            const add = {  _id:data.uid,
+            const message = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
@@ -180,17 +179,15 @@ class Talk_body extends PureComponent{
                         };
                         
             if(this._isMounted){
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+              const {onCamera} = this.props;
+              onCamera(message);
             }        
           })
           
           // gif 일떄 
           socket_Chat.on('gif', (data) => { // 서버로부터 gif 파일 들어옴
             console.log('GifFromServer',data);
-            const add = {  _id:data.uid,
+            const message = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
@@ -198,75 +195,67 @@ class Talk_body extends PureComponent{
                           cratedAt:data.reg_time,
                         };
                 
-            if(this._isMounted){       
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+            if(this._isMounted){  
+              const {onGif} = this.props;     
+              onGif(message);
             }        
           })
 
           // video 일때
           socket_Chat.on('video', (data) => { // 서버로부터 gif 파일 들어옴
             console.log('VideoFromServer',data);
-            const add = {  _id:data.uid,
+            const message = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
                           getter:data.getter,
                           cratedAt:data.reg_time,
                         };
-            if(this._isMounted){       
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+            if(this._isMounted){     
+              const {onVideo} = this.props; 
+              onVideo(message); 
             }        
           })
 
           // album 일때
           socket_Chat.on('album', (data) => { // 서버로부터 gif 파일 들어옴
             console.log('AlbumFromServer',data);
-            const add = {  _id:data.uid,
+            const message = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
                           getter:data.getter,
                           cratedAt:data.reg_time,
                         };
-            if(this._isMounted){       
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+            if(this._isMounted){
+              const {onAlbum} = this.props;
+              onAlbum(message);       
             }        
           })
 
            // voiceRecord 일때
            socket_Chat.on('voiceRecord', (data) => { // 서버로부터 gif 파일 들어옴
             console.log('voiceRecordFromServer',data);
-            const add = {  _id:data.uid,
+            const message = {  _id:data.uid,
                           comment:data.message,
                           sender:data.sender,
                           gif:data.gif,
                           getter:data.getter,
                           cratedAt:data.reg_time,
                         };
-            if(this._isMounted){       
-              this.setState((prev)=>({
-                ...prev,
-                log:[...this.state.log, add],
-              }))
+            if(this._isMounted){
+              const {onRecord} = this.props;
+              onRecord(message);       
             }        
           })
     }
     
     
 
-    _onClick = async(e) => {
+    _onClick = (e) => {
       e.preventDefault();
-      const {message,log} = this.state;
-      const {name,email,oppentEmail,_code} = this.state.user;
+      const {message} = this.state;
+      const {email,oppentEmail,sendMessage} = this.props;
       console.log('_onClick_setMessage',message);
       
       const _message={
@@ -276,22 +265,11 @@ class Talk_body extends PureComponent{
                       getter:oppentEmail,
                       cratedAt:moment(new Date()).format("YYYY-MM-DDTHH:mm:ss")
                       }
-       await fetch('/io/chat_info',{method: "POST",
-                            headers: {
-                              'Content-Type': 'application/json',
-                              'Accept': 'application/json'
-                            },
-                            body:JSON.stringify(_message)
-                          })
-      .then(res => res.json())
-      .then(res => {
-        console.log(res.results);
-      })
+      sendMessage(_message);              
       this.setState({message:''});
     }
 
     // TalkModalPhoto 구역입니다. 
-
     _onChangePhoto = (e) => {
       const file = e.target.files[0];
       this.setState(prev=>({
@@ -303,37 +281,26 @@ class Talk_body extends PureComponent{
       }));
     }
 
-    _setData = async(e) => {
+    _setData = (e) => {
       e.preventDefault();
-      const {name,email,oppentEmail,_code} = this.state.user;
-      console.log('TalkModalPhoto 구역입니다.',_code);
+      const {email,oppentEmail,sendPhoto} = this.props;
+      console.log('TalkModalPhoto 구역입니다.');
       let file = this.state.photo.realfile;
       if(!file){
         alert('사진을 선택해주세요');
         return;
       }
-      const formData = new FormData();
+      let formData = new FormData();
       formData.append('myImages',file);
-      const config = {
-        headers: {
-            'content-type': 'multipart/form-data',
-            'Accept': 'application/json'
-        }
-      };
-       fetch(`/io/chat_photo?sender=${email}&getter=${oppentEmail}`, 
-                          {method: "PATCH",
-                          config,
-                          body: formData
-                          })
-      .then(res => res.json())
-      .then(res => {
-        console.log(res.results);
-        if(res.results===1)
-        this.setState(prev => ({
-          ...prev,
-          modal8:!this.state.modal8
-        }));
-      })
+      const data = {email,oppentEmail,formData};
+      console.log('TalkModalPhoto',file);
+      setTimeout(() => {
+        sendPhoto(data,formData);
+      }, 500); 
+      this.setState(prev => ({
+        ...prev,
+        modal8:!this.state.modal8
+      }));
     }
 
     // TalkModalCamera 구역입니다.
@@ -369,33 +336,20 @@ class Talk_body extends PureComponent{
        }));
     };
 
-    _setCameraData = async(e) => {
+    _setCameraData = (e) => {
       e.preventDefault();
       console.log('TalkModalCamera 구역입니다.');
       const {imageData,imageName} = this.state.camera;
-      const {email,oppentEmail,_code} = this.state.user;
+      const {email,oppentEmail,sendCamera} = this.props;
       const myBlob = imageEncodeToBase64(imageData,'image/jpeg');
       let formData = new FormData();
       formData.append('myImages',myBlob,imageName);
-      const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
-      };
-      fetch(`/io/chat_camera?sender=${email}&getter=${oppentEmail}`, 
-                          {method: "PATCH",
-                          config,
-                          body: formData 
-                          })
-      .then(res => res.json())
-      .then(res => {
-        console.log("TalkModalCamera완료",res.results);
-        if(res.results===1)
-        this.setState(prev => ({
-          ...prev,
-          modal8:!this.state.modal8
-        }));
-      })
+      const data = {email,oppentEmail,formData};
+      sendCamera(data);
+      this.setState(prev => ({
+        ...prev,
+        modal8:!this.state.modal8
+      }));
     }
 
      _onClickRetake = (e) => {
@@ -413,36 +367,23 @@ class Talk_body extends PureComponent{
       }
 
       // TalkModalGif 구역
-
-      _setGifData = async(e) => {
+      _setGifData = (e) => {
         e.preventDefault();
-        const {email,oppentEmail,_code} = this.state.user;
+        const {email,oppentEmail,sendGif} = this.props;
         const gifKey = {
                         gifKey:e.target.name,
                         sender:email,
                         getter:oppentEmail,
                         };
-        console.log('TalkModalGif 구역입니다.',_code,gifKey);
-        fetch('/io/chat_gif',{method: "POST",
-                            headers: {
-                              'Content-Type': 'application/json',
-                              'Accept': 'application/json'
-                            },
-                            body:JSON.stringify(gifKey)
-                          })
-        .then(res => res.json())
-        .then(res => {
-          console.log(res.results);
-          if(res.results===1)
-          this.setState(prev => ({
-            ...prev,
-            modal8:!this.state.modal8
-          }));
-        })
+        console.log('TalkModalGif 구역입니다.',gifKey);
+        sendGif(gifKey);
+        this.setState(prev => ({
+          ...prev,
+          modal8:!this.state.modal8
+        }));
       }
 
       // TalkModalVideo 구역
-
       _onChangeVideo = (e) => {
         const file = e.target.files[0];
         this.setState(prev=>({
@@ -455,10 +396,10 @@ class Talk_body extends PureComponent{
         }));
       }
   
-      _setVideoData = async(e) => {
+      _setVideoData = (e) => {
         e.preventDefault();
-        const {email,oppentEmail,_code} = this.state.user;
-        console.log('TalkModalVideo 구역입니다.',_code);
+        const {email,oppentEmail,sendVideo} = this.props;
+        console.log('TalkModalVideo 구역입니다.');
         let file = this.state.video.realfile;
         if(!file){
           alert('동영상을 선택해주세요');
@@ -466,26 +407,12 @@ class Talk_body extends PureComponent{
         }
         const formData = new FormData();
         formData.append('videoFile',file);
-        const config = {
-          headers: {
-              'content-type': 'multipart/form-data',
-              'Accept': 'application/json'
-          }
-        };
-         fetch(`/io/chat_video?sender=${email}&getter=${oppentEmail}`, 
-                            {method: "PATCH",
-                            config,
-                            body: formData
-                            })
-        .then(res => res.json())
-        .then(res => {
-          console.log(res.results);
-          if(res.results===1)
-          this.setState(prev => ({
-            ...prev,
-            modal8:!this.state.modal8
-          }));
-        })
+        const data = {email,oppentEmail,formData};
+        sendVideo(data);
+        this.setState(prev => ({
+          ...prev,
+          modal8:!this.state.modal8
+        }));
       }
 
       // TalkModalAlbum 구역
@@ -495,7 +422,6 @@ class Talk_body extends PureComponent{
         const albumImageName = e.target.name; // imageName
         if(files.length>=1){
           for (const imgPath of files) {
-
             // 이미 공유사진을 선택했을 때
             if(imgPath.imageName===albumImageName){
               alert('이미 선택된 사진입니다.');
@@ -525,11 +451,11 @@ class Talk_body extends PureComponent{
         }));
       }
 
-      _setAlbumData = async(e) => {
+      _setAlbumData = (e) => {
         e.preventDefault();
-        const {email,oppentEmail,_code} = this.state.user;
+        const {email,oppentEmail} = this.props;
         const imagePath = this.state.album.file; // imagePath, imageName
-        console.log('TalkModalAlbum 구역입니다.',_code,imagePath);
+        console.log('TalkModalAlbum 구역입니다.',imagePath);
         if(!imagePath){
           alert('공유사진을 선택해주세요');
           return;
@@ -539,23 +465,12 @@ class Talk_body extends PureComponent{
                           getter:oppentEmail,
                           sender:email,
                         };
-        await fetch(`/io/chat_album`, 
-                            {method: "POST",
-                            headers: {
-                              'Content-Type': 'application/json',
-                              'Accept': 'application/json'
-                            },
-                            body: JSON.stringify(AlbumKey)
-                            })
-        .then(res => res.json())
-        .then(res => {
-          console.log(res.results);
-          if(res.results===1)
-          this.setState(prev => ({
-            ...prev,
-            modal8:!this.state.modal8
-          }));
-        })
+        const {sendAlbum} = this.props;
+        sendAlbum(AlbumKey); 
+        this.setState(prev => ({
+          ...prev,
+          modal8:!this.state.modal8
+        }));              
       }
       
       // TalkModalRecordVoice 구역입니다. 
@@ -602,11 +517,11 @@ class Talk_body extends PureComponent{
         }));
       }
 
-      _setRecordData = async(e) => {
+      _setRecordData = (e) => {
         e.preventDefault();
-        const {email,oppentEmail,_code} = this.state.user;
+        const {email,oppentEmail} = this.props;
         let file = this.state.voicerRecord.recordedBlob;
-        console.log('TalkModalRecord 구역입니다.',file,_code);
+        console.log('TalkModalRecord 구역입니다.',file);
         if(!file){
           alert('음성녹음을 해주세요');
           return;
@@ -614,26 +529,13 @@ class Talk_body extends PureComponent{
         const formData = new FormData();
         const filename = file.blobURL.split('/');
         formData.append('voiceRecord',file.blob,filename[3]);
-        const config = {
-          headers: {
-              'content-type': 'multipart/form-data',
-              'Accept': 'application/json'
-          }
-        };
-         fetch(`/io/chat_voicerecord?sender=${email}&getter=${oppentEmail}`, 
-                            {method: "PATCH",
-                            config,
-                            body: formData
-                            })
-        .then(res => res.json())
-        .then(res => {
-          console.log(res.results);
-          if(res.results===1)
-          this.setState(prev => ({
-            ...prev,
-            modal8:!this.state.modal8
-          }));
-        })
+        const data = {email,oppentEmail,formData};
+        const {sendRecord} = this.props;
+        sendRecord(data);
+        this.setState(prev => ({
+          ...prev,
+          modal8:!this.state.modal8
+        }));
       }
 
     render(){
@@ -760,6 +662,20 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   chatDataRequest: (limit) => dispatch(TalkActions.chatDataRequest(limit)),
+  onMessage: (message) => dispatch(TalkActions.onMessage(message)),
+  sendMessage: (data) => dispatch(TalkActions.sendMessage(data)),
+  onPhoto: (data) => dispatch(TalkActions.onPhoto(data)),
+  sendPhoto: (data) => dispatch(TalkActions.sendPhoto(data)),
+  onCamera: (data) => dispatch(TalkActions.onCamera(data)),
+  sendCamera: (data) => dispatch(TalkActions.sendCamera(data)),
+  onGif: (data) => dispatch(TalkActions.onGif(data)),
+  sendGif: (data) => dispatch(TalkActions.sendGif(data)),
+  onVideo: (data) => dispatch(TalkActions.onVideo(data)),
+  sendVideo: (data) => dispatch(TalkActions.sendVideo(data)),
+  onAlbum: (data) => dispatch(TalkActions.onAlbum(data)),
+  sendAlbum: (data) => dispatch(TalkActions.sendAlbum(data)),
+  onRecord: (data) => dispatch(TalkActions.onRecord(data)),
+  sendRecord: (data) => dispatch(TalkActions.sendRecord(data)),
   talkOut: () => dispatch(TalkActions.talkOut()),
 })
 
