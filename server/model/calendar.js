@@ -8,6 +8,7 @@ const _dataSchema = new mongoose.Schema({
     e_time:{type: String, required:true, default:null, trim:true},
     author:{type: String, required:true, default:null, trim:true},
     memo:{type: String, required:true, default:null, trim:true},
+    category:{type: Number, required:true, default:0, trim:true},
     time : { type : Date, default: Date.now }
   });
 

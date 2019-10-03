@@ -28,7 +28,7 @@ class Calendar extends PureComponent{
 
   _onsubmit = (e) => {
     e.preventDefault();
-      const {startDate,endDate,startTime,endTime,sub,memo,insertCalendar} = this.props;
+      const {startDate,endDate,startTime,endTime,sub,memo,insertCalendar,category} = this.props;
       const data = {
         startDate:startDate,
         endDate:endDate,
@@ -36,7 +36,9 @@ class Calendar extends PureComponent{
         endTime:endTime,
         sub:sub,
         memo:memo,
+        category:category,
       }
+      console.log(data);
       insertCalendar(data);
       this.setState({
         modal:!this.state.modal
@@ -102,6 +104,7 @@ const mapStateToProps = (state) => ({
   endTime: state.Calendar.endTime,
   sub: state.Calendar.sub,
   memo: state.Calendar.memo,
+  category: state.Calendar.category,
   _id: state.Calendar._id,
   order: state.Calendar.order,
   comment: state.Calendar.comment,

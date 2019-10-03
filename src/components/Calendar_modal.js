@@ -50,6 +50,12 @@ class Calendar_modal extends PureComponent{
     setSubMemo(sub,memo);
   }
 
+  _setCalendarCategory = (e) => {
+    const category = e.target.value;
+    const {setCategory} = this.props;
+    setCategory(category);
+  }
+
   _onchange = async(e) => {
     e.preventDefault();
     const name = e.target.name;
@@ -81,7 +87,9 @@ class Calendar_modal extends PureComponent{
                                     onChange={this._onchange}
                                   />
                                 </div>
-                                <CalendarCategory />
+                                <CalendarCategory 
+                                  setCalendarCategory={this._setCalendarCategory}
+                                />
                                 <hr color="black" style={{borderBlockColor:"30"}}></hr>
                                 <MDBListGroup className=" border-dark" >
                                   <MDBListGroupItem style={this.props.list1}>
@@ -142,6 +150,7 @@ const mapDispatchToProps = (dispatch) => ({
   setCalendarData: (startDate,endDate) => dispatch(calendarAction.setCalendarData(startDate,endDate)),
   setCalendarTime: (name,val) => dispatch(calendarAction.setCalendarTime(name,val)),
   setSubMemo: (sub,memo) => dispatch(calendarAction.setSubMemo(sub,memo)),
+  setCategory: (data) => dispatch(calendarAction.setCategory(data)),
 })
 
 

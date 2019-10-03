@@ -125,7 +125,8 @@ function calendarUpdateAPI(data) {
                                       startTime:data.startTime,
                                       endTime:data.endTime,
                                       sub:data.sub,
-                                      memo:data.memo,  
+                                      memo:data.memo,
+                                      category:data.category,   
                                       }})
                                       })
                                       .then(res => res.json())

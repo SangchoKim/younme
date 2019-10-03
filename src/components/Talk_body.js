@@ -114,7 +114,6 @@ class Talk_body extends PureComponent{
           
           this._approchServer(10);
           
-          
           socket_Chat.on('connect',()=>{
             console.log('client-Sokect 접속 됨'); 
          });

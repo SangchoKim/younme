@@ -2,6 +2,7 @@
 const SETCALENDARDATA = 'SETCALENDARDATA';
 const SETCALENDARTIME = 'SETCALENDARTIME';
 const SETSUBMEMO = 'SETSUBMEMO';
+const SETCATEGORY = 'SETCATEGORY';
 
 export const CALENDAR_REQUEST = 'CALENDAR_REQUEST';
 export const CALENDAR_FAIL = 'CALENDAR_FAIL';
@@ -24,7 +25,7 @@ export const CALENDAR_OUT = 'CALENDAR_OUT';
 export const setCalendarData = (startDate,endDate) => ({ type: SETCALENDARDATA, payload:{startDate:startDate,endDate:endDate}});
 export const setCalendarTime = (name, val) => ({ type: SETCALENDARTIME, payload:{name:name,val:val}});
 export const setSubMemo = (sub,memo) => ({ type: SETSUBMEMO,payload:{sub:sub,memo:memo}});
-
+export const setCategory = (data) => ({ type: SETCATEGORY,data:data})
 
 export const setCalendarReads = () => ({ type: CALENDAR_REQUEST, data:null});
 export const insertCalendar = (data) => ({ type: CALENDAR_INSERT_REQUEST, data:data});
@@ -44,6 +45,7 @@ const initialState = {
         icon:{main:"calendar-check fa-3x", update:"plus fa-2x", back:"arrow-circle-left fa-2x"},
         mode:{show:"calendar"}
       },
+      category:null,
       startDate:null,
       endDate:null,
       startTime:null,
@@ -82,6 +84,11 @@ export default function reducer(state = initialState, action) {
             sub: action.payload.sub,
             memo: action.payload.memo,
           };
+        case SETCATEGORY:
+          return {
+            ...state,
+            category: action.data,
+          };  
         
         case CALENDAR_REQUEST:
             return {

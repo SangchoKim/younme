@@ -27,29 +27,69 @@ class Calendar_dateInfo extends PureComponent{
         endTime:null,
         sub:null,
         memo:null,
+        category:null,
         setIniailSub: true,
         setIniailMemo: true,
+        setIniailCategory:true,
     }
 
     _onClick = async (e) => {
         e.preventDefault();
         const {id,name} = e.target;
         if(name==="update"){
-          const {startDate,endDate,startTime,endTime,sub,memo} = this.state;
-          const {updateCalendar} = this.props;
-          const data ={id,startDate,endDate,startTime,endTime,sub,memo};
-          window.confirm('정말로 수정 하시겠습니까?')&&
-          updateCalendar(data);
-          this.setState((pre)=>({
-            ...pre,
-            setIniailSub:true,
-            setIniailMemo:true,
-            mode:'',
-          })) 
+          if(window.confirm('정말로 수정 하시겠습니까?')){
+            let {startDate,endDate,startTime,endTime,sub,memo,category} = this.state;
+            const {updateCalendar,data} = this.props;
+           
+            if(await startDate===null||endDate===null){
+              const result = data.filter(data => data._id===id && data);
+              const {s_date,e_date,} = result[0];
+              startDate = s_date;
+              endDate = e_date;
+            }
+
+            if(await startTime===null||endTime===null){
+                const result = data.filter(data => data._id===id && data);
+                const {s_time,e_time} = result[0];
+                startTime = s_time;
+                endTime = e_time;
+            }
+
+            if(await sub===null){
+                const result = data.filter(data => data._id===id && data);
+                const {title} = result[0];
+                sub = title;
+            }
+
+            if(await category===null){
+                const result = data.filter(data => data._id===id && data);
+                const cate = result[0].category;
+                category = cate;
+            }
+
+            const datas ={id,startDate,endDate,startTime,endTime,sub,memo,category};
+            console.log(datas);
+            updateCalendar(datas);
+            this.setState((pre)=>({
+                ...pre,
+                setIniailSub:true,
+                setIniailMemo:true,
+                mode:'',
+            }))  
+          }else{
+              return;
+          } 
         }else if(name==="ready"){
-            const {mode} = this.state
-            this.setState({mode:"ready"});
-            console.log('_updateReady_Calendar_dateInfo',mode);
+            const {data} = this.props;
+            const result = data.filter(data => data._id===id && data);
+            console.log('_updateReady_Calendar_dateInfo',result);
+            const cate = result[0].category;
+            this.setState(prev=>({
+                ...prev,
+                mode:"ready",
+                category:cate,
+            }));
+            
         }else if(name==="delete"){
             const {deleteCalendar} = this.props;
             console.log('_delete_Calendar_dateInfo',id);
@@ -74,7 +114,13 @@ class Calendar_dateInfo extends PureComponent{
                 ...pre,
                 setIniailMemo:false,
             }))  
-        } 
+        }
+        if(name==="category"){
+            await this.setState((pre)=>({
+                ...pre,
+                setIniailCategory:false,
+            }))  
+        }  
         await this.setState((pre)=>({
             ...pre,
             [name]: val
@@ -116,9 +162,11 @@ class Calendar_dateInfo extends PureComponent{
                           mode = {this.state.mode}
                           setIniailSub = {this.state.setIniailSub}
                           setIniailMemo = {this.state.setIniailMemo}
+                          setIniailCategory = {this.state.setIniailCategory}
                           list1 = {list1}
                           memo = {this.state.memo}
                           sub = {this.state.sub}
+                          category = {this.state.category}
                           onchange = {this._onchange}
                           dateChange = {this._dateChange}
                           timeChange = {this._timeChange}

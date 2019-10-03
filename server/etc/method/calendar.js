@@ -80,7 +80,7 @@ const _deletecalendar = (req,res,next) => {
 
 const _updatecalendar = async (req,res,next) => {
   const _id = req.body.data.id;
-  const {startDate,endDate,startTime,endTime,sub,memo} = req.body.data;
+  let {startDate,endDate,startTime,endTime,sub,memo,category} = req.body.data;
   const author = req.user.name;
   const shared_code = req.user._code.codes;
   console.log("_updatecalendar",_id);
@@ -112,6 +112,7 @@ const _updatecalendar = async (req,res,next) => {
                                       "dataSchema.$.e_time": endTime!==null?endTime:result.dataSchema.e_time, 
                                       "dataSchema.$.author": author,   
                                       "dataSchema.$.memo": memo!==null?memo:result.dataSchema.memo,
+                                      "dataSchema.$.category": category!==null?category:result.dataSchema.category,
                                       }},(err,result)=>{
                     if(err) throw new Error();
                     else {
@@ -155,7 +156,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
     // 스키마자 존재 -> $addToset
     const author = req.user.name;
     console.log('스키마자 존재',req.body.data);
-    const {startDate,endDate,startTime,endTime,sub,memo} = req.body.data;
+    const {startDate,endDate,startTime,endTime,sub,memo,category} = req.body.data;
     const query = {'_code':r._code};
 
      // Alert 업데이트 
@@ -178,6 +179,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
             'e_time':endTime,
             'author':author,
             'memo':memo,
+            'category':parseInt(category),
           }}},{upsert:true, new: true},(err,result)=>{
         if(err) throw new Error();
         else {
@@ -188,7 +190,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
     // 스키마가 null -> $set
     console.log('스키마자 존재하지 않음',req.body.data);
     const {author} = req.user.name;
-    const {startDate,endDate,startTime,endTime,sub,memo} = req.body.data;
+    const {startDate,endDate,startTime,endTime,sub,memo,category} = req.body.data;
     const query = {'_code':r._code};
 
     // Alert 업데이트 
@@ -211,6 +213,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
             'e_time':endTime,
             'author':author,
             'memo':memo,
+            'category':parseInt(category),
           }}},{upsert:true, new: true},(err,result)=>{
         if(err) throw new Error();
         else {

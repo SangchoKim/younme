@@ -80,7 +80,7 @@ class App extends React.Component {
                   await this.setState({visible:true,notification:notification,},()=>{
                      window.setTimeout(()=>{
                       this.setState({visible:false,notification:null})
-                    },2000)
+                    },5000)
                   });
             }
           })   
