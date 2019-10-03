@@ -93,8 +93,10 @@ class Calendar_dateInfo extends PureComponent{
         }else if(name==="delete"){
             const {deleteCalendar} = this.props;
             console.log('_delete_Calendar_dateInfo',id);
-            window.confirm('정말로 삭제 하시겠습니까?')&&
-            deleteCalendar(id);   
+            if(window.confirm('정말로 삭제 하시겠습니까?'))
+            deleteCalendar(id);
+            else
+            return;   
         }  
     }
 
