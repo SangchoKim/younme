@@ -150,7 +150,7 @@ MIT © LICENSE를 준수하며 ``MITLICENSE``에서 자세한 정보를 확인�
 
 Github - [https://github.com/SangchoKim/hicamper]
 
-Page - 배포 중단
+Page - 릴리즈 예정
 
 ## 기여 방법
 
