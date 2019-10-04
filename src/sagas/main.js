@@ -17,7 +17,8 @@ import {
 const delays = delay(2000);
 // 메인 페이지로 이동
 function moveMainAPI(data) {
-  return fetch("/api/login",{method: "post",
+  return fetch("/api/login",{ 
+                              method: "post",
                               headers: {
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json'
