@@ -2,8 +2,12 @@ const mongoose = require('mongoose');
 
 module.exports = () => {
   function connect() {
+    let ip = 'localhost'
+    // if(process.env.NODE_ENV==='production'){
+    //   ip = process.env.
+    // }
     mongoose.Promise = global.Promise
-    mongoose.connect('mongodb://localhost:27017/admin',
+    mongoose.connect(`mongodb://${ip}:27017/admin`,
         {'useNewUrlParser': true,'useCreateIndex': true},
       function(err) {
       if (err) {
