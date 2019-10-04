@@ -59,6 +59,10 @@ passportConfig(); // 이 부분 추가
 app.use('/api', router);
 app.use('/io', socketIoRouter);
 
+app.get('/',(req, res, next) => { // 404 처리 부분
+  res.status(200).send('YounMe Server');
+});
+
 app.use((req, res, next) => { // 404 처리 부분
     res.status(404).send('일치하는 주소가 없습니다!');
   });
