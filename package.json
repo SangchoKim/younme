@@ -124,7 +124,9 @@
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=80 pm2 start ./server/server.js",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "start:client": "cross-env NODE_ENV=production PORT=3000 pm2 start ./scripts/start.js",
+    "start:server": "cross-env NODE_ENV=production PORT=5000 pm2 start ./server/server.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon ./server/server.js",
     "dev:client": "node ./scripts/start.js",

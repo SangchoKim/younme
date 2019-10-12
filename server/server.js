@@ -84,7 +84,7 @@ const port = 5000;
 //   })
 // }else{
   console.log(process.pid,'워커 실행');
-  const server = app.listen(process.env.NODE_ENV==='production'? 80 : port, () => console.log(`Server started on port 80`));
+  const server = app.listen(process.env.NODE_ENV==='production'? 5000 : port, () => console.log(`Server started on port ${port}`));
   const io = SocketIo(server); // socket.io와 서버 연결하는 부분
   socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
 // } 
