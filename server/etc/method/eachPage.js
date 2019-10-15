@@ -6,6 +6,8 @@ const Alert = require('../../model/alert');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const AWS = require('aws-sdk');
+const multerS3 = require('multer-s3');
 
 const _alertFindOne = async(join_code, req, next) => {
   try {
@@ -236,6 +238,12 @@ const _main = (req,res,next) =>{
     
   }
 
+AWS.config.update({
+ region:'ap-norteast-2',
+  accessKeyId:process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
+}); 
+
   const storage = multer.diskStorage({
     destination: "./public/uploads/",
     filename: function(req, file, cb){
@@ -243,7 +251,13 @@ const _main = (req,res,next) =>{
     }
  });
  const _upload = multer({
-  storage: storage,
+  storage: multerS3({
+    s3:new AWS.S3(),
+    bucket:'younme',
+    key(req,file,cd){
+      cd(null, `original/${+new Date()}${path.basename(file.originalname)}`)
+    }
+  }),
   limits:{fileSize: 1000000},
 });
 
@@ -254,7 +268,7 @@ const _setbackground =(req,res,next) => {
     if(file){
       const order = req.user._id;
       const shared_code = req.user._code.codes;
-      const _filename = req.file.filename;
+      const _filename = req.file.location;
       const _originalname = req.file.originalname;
       const _size = req.file.size;
       let _code = null;

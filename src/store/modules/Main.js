@@ -78,7 +78,7 @@ export default function reducer(state = initialState, action) {
       case MAIN_GETDATA_SUCCESS:
         let {name,oppentname,relDay,img} = action.data.user_info;
         if(!img) img = defautImge;
-        else img = '/uploads/'+ img;
+        // else img = '/uploads/'+ img;
         return (
           {...state,
             User_info:{
