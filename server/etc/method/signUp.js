@@ -116,8 +116,8 @@ const _first_signUp =(req,res) => {
     }
   }
 
-  const _third_signUp =(req,res) => {
-    const email = req.session.email;
+  const _third_signUp = async(req,res,next) => {
+  const email = req.session.email;
   console.log(email);
   const _man = req.body.man;
   const _women = req.body.women;
@@ -125,49 +125,57 @@ const _first_signUp =(req,res) => {
   const _birthday = req.body.birthday;
   const _relday = req.body.relday;
   if(email){
-    
-    crypto.randomBytes(64, (err, buf) => {
-      const _pw = req.session.password;
-      const _code = req.session.c_code;
-      const _userMail1 = req.session.userMail1;
-      const _oppentEmail = req.session.oppentEmail;
-      crypto.pbkdf2(_pw , buf.toString('base64'), 100000, 64, 'sha512', (err, key) => {
-        console.log('암호화된비밀번호:',key.toString('base64')); // 'dWhPkH6c4X1Y71A/DrAHhML3DyKQdEkUOIaSmYCI7xZkD5bLZhPF0dOSs2YZA/Y4B8XNfWd3DHIqR5234RtHzw=='
-        console.log(_userMail1);
-        let _gender = '';
-        if(_man)
-        _gender = "남성";
-        else if(_women)
-        _gender = "여성";
-        const c = {codes:_code,
-                    userMail1:_userMail1,
-                    oppentEmail:_oppentEmail
-                  };
-        const user = new User({
-                              id:email,
-                              password:key.toString('base64'),
-                              _salt:buf.toString('base64'),
-                              name:_name,
-                              birth:_birthday,
-                              gender:_gender,
-                              relday:_relday,
-                              _code:c
-                            });
-        console.log(user);
-        user.save((err)=>{
-          if(err){
-            console.error(err);
-            res.json({result: 0});
-            return;
-          }else{
-            console.log('회원가입 성공');
-            req.session.destroy(()=>{return req.session;}); 
-            res.json({result: 1});
-                     
-          }
-        })
+    try {
+      const answer = await User.findOne({id:email});
+      if(answer){
+        res.send('이미 등록되어 있는 아이디 입니다.');
+      }
+      await crypto.randomBytes(64, (err, buf) => {
+        const _pw = req.session.password;
+        const _code = req.session.c_code;
+        const _userMail1 = req.session.userMail1;
+        const _oppentEmail = req.session.oppentEmail;
+        crypto.pbkdf2(_pw , buf.toString('base64'), 100000, 64, 'sha512', (err, key) => {
+          console.log('암호화된비밀번호:',key.toString('base64')); // 'dWhPkH6c4X1Y71A/DrAHhML3DyKQdEkUOIaSmYCI7xZkD5bLZhPF0dOSs2YZA/Y4B8XNfWd3DHIqR5234RtHzw=='
+          console.log(_userMail1);
+          let _gender = '';
+          if(_man)
+          _gender = "남성";
+          else if(_women)
+          _gender = "여성";
+          const c = {codes:_code,
+                      userMail1:_userMail1,
+                      oppentEmail:_oppentEmail
+                    };
+          const user = new User({
+                                id:email,
+                                password:key.toString('base64'),
+                                _salt:buf.toString('base64'),
+                                name:_name,
+                                birth:_birthday,
+                                gender:_gender,
+                                relday:_relday,
+                                _code:c
+                              });
+          console.log(user);
+          user.save((err)=>{
+            if(err){
+              console.error(err);
+              res.json({result: 0});
+              return;
+            }else{
+              console.log('회원가입 성공');
+              req.session.destroy(()=>{return req.session;}); 
+              res.json({result: 1});
+                       
+            }
+          })
+        });
       });
-    });
+    } catch (error) {
+      console.log(error);
+      next(error); 
+    }
   }else{
     res.json({result:0});
   }

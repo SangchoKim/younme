@@ -3,8 +3,9 @@ const datediff = require('../../../src/lib/moment').datediff;
 const User = require('../../model/user');
 
 
-  const _menorial = (req,res) => {
-    const order = req.user._id;
+  const _menorial = (req,res,next) => {
+    try {
+      const order = req.user._id;
     if(order){
       User.findOne({ _id: order })
       .then((result) =>{
@@ -46,6 +47,11 @@ const User = require('../../model/user');
     }else{
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }  
 
 module.exports = {

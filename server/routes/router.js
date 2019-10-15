@@ -28,6 +28,7 @@ const setcalendar = require('../etc/method/calendar').setcalendar;
 const readcalendar = require('../etc/method/calendar').readcalendar;
 const deletecalendar = require('../etc/method/calendar').deletecalendar;
 const updatecalendar = require('../etc/method/calendar').updatecalendar;
+const {isLoggedIn,isNotLoggedIn} = require('./middleware');
 
 router.get("/home", (req,res,next) => {
   getHome(req,res,next);
@@ -40,34 +41,58 @@ router.post("/home", (req,res,next) => {
 
 
 
-router.post("/first", (req,res,next) => {  
+router.post("/first", isNotLoggedIn, (req,res,next) => {  
   first_signUp(req,res,next);
 })
 
-router.post("/secondCodeSave", (req,res,next) => {
+router.post("/secondCodeSave",isNotLoggedIn, (req,res,next) => {
   secondCodeSave(req,res,next);
 })
 
-router.post("/second", (req,res,next) => {
+router.post("/second",isNotLoggedIn, (req,res,next) => {
   second_signUp(req,res,next); 
 })
 
-router.post("/backtofirst", (req,res,next) => {
+router.post("/backtofirst",isNotLoggedIn, (req,res,next) => {
   backtofirst(req,res,next);
 })
 
-router.post("/third", (req,res,next) => {
+router.post("/third", isNotLoggedIn, (req,res,next) => {
   third_signUp(req,res,next);
   
 })
 
-router.post("/backtosecond", (req,res,next) => {
+router.post("/backtosecond", isNotLoggedIn, (req,res,next) => {
   backtosecond(req,res,next);
 })
 
+// router.post('/login',(req,res,next)=>{
+//   passport.authenticate('local',(err,user,info)=>{
+    
+//     if(err){
+//       console.error(err);
+//       return next(err);
+//     }
+//     if(info){
+//       return res.status(401).send(info.message);
+//     }
+
+//     return req.login(user, async(loginErr)=>{
+//       try {
+//         if(loginErr){
+//           return next(loginErr);
+//         }
+//         checkLogin(req,res,next);
+//       } catch (error) {
+//         console.error(error);
+//         next(error);
+//       }
+//     })
+//   })
+// })
 
 router.post('/login', passport.authenticate('local', {
-    failureRedirect: '/home', failureFlash:true,   
+    failureRedirect: '/api/home', failureFlash:true,   
   }), (req, res,next) => {
     console.log('성공');
     checkLogin(req,res,next);
@@ -147,11 +172,6 @@ router.get('/facebook', passport.authenticate('facebook', {
 router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }), function(req, res) {
   console.log('성공');
     res.json({result:1});
-});
-
-router.get("/customers", (req,res) =>{ // app 대신 router에 연결
-    const customers = {id:1, firstName: "John"};
-    res.json(customers);
 });
 
 module.exports = router; // 모듈로 만드는 부분

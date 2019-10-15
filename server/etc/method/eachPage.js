@@ -33,12 +33,13 @@ const _alertFindOne = async(join_code, req, next) => {
   }
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
 }
 
-const _checkLogin = (req, res) => {
-  const order = req.user._id;
+const _checkLogin = (req, res, next) => {
+  try {
+    const order = req.user._id;
   if(order){
     User.findOne({ _id: order })
     .then((result) =>{
@@ -57,6 +58,11 @@ const _checkLogin = (req, res) => {
       }
     })
   }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  
 }
 
 const init_calendar = async (result) => {
@@ -131,6 +137,7 @@ const init_alert = async (result) => {
 }
 
 const _main = (req,res,next) =>{
+  try {
     const order = req.user._id;
     console.log(req.user);
     if(order){
@@ -186,21 +193,34 @@ const _main = (req,res,next) =>{
     }else{
       res.json({result:0});
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+    
   }
 
 
-  const _getHome =(req,res) => {
-    console.log(req.session);
+  const _getHome =(req,res,next) => {
+    try {
+      console.log(req.session);
     const _fMsg = req.flash();
     if(_fMsg){
-      res.json({result:2, fMsg:_fMsg});
+      console.log(_fMsg.error);
+      res.json({result:2, fMsg:_fMsg.error});
     }else{
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
-  const _postHome =(req,res) => {
-    console.log(req.session);
+  const _postHome =(req,res,next) => {
+    try {
+      console.log(req.session);
     const ORDER = "deleteSession"
     const order = req.body.order;
     if(ORDER === order){
@@ -209,6 +229,11 @@ const _main = (req,res,next) =>{
     }else{
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
   const storage = multer.diskStorage({
@@ -223,7 +248,8 @@ const _main = (req,res,next) =>{
 });
 
 const _setbackground =(req,res,next) => {
-  console.log("req.file:", req.file);
+  try {
+    console.log("req.file:", req.file);
     const file = req.file;
     if(file){
       const order = req.user._id;
@@ -282,6 +308,11 @@ const _setbackground =(req,res,next) => {
     }else{
       res.json({result:0});
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  
 }
 
 const _fsRemove = (img) => {

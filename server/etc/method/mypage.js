@@ -1,7 +1,8 @@
 const User = require('../../model/user');
 
 
-const _mypage =(req,res) => {
+const _mypage =(req,res,next) => {
+  try {
     const order = req.user._id;
     if(order){
       User.findOne({_id:order})
@@ -29,9 +30,15 @@ const _mypage =(req,res) => {
     }else{
       res.json({result:0});
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+    
   }
 
-  const _changeGender =(req,res) => {
+  const _changeGender =(req,res,next) => {
+    try {
     const _gender = req.query.gender;
     const order = req.user._id;
     if(order){
@@ -59,10 +66,16 @@ const _mypage =(req,res) => {
     }else{
       res.json({result:0});
     } 
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
-  const _changeinfo =(req,res) => {
-    const _info = req.body.info;
+  const _changeinfo =(req,res,next) => {
+    try {
+      const _info = req.body.info;
     const order = req.user._id;
     if(order){
       User.findAndModify({ _id: order },[], { $set: { intro: _info } }, {}, (err,user)=>{
@@ -77,9 +90,15 @@ const _mypage =(req,res) => {
     }else{
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
-  const _changebirth =(req,res) => {
+  const _changebirth =(req,res,next) => {
+    try {
     const _birth = req.body.birth;
     const order = req.user._id;
     if(order){
@@ -94,10 +113,16 @@ const _mypage =(req,res) => {
     }else{
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
-  const _logout =(req,res) => {
-    const order = req.user._id;
+  const _logout =(req,res,next) => {
+    try {
+      const order = req.user._id;
     if(order){
       User.findOne({ _id: order },(err,user)=>{
         if(err) console.log(err);
@@ -109,6 +134,11 @@ const _mypage =(req,res) => {
     }else{
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
 

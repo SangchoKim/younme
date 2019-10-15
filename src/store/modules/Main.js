@@ -30,6 +30,7 @@ const initialState = {
       mainState:'isReady',
       comment:'',
       errMessage:null,
+      reason:'',
       result:'',
       User_info:{
         userName:'김철수',
@@ -55,6 +56,7 @@ export default function reducer(state = initialState, action) {
         return (
           {...state,
             result:action.data.result,
+            reason:action.data.fMsg,
             mainState:'isSuccess'
           }
         );

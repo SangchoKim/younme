@@ -28,23 +28,30 @@ const _alertFindOne = async(join_code, req, next) => {
   }
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
 }
 
-const _readcalendar = (req,res) => {
-  const {order, data} = req.query;
+const _readcalendar = (req,res,next) => {
+  try {
+    const {order, data} = req.query;
   console.log("_readcalendar",req.user._code,data);
   switch(order){
     case "READ":
-      return _calendarRead(req.user._code,res);
+      return _calendarRead(req.user._code,res,next);
     default:
       return;
   }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  
 }
 
 const _deletecalendar = (req,res,next) => {
-  const {_id} = req.query;
+  try {
+    const {_id} = req.query;
   const shared_code = req.user._code.codes;
   console.log("_deletecalendar",_id);
   
@@ -68,7 +75,7 @@ const _deletecalendar = (req,res,next) => {
                 if(err) throw new Error();
                 else {
                 if(result.ok===1){
-                    _calendarRead(req.user._code,res);
+                    _calendarRead(req.user._code,res,next);
                     console.log('캘린더 Delete완료');
               }else{
                 res.json({result:5});
@@ -76,10 +83,16 @@ const _deletecalendar = (req,res,next) => {
               }
             }
           })
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  
 }
 
 const _updatecalendar = async (req,res,next) => {
-  const _id = req.body.data.id;
+  try {
+    const _id = req.body.data.id;
   let {startDate,endDate,startTime,endTime,sub,memo,category} = req.body.data;
   const author = req.user.name;
   const shared_code = req.user._code.codes;
@@ -117,7 +130,7 @@ const _updatecalendar = async (req,res,next) => {
                     if(err) throw new Error();
                     else {
                     if(result.ok===1){
-                        _calendarRead(req.user._code,res);
+                        _calendarRead(req.user._code,res,next);
                         console.log('캘린더 Update완료');
                   }else{
                     res.json({result:5});
@@ -132,26 +145,43 @@ const _updatecalendar = async (req,res,next) => {
     }else{
       res.send("데이터가 존재하지 않습니다.");
     }
-  })           
+  })   
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+          
 }
 
 const _setcalendar = (req,res,next) => {
-  const shared_code = req.user._code.codes;
+  try {
+    const shared_code = req.user._code.codes;
   console.log("_setcalendar",shared_code);
   _calendarHaveOrNot(shared_code,req,res,next); 
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 }
 
 const _calendarHaveOrNot = async(shared_code,req,res,next) => {
-  console.log("_calendarHaveOrNot",shared_code);
+  try {
+    console.log("_calendarHaveOrNot",shared_code);
   await Calendar.findOne({ '_code' : shared_code })
   .then((r)=>{
     console.log("CalendarSkima유뮤존재",r);
     _calendarSkimaHaveOrNot(r,req,res,next);
   })
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  
 }
 
 const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
-  console.log("_calendarSkimaHaveOrNot",r);
+  try {
+    console.log("_calendarSkimaHaveOrNot",r);
     if(r.dataSchema!==null){
     // 스키마자 존재 -> $addToset
     const author = req.user.name;
@@ -183,7 +213,7 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
           }}},{upsert:true, new: true},(err,result)=>{
         if(err) throw new Error();
         else {
-          _calendarRead(req.user._code,res);
+          _calendarRead(req.user._code,res,next);
         }
         })
   }else{
@@ -218,14 +248,20 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
         if(err) throw new Error();
         else {
           if(result.ok===1){
-          _calendarRead(req.user._code,res);
+          _calendarRead(req.user._code,res,next);
           }
         }
         })
   }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  
 }
 
-const _calendarRead = ({codes},res) => {
+const _calendarRead = ({codes},res,next) => {
+  try {
     console.log('_calendarRead',codes);
     Calendar.findOne({'_code':codes})
       .then((result)=>{
@@ -242,7 +278,11 @@ const _calendarRead = ({codes},res) => {
     .catch((err) => {
       console.log(err);
       });  
-    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
   
 
 module.exports = {

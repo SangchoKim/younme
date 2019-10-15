@@ -70,7 +70,7 @@ const _alertFindOne = async(join_code, req, next) => {
   }
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
 }
 
@@ -116,7 +116,7 @@ const _chatInfo = async(req,res,next) => {
               })
     } catch (error) {
       console.error(error);
-      next();
+      next(error);
     }
 }
 
@@ -163,7 +163,7 @@ const _chatPhoto = async(req,res,next) => {
             })
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
 }
 
@@ -210,7 +210,7 @@ const _chatCamera = async(req,res,next) => {
             })
       } catch (error) {
         console.error(error);
-        next();
+        next(error);
       }
 }
 
@@ -255,7 +255,7 @@ const _chatGif = async(req,res,next) => {
             })
       } catch (error) {
         console.error(error);
-        next();
+        next(error);
       }
 }
 
@@ -302,7 +302,7 @@ const _chatVideo = async(req,res,next) => {
             })
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
 }
 
@@ -347,7 +347,7 @@ const _chatAlbum = async(req,res,next) => {
             })
       } catch (error) {
         console.error(error);
-        next();
+        next(error);
       }
 }
 
@@ -394,7 +394,7 @@ const _chatvoiceRecord = async(req,res,next) => {
             })
       } catch (error) {
         console.error(error);
-        next();
+        next(error);
       }
 }
 

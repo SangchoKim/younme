@@ -24,6 +24,7 @@ const prod = process.env.NODE_ENV === 'production';
 
 const numCPUs = os.cpus().length;
 
+
 const sessionMiddleware = session({
   secret: process.env.COOKIE_SECRET,
   resave: false,
@@ -37,6 +38,7 @@ const sessionMiddleware = session({
 });
 
 dotenv.config();
+passportConfig(); // 이 부분 추가
 app.use(morgan('dev'));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware); // 세션 활성화
@@ -54,7 +56,7 @@ app.use(methodOverride()); // PUT, DELETE를 지원 안 하는 클라이언트�
 app.use(bodyParser.urlencoded({ extended: true })); // qs모듈로 쿼리스트링 파싱
 app.use(bodyParser.json()); // body의 데이터를 json형식으로 받음
 db();
-passportConfig(); // 이 부분 추가
+
 
 app.use('/api', router);
 app.use('/io', socketIoRouter);

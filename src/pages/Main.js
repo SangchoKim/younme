@@ -150,18 +150,19 @@ class Main extends PureComponent{
   
   render(){
     
-    const {mainState} = this.props;
+    const {mainState,result,reason} = this.props;
     return(
       <React.Fragment>
-        {mainState==='isReady'&&
+        {mainState==='isReady'&& 
           <Loding 
             comment={this.props.comment}
           />
         }
+        
         {mainState==="isFail"&&
            <p>에러발생</p>
         }
-        {mainState==='isSuccess'&&
+        {mainState==='isSuccess'&& result===1&&
           <React.Fragment>
             <MainNav 
               history={this.props.history}
@@ -192,8 +193,7 @@ class Main extends PureComponent{
               mode={this.state.mode}
             />
           </React.Fragment>
-        }    
-      
+        }
     </React.Fragment>
     )
   }

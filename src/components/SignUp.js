@@ -69,12 +69,12 @@ class SignUp extends PureComponent {
   }
 
   componentDidUpdate(){
-    const {mainState,result,errMessage} = this.props;
-    console.log(mainState,result);
+    const {mainState,result,errMessage,reason} = this.props;
+    console.log(mainState,result,reason);
     if(mainState==="isSuccess"){
-      if(result ==='2'){
-        alert('로그인에 실패하였습니다. 다시 한번 더 시도해주세요!');
-      }else if(result ==='5'){
+      if(result === 2){
+        alert(reason);
+      }else if(result === 5){
         alert('상대방이 가입하기 전입니다.');
       }else{
         const url = '/main';
@@ -168,6 +168,7 @@ const mapStateToProps = (state) => ({
   mainState: state.Main.mainState,
   errMessage: state.Main.errMessage,
   result: state.Main.result,
+  reason: state.Main.reason,
 });
 
 

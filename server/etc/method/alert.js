@@ -28,7 +28,7 @@ const _alertFindOne = async(req, res, next) => {
       }
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
   
 }

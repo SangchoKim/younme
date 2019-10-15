@@ -31,24 +31,30 @@ const _alertFindOne = async(join_code, req, next) => {
   }
   } catch (error) {
     console.error(error);
-    next();
+    next(error);
   }
 }
 
 const _albumRead = (req,res,next) =>{
-    const order = req.user._id;
+    try {
+      const order = req.user._id;
     const shared_code = req.user._code.codes;
     const img = req.query.image;
     const mode = req.query.order;
     if(order){
       switch(mode){
         case "DELETE": return _deleteAlbum(shared_code,img,order,res,next,req);
-        default: _readAlbum(order,res); 
+        default: _readAlbum(order,res,next); 
       }    
     }else{
     console.log('세션 _id 값 없음');
       res.json({result:0});
     }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
   const s = multer.diskStorage({
@@ -64,7 +70,9 @@ const _albumRead = (req,res,next) =>{
   });
 
   const _updatealbum = (req,res,next) => {
-    console.log("req.file:", req.file);
+
+    try {
+      console.log("req.file:", req.file);
     const order = req.user._id;
     const _filename = req.file.filename;
     const _originalname = req.file.originalname;
@@ -99,10 +107,16 @@ const _albumRead = (req,res,next) =>{
               }
             }
           })
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
   const _deleteAlbum = (shared_code,img,order,res,next,req) => {
-    console.log('공유앨범Delete 준비',shared_code,img);
+    try {
+      console.log('공유앨범Delete 준비',shared_code,img);
               const query = {'_code':shared_code};
               
               // Alert 업데이트 
@@ -122,33 +136,45 @@ const _albumRead = (req,res,next) =>{
                 if(err) throw new Error();
                 else {
                   if(result.ok===1){
-                    _fsRemove(img,order,res);
+                    _fsRemove(img,order,res, next);
                     console.log('공유앨범Delete완료');
                  
               }
             }
           })
-  }
-
-  const _fsRemove = async(img,order,res) => {
-    const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
-    console.log("directory:",directory);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
     
-    await fs.readdir(directory, (err, files) => {
-      if (err) throw err;
-      for (const file of files) {
-        if(file===img)
-        fs.unlink(path.join(directory, file), err => {
-          if (err) throw err;
-          else console.log('FS_이미지 삭제 성공');
-        });
-      }
-    });
-    await _readAlbum(order,res); 
   }
 
-  const _readAlbum = (order,res) => {
-    User.findOne({ _id: order })
+  const _fsRemove = async(img,order,res,next) => {
+
+    try {
+      const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
+      console.log("directory:",directory);
+      await fs.readdir(directory, (err, files) => {
+        if (err) throw err;
+        for (const file of files) {
+          if(file===img)
+          fs.unlink(path.join(directory, file), err => {
+            if (err) throw err;
+            else console.log('FS_이미지 삭제 성공');
+          });
+        }
+      });
+      await _readAlbum(order,res,next);  
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
+  }
+
+  const _readAlbum = (order,res,next) => {
+    try {
+      User.findOne({ _id: order })
     .then((result) =>{
       let _img = null;
       let _code = null;
@@ -167,8 +193,14 @@ const _albumRead = (req,res,next) =>{
       })
       .catch((err) => {
           console.log(err);
+          
         });  
     })
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
   const storages = multer.diskStorage({
@@ -183,7 +215,8 @@ const _albumRead = (req,res,next) =>{
   });
   
   const _setalbum =(req,res,next) => {
-    console.log("req.file:", req.file);
+    try {
+      console.log("req.file:", req.file);
       const file = req.file;
       if(file){
         const shared_code = req.user._code.codes;
@@ -291,6 +324,11 @@ const _albumRead = (req,res,next) =>{
       }else{
         res.json({result:0});
       }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+    
   }
 
   
