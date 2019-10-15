@@ -66,30 +66,6 @@ router.post("/backtosecond", isNotLoggedIn, (req,res,next) => {
   backtosecond(req,res,next);
 })
 
-// router.post('/login',(req,res,next)=>{
-//   passport.authenticate('local',(err,user,info)=>{
-    
-//     if(err){
-//       console.error(err);
-//       return next(err);
-//     }
-//     if(info){
-//       return res.status(401).send(info.message);
-//     }
-
-//     return req.login(user, async(loginErr)=>{
-//       try {
-//         if(loginErr){
-//           return next(loginErr);
-//         }
-//         checkLogin(req,res,next);
-//       } catch (error) {
-//         console.error(error);
-//         next(error);
-//       }
-//     })
-//   })
-// })
 
 router.post('/login', passport.authenticate('local', {
     failureRedirect: '/api/home', failureFlash:true,   
@@ -99,7 +75,7 @@ router.post('/login', passport.authenticate('local', {
   });
 
 
-  router.get("/main", (req,res,next) => {
+  router.get("/main", isLoggedIn, (req,res,next) => {
     const _momorial = req.query.momorial;
     if(_momorial){
       console.log(_momorial);
@@ -109,59 +85,59 @@ router.post('/login', passport.authenticate('local', {
     }
   }) 
 
-  router.post("/updatealbum", modiAlbum.single("myImage") , (req,res,next) => {
+  router.post("/updatealbum", isLoggedIn, modiAlbum.single("myImage") , (req,res,next) => {
     updatealbum(req,res,next);
   })
 
 
-  router.post("/setbackground", upload.single("myImage") , (req,res,next) => {
+  router.post("/setbackground", isLoggedIn, upload.single("myImage") , (req,res,next) => {
     setbackground(req,res,next);
   })
 
-  router.post("/setalbum", uploadAlbum.single("myImages") , (req,res,next) => {
+  router.post("/setalbum",isLoggedIn, uploadAlbum.single("myImages") , (req,res,next) => {
     setalbum(req,res,next);
   })
 
-  router.get("/mypage", (req,res,next) => {
+  router.get("/mypage", isLoggedIn, (req,res,next) => {
     mypage(req,res,next);
   });
 
-  router.get("/changeGender", (req,res,next) =>{
+  router.get("/changeGender", isLoggedIn ,(req,res,next) =>{
     changeGender(req,res,next);
   });
 
   
 
-  router.post("/changeinfo", (req,res,next) =>{
+  router.post("/changeinfo", isLoggedIn , (req,res,next) =>{
     changeinfo(req,res,next);
   });
 
-  router.post("/setcalendar", (req,res,next) =>{
+  router.post("/setcalendar", isLoggedIn, (req,res,next) =>{
     setcalendar(req,res,next);
   });
 
-  router.get("/readcalendar", (req,res,next) =>{
+  router.get("/readcalendar",isLoggedIn, (req,res,next) =>{
     readcalendar(req,res,next);
   });
 
-  router.get("/deletecalendar", (req,res,next) =>{
+  router.get("/deletecalendar", isLoggedIn, (req,res,next) =>{
     deletecalendar(req,res,next);
   });
 
-  router.patch("/updatecalendar", (req,res,next) =>{
+  router.patch("/updatecalendar", isLoggedIn, (req,res,next) =>{
     updatecalendar(req,res,next);
   });
 
-  router.post("/changebirth", (req,res,next) =>{
+  router.post("/changebirth", isLoggedIn, (req,res,next) =>{
     changebirth(req,res,next);
     
   });
 
-  router.get("/logout", (req,res,next) =>{ 
+  router.get("/logout", isLoggedIn, (req,res,next) =>{ 
     logout(req,res,next);
 });
 
-router.get("/album", (req,res,next) =>{ 
+router.get("/album", isLoggedIn, (req,res,next) =>{ 
   albumRead(req,res,next);
 });
 

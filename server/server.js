@@ -1,7 +1,10 @@
 const express = require('express');
 const os = require('os');
 const cluster = require('cluster');
+const hpp = require('hpp');
+const helmet = require('helmet');
 const app = express();
+const cors = require('cors');
 const morgan = require('morgan');
 const db = require('./db.js');
 const router = require('./routes/router');
@@ -38,8 +41,25 @@ const sessionMiddleware = session({
 });
 
 dotenv.config();
-passportConfig(); // 이 부분 추가
-app.use(morgan('dev'));
+passportConfig();
+
+if(prod){
+ app.use(hpp());
+ app.use(helmet());
+ app.use(morgan('combined'));
+ app.use(cors({
+  origin:'http://localhost',
+  credentials:true,    
+}))
+}else{
+  app.use(morgan('dev'));
+  app.use(cors({
+    origin:true,
+    credentials:true,    
+  }))
+}
+
+
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(sessionMiddleware); // 세션 활성화
 app.use(flash());
@@ -86,7 +106,7 @@ const port = 5000;
 //   })
 // }else{
   console.log(process.pid,'워커 실행');
-  const server = app.listen(process.env.NODE_ENV==='production'? 5000 : port, () => console.log(`Server started on port ${port}`));
+  const server = app.listen(prod ==='production'? 5000 : port, () => console.log(`Server started on port ${port}`));
   const io = SocketIo(server); // socket.io와 서버 연결하는 부분
   socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
 // } 
