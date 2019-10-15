@@ -162,7 +162,7 @@ class Main extends PureComponent{
         {mainState==="isFail"&&
            <p>에러발생</p>
         }
-        {mainState==='isSuccess'&& result===1&&
+        {mainState==='isSuccess'&& 
           <React.Fragment>
             <MainNav 
               history={this.props.history}
