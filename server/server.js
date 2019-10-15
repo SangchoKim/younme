@@ -21,12 +21,17 @@ const socketEvents = require('./socket/soket'); //
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv'); 
 const ColorHash = require('color-hash');
+const AWS = require('aws-sdk');
 
 const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
-
 const numCPUs = os.cpus().length;
 
+AWS.config.update({
+  region:'ap-northeast-2',
+  accessKeyId:process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
+}); 
 
 const sessionMiddleware = session({
   secret: process.env.COOKIE_SECRET,
