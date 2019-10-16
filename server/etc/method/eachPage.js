@@ -272,11 +272,11 @@ const _setbackground =(req,res,next) => {
       const _filename = req.file.location;
       const _originalname = req.file.originalname;
       const _size = req.file.size;
+      console.log(_filename,_originalname,_size);
       let _code = null;
       if(order){
         User.findOne({ _id: order })
         .then((result)=>{
-          console.log(result);
           _code =  result._code.codes; 
           Album.findOne({ '_code' : _code })
           .then((result)=>{
@@ -308,7 +308,7 @@ const _setbackground =(req,res,next) => {
                   if(result.ok===1){
                 Album.findOne({'_code':_code})
                 .then((result)=>{
-                  console.log(result.wallpaperSchema.src);
+                  console.log('src',result.wallpaperSchema.src);
                   res.json({result:1, img:result.wallpaperSchema.src});
                 })
               }

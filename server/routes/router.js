@@ -10,7 +10,7 @@ const second_signUp = require('../etc/method/signUp').second_signUp;
 const backtofirst = require('../etc/method/signUp').backtofirst;
 const third_signUp = require('../etc/method/signUp').third_signUp;
 const backtosecond = require('../etc/method/signUp').backtosecond;
-// const upload = require('../etc/method/eachPage').upload;
+const upload = require('../etc/method/eachPage').upload;
 const uploadAlbum = require('../etc/method/album').uploadAlbum;
 const modiAlbum = require('../etc/method/album').modiAlbum;
 const setbackground = require('../etc/method/eachPage').setbackground;
@@ -30,32 +30,15 @@ const deletecalendar = require('../etc/method/calendar').deletecalendar;
 const updatecalendar = require('../etc/method/calendar').updatecalendar;
 const {isLoggedIn,isNotLoggedIn} = require('./middleware');
 const AWS = require('aws-sdk');
-const multerS3 = require('multer-s3');
-const multer = require('multer');
-const path = require('path');
 const dotenv = require('dotenv'); 
 dotenv.config();
-// AWS.config.update({
-  
-  
-// });
 
-const upload = multer({
-  storage: multerS3({
-    s3:new AWS.S3({
-      credentials:{
-        accessKeyId:process.env.S3_ACCESS_KEY_ID,
-        secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
-      }, 
-      region:'ap-northeast-2'
-    }),
-    bucket:'younme',
-    acl: 'public-read', 
-    key(req,file,cd){
-      cd(null, `original/${+new Date()}${path.basename(file.originalname)}`)
-    }
-  }),
-  limits:{fileSize: 1000000},
+AWS.config.update({
+  credentials:{
+    accessKeyId:process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
+  }, 
+  region:'ap-northeast-2'
 });
 
 router.get("/home", (req,res,next) => {
