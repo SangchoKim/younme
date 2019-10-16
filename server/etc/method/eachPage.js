@@ -283,9 +283,9 @@ const _setbackground =(req,res,next) => {
             console.log("albumSkima유뮤존재",result);
               console.log('wallpaperSchema 값이 있음',result.wallpaperSchema);
               const query = {'_code':result._code};
-              if(result.wallpaperSchema!==null){
-                _fsRemove(result.wallpaperSchema.src);
-              }
+              // if(result.wallpaperSchema!==null){
+              //   _fsRemove(result.wallpaperSchema.src);
+              // }
               
               // Alert 업데이트 
               Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 1, crud:1}}},(err,result)=>{
