@@ -166,7 +166,7 @@ const _main = (req,res,next) =>{
           User.findOne({ 'id' : _oppentEmail })
           .then((r)=>{
             if(r){
-              console.log('oppent찾기 성공:',r);
+              console.log('oppent찾기 성공:',r,_img);
               _oppentname = r.name;
               res.json({result:1, 
                 user_info:{
