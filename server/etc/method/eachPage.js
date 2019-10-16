@@ -252,6 +252,7 @@ const _main = (req,res,next) =>{
   storage: multerS3({
     s3:new AWS.S3(),
     bucket:'younme',
+    acl: 'public-read', 
     key(req,file,cd){
       cd(null, `original/${+new Date()}${path.basename(file.originalname)}`)
     }
