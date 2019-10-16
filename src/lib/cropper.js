@@ -8,14 +8,14 @@ class cropper extends PureComponent {
 
   _crop = () =>{
     // image in dataUrl
-    const data = this.refs.cropper.getCroppedCanvas().toDataURL();
+    const data = this.cropper.getCroppedCanvas().toDataURL();
     this.props.onChange(data);
   }
  
   render() {
     return (
       <Cropper
-        ref={cropper}
+        ref={(ref)=>{this.cropper=ref;}}
         src={this.props.imageName}
         style={{height:"100%"}}
         // Cropper.js options
