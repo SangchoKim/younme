@@ -257,6 +257,12 @@ const _main = (req,res,next) =>{
   limits:{fileSize: 1000000},
 });
 
+AWS.config.update({
+  region:'ap-northeast-2',
+  accessKeyId:process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
+}); 
+
 const _setbackground =(req,res,next) => {
   try {
     console.log("req.file:", req.file);
