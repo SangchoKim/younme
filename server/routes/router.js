@@ -134,7 +134,7 @@ router.post('/login', passport.authenticate('local', {
     }
   }) 
 
-  router.post("/updatealbum", isLoggedIn, modiAlbum.single("myImage") , (req,res,next) => {
+  router.patch("/updatealbum", isLoggedIn, modiAlbum.single("myImage") , (req,res,next) => {
     updatealbum(req,res,next);
   })
 

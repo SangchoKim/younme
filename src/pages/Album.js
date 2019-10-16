@@ -264,7 +264,7 @@ class Album extends PureComponent{
             'content-type': 'multipart/form-data'
         }
       };
-      fetch("/api/setalbum", {method: "POST",
+      fetch(`/api/setalbum?`, {method: "POST",
                           config,
                           body: formData 
                           })
@@ -289,16 +289,16 @@ class Album extends PureComponent{
       console.log('modifyImgVal',document.getElementById('data').value);
       const _modifyImgVal = document.getElementById('data').value;
       const myBlob = imageEncodeToBase64(_modifyImgVal,'image/jpeg');
-      let imageName = this.state.imageName;
-      console.log("targetID", imageName);
+      let id = this.state.imageName;
+      console.log("targetID", id);
       let data = new FormData();
-      data.append('myImage', myBlob, imageName);
+      data.append('myImage', myBlob, id);
       const config = {
         headers: {
             'content-type': 'multipart/form-data'
         }
       };
-      fetch("/api/updatealbum", {method: "POST",
+      fetch(`/api/updatealbum?id=${id}`, {method: "PATCH",
                           config,
                           body: data 
                           })

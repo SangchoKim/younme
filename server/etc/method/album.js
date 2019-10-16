@@ -72,13 +72,14 @@ const _albumRead = (req,res,next) =>{
   const _updatealbum = (req,res,next) => {
     try {
     console.log("req.file:", req.file);
+    const id = req.query.id;
     const order = req.user._id;
     const _filename = req.file.location;
     const _originalname = req.file.originalname;
     const _size = req.file.size;
     const shared_code = req.user._code.codes;
     const querys = {'_code':shared_code};
-    console.log('공유앨범 Modify 준비',shared_code,_originalname,_filename);
+    console.log('공유앨범 Modify 준비',shared_code,_originalname,_filename,id);
 
     // Alert 업데이트 
     Alert.updateOne(querys,{$addToSet:{'dataSchema':{number: 2, crud:2}}},(err,result)=>{
@@ -92,7 +93,7 @@ const _albumRead = (req,res,next) =>{
     });
 
     // SharedAlbum data 수정
-    const query = {'_code':shared_code, "sharedSchema":{ $elemMatch:{"src":_originalname}}};
+    const query = {'_code':shared_code, "sharedSchema":{ $elemMatch:{"src":id}}};
     Album.updateOne(query,{$set:{"sharedSchema.$.originalname":_originalname, 
                                   "sharedSchema.$.src":_filename,
                                   "sharedSchema.$.size": _size
