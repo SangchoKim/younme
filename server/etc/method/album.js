@@ -204,16 +204,16 @@ const _albumRead = (req,res,next) =>{
     
   }
 
-  const storages = multer.diskStorage({
-    destination: "./public/uploadsAlbum/",
-    filename: function(req, file, cb){
-       cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
-    }
-  });
-  const _uploadAlbum = multer({
-  storage: storages,
-  limits:{fileSize: 1000000},
-  });
+  // const storages = multer.diskStorage({
+  //   destination: "./public/uploadsAlbum/",
+  //   filename: function(req, file, cb){
+  //      cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+  //   }
+  // });
+  // const _uploadAlbum = multer({
+  // storage: storages,
+  // limits:{fileSize: 1000000},
+  // });
   
   const _setalbum =(req,res,next) => {
     try {
