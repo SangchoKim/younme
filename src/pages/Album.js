@@ -293,13 +293,13 @@ class Album extends PureComponent{
       console.log("targetID", id);
       let data = new FormData();
       data.append('myImage', myBlob, id);
-      const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
-      };
+      // const config = {
+      //   headers: {
+      //       'content-type': 'multipart/form-data'
+      //   }
+      // };
       fetch(`/api/updatealbum?id=${id}`, {method: "PATCH",
-                          config,
+                          // config,
                           body: data 
                           })
       .then(res => res.json())
