@@ -3,11 +3,6 @@ const User = require('../../model/user');
 const Album = require('../../model/album');
 const Calendar = require('../../model/calendar');
 const Alert = require('../../model/alert');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const AWS = require('aws-sdk');
-const multerS3 = require('multer-s3');
 
 const _alertFindOne = async(join_code, req, next) => {
   try {
@@ -238,30 +233,6 @@ const _main = (req,res,next) =>{
     
   }
 
-  const storage = multer.diskStorage({
-    destination: "./public/uploads/",
-    filename: function(req, file, cb){
-       cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
-    }
- });
-
-
-
-
- const _upload = multer({
-  storage: multerS3({
-    s3:new AWS.S3(),
-    bucket:'younme',
-    acl: 'public-read', 
-    key(req,file,cd){
-      cd(null, `original/${+new Date()}${path.basename(file.originalname)}`)
-    }
-  }),
-  limits:{fileSize: 1000000},
-});
-
-
-
 const _setbackground =(req,res,next) => {
   try {
     console.log("req.file:", req.file);
@@ -283,9 +254,6 @@ const _setbackground =(req,res,next) => {
             console.log("albumSkima유뮤존재",result);
               console.log('wallpaperSchema 값이 있음',result.wallpaperSchema);
               const query = {'_code':result._code};
-              // if(result.wallpaperSchema!==null){
-              //   _fsRemove(result.wallpaperSchema.src);
-              // }
               
               // Alert 업데이트 
               Alert.updateOne(query,{$addToSet:{'dataSchema':{number: 1, crud:1}}},(err,result)=>{
@@ -330,21 +298,21 @@ const _setbackground =(req,res,next) => {
   
 }
 
-const _fsRemove = (img) => {
-  const directory = path.join(process.cwd()+'/public/uploads/'); 
-  console.log("directory:",directory);
-  console.log("image:",img);
-  fs.readdir(directory, (err, files) => {
-    if (err) throw err;
-    for (const file of files) {
-      if(file===img)
-      fs.unlink(path.join(directory, file), err => {
-        if (err) throw err;
-        else console.log('FS_이미지 삭제 성공');
-      });
-    }
-  });
-}
+// const _fsRemove = (img) => {
+//   const directory = path.join(process.cwd()+'/public/uploads/'); 
+//   console.log("directory:",directory);
+//   console.log("image:",img);
+//   fs.readdir(directory, (err, files) => {
+//     if (err) throw err;
+//     for (const file of files) {
+//       if(file===img)
+//       fs.unlink(path.join(directory, file), err => {
+//         if (err) throw err;
+//         else console.log('FS_이미지 삭제 성공');
+//       });
+//     }
+//   });
+// }
 
 
 
@@ -352,7 +320,6 @@ module.exports = {
     mainMethod: _main, 
     getHome:_getHome,
     postHome:_postHome,
-    upload:_upload,
     setbackground:_setbackground,
     checkLogin:_checkLogin
 }

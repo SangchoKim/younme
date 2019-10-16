@@ -78,7 +78,6 @@ export default function reducer(state = initialState, action) {
       case MAIN_GETDATA_SUCCESS:
         let {name,oppentname,relDay,img} = action.data.user_info;
         if(!img) img = defautImge;
-        // else img = '/uploads/'+ img;
         return (
           {...state,
             User_info:{
@@ -108,7 +107,6 @@ export default function reducer(state = initialState, action) {
       case MAIN_UPDATEALBUM_SUCCESS:
           let image = action.data.img;
           if(!image) image = defautImge;
-          // else image = '/uploads/'+ image;
           return (
             {...state,
               User_info:{
@@ -136,7 +134,6 @@ export default function reducer(state = initialState, action) {
        case MAIN_UPDATECAMERA_SUCCESS:
            let images = action.data.img;
            if(!images) images = defautImge;
-          //  else images = '/uploads/'+ images;
            return (
              {...state,
                User_info:{

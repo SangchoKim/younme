@@ -10,9 +10,8 @@ const second_signUp = require('../etc/method/signUp').second_signUp;
 const backtofirst = require('../etc/method/signUp').backtofirst;
 const third_signUp = require('../etc/method/signUp').third_signUp;
 const backtosecond = require('../etc/method/signUp').backtosecond;
-// const upload = require('../etc/method/eachPage').upload;
 const uploadAlbum = require('../etc/method/album').uploadAlbum;
-const modiAlbum = require('../etc/method/album').modiAlbum;
+// const modiAlbum = require('../etc/method/album').modiAlbum;
 const setbackground = require('../etc/method/eachPage').setbackground;
 const setalbum = require('../etc/method/album').setalbum;
 const mypage = require('../etc/method/mypage').mypage;
@@ -50,7 +49,19 @@ const upload = multer({
     bucket:'younme',
     acl: 'public-read', 
     key(req,file,cd){
-      cd(null, `original/${+new Date()}${path.basename(file.originalname)}`)
+      cd(null, `wallpaper/${+new Date()}${path.basename(file.originalname)}`)
+    }
+  }),
+  limits:{fileSize: 1000000},
+});
+
+const modiAlbum = multer({
+  storage: multerS3({
+    s3:new AWS.S3(),
+    bucket:'younme',
+    acl: 'public-read', 
+    key(req,file,cd){
+      cd(null, `sharedAlbum/${+new Date()}${path.basename(file.originalname)}`)
     }
   }),
   limits:{fileSize: 1000000},

@@ -37,7 +37,7 @@ const _alertFindOne = async(join_code, req, next) => {
 
 const _albumRead = (req,res,next) =>{
     try {
-      const order = req.user._id;
+    const order = req.user._id;
     const shared_code = req.user._code.codes;
     const img = req.query.image;
     const mode = req.query.order;
@@ -57,24 +57,23 @@ const _albumRead = (req,res,next) =>{
     
   }
 
-  const s = multer.diskStorage({
-    destination: "./public/uploadsAlbum/",
-    filename: function(req, file, cb){
-       cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
-    }
-  });
+  // const s = multer.diskStorage({
+  //   destination: "./public/uploadsAlbum/",
+  //   filename: function(req, file, cb){
+  //      cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+  //   }
+  // });
 
-  const _modiAlbum = multer({
-  storage: s,
-  limits:{fileSize: 10000000000},
-  });
+  // const _modiAlbum = multer({
+  // storage: s,
+  // limits:{fileSize: 10000000000},
+  // });
 
   const _updatealbum = (req,res,next) => {
-
     try {
-      console.log("req.file:", req.file);
+    console.log("req.file:", req.file);
     const order = req.user._id;
-    const _filename = req.file.filename;
+    const _filename = req.file.location;
     const _originalname = req.file.originalname;
     const _size = req.file.size;
     const shared_code = req.user._code.codes;
@@ -101,7 +100,8 @@ const _albumRead = (req,res,next) =>{
                 if(err) throw new Error();
                 else {
                   if(result.ok===1){
-                    _fsRemove(_originalname,order,res);
+                     _readAlbum(order,res,next);  
+                    // _fsRemove(_originalname,order,res);
                     console.log('공유앨범 수정완료');
                   
               }
@@ -136,7 +136,8 @@ const _albumRead = (req,res,next) =>{
                 if(err) throw new Error();
                 else {
                   if(result.ok===1){
-                    _fsRemove(img,order,res, next);
+                    // _fsRemove(img,order,res, next);
+                    _readAlbum(order,res,next);
                     console.log('공유앨범Delete완료');
                  
               }
@@ -149,28 +150,28 @@ const _albumRead = (req,res,next) =>{
     
   }
 
-  const _fsRemove = async(img,order,res,next) => {
+  // const _fsRemove = async(img,order,res,next) => {
 
-    try {
-      const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
-      console.log("directory:",directory);
-      await fs.readdir(directory, (err, files) => {
-        if (err) throw err;
-        for (const file of files) {
-          if(file===img)
-          fs.unlink(path.join(directory, file), err => {
-            if (err) throw err;
-            else console.log('FS_이미지 삭제 성공');
-          });
-        }
-      });
-      await _readAlbum(order,res,next);  
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
+  //   try {
+  //     const directory = path.join(process.cwd()+'/public/uploadsAlbum/'); 
+  //     console.log("directory:",directory);
+  //     await fs.readdir(directory, (err, files) => {
+  //       if (err) throw err;
+  //       for (const file of files) {
+  //         if(file===img)
+  //         fs.unlink(path.join(directory, file), err => {
+  //           if (err) throw err;
+  //           else console.log('FS_이미지 삭제 성공');
+  //         });
+  //       }
+  //     });
+  //     await _readAlbum(order,res,next);  
+  //   } catch (error) {
+  //     console.error(error);
+  //     next(error);
+  //   }
     
-  }
+  // }
 
   const _readAlbum = (order,res,next) => {
     try {
@@ -221,7 +222,7 @@ const _albumRead = (req,res,next) =>{
       if(file){
         const shared_code = req.user._code.codes;
         const order = req.user._id;
-        const _filename = req.file.filename;
+        const _filename = req.file.location;
         const _originalname = req.file.originalname;
         const _size = req.file.size;
         let _code = null;
@@ -336,7 +337,7 @@ module.exports = {
     albumRead: _albumRead,
     setalbum:_setalbum,
     uploadAlbum:_uploadAlbum,
-    modiAlbum:_modiAlbum,
+    // modiAlbum:_modiAlbum,
     updatealbum:_updatealbum,
 
 }

@@ -76,7 +76,7 @@ class Album extends PureComponent{
         console.log("src:", r);
         const setAlbumInfo = {image:r};
         console.log("setAlbumInfo:",setAlbumInfo);
-        this.setState({image: '/uploadsAlbum/'+ r});
+        this.setState({image: r});
         this.pre(setAlbumInfo)
         .then((r)=>{
           console.log("rL",r); 
