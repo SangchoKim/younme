@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as AlbumAction from '../store/modules/Album'
 
 
-class cropper extends PureComponent {
+class croppers extends PureComponent {
 
   _crop = () =>{
     // image in dataUrl
@@ -16,7 +16,7 @@ class cropper extends PureComponent {
   render() {
     return (
       <Cropper
-        ref={cropper}
+        ref='cropper'
         src={this.props.imageName}
         style={{height:"100%"}}
         // Cropper.js options
@@ -48,6 +48,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 })
     
-export default connect(mapStateToProps, mapDispatchToProps) (cropper); 
+export default connect(mapStateToProps, mapDispatchToProps) (croppers); 
 
 
