@@ -34,15 +34,17 @@ const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
 
-AWS.config.update({
-  accessKeyId:process.env.S3_ACCESS_KEY_ID,
-  secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
-  region:'ap-northeast-2',
-});
+// AWS.config.update({
+ 
+// });
 
 const upload = multer({
   storage: multerS3({
-    s3:new AWS.S3(),
+    s3:new AWS.S3({
+      accessKeyId:process.env.S3_ACCESS_KEY_ID,
+      secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
+      region:'ap-northeast-2',
+    }),
     bucket:'younme',
     acl: 'public-read', 
     key(req,file,cd){
