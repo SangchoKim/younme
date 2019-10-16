@@ -290,10 +290,9 @@ class Album extends PureComponent{
       const _modifyImgVal = document.getElementById('data').value;
       const myBlob = imageEncodeToBase64(_modifyImgVal,'image/jpeg');
       let id = this.state.imageName;
-      id = id.split('/');
       console.log("targetID", id);
       let data = new FormData();
-      data.append('myImage', myBlob, id[2]);
+      data.append('myImage', myBlob, id);
       const config = {
         headers: {
             'content-type': 'multipart/form-data'

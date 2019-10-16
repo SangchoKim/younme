@@ -4,18 +4,19 @@ import 'cropperjs/dist/cropper.css';
 import { connect } from 'react-redux';
 import * as AlbumAction from '../store/modules/Album'
 
+
 class cropper extends PureComponent {
 
   _crop = () =>{
     // image in dataUrl
-    const data = this.cropper.getCroppedCanvas().toDataURL();
+    const data = this.refs.cropper.getCroppedCanvas().toDataURL();
     this.props.onChange(data);
   }
  
   render() {
     return (
       <Cropper
-        ref={(ref)=>{this.cropper=ref;}}
+        ref={cropper}
         src={this.props.imageName}
         style={{height:"100%"}}
         // Cropper.js options
