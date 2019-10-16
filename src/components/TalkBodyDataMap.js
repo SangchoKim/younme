@@ -44,7 +44,7 @@ const TalkBodyDataMap = (props) => {
                               </div>
                               <div className="text-left ml-2">
                                 {data.comment&&<p>{data.comment}</p>}
-                                {data.gif&&data.gif[0].filename&&<img src={`/uploadsChat/${data.gif[0].filename}`}
+                                {data.gif&&data.gif[0].filename&&<img src={data.gif[0].filename}
                                 alt="Logo" width="100%" height="" className="img-fluid z-depth-1 p-2"/>}
                                 {data.gif&&data.gif[0].gifname&&
                                                                 <Lottie
@@ -57,7 +57,7 @@ const TalkBodyDataMap = (props) => {
                                 {data.gif&&data.gif[0].videoName&&
                                                                 <Player
                                                                 playsInline
-                                                                src={`/uploadsVideoChat/${data.gif[0].videoName}`}
+                                                                src={data.gif[0].videoName}
                                                                 />
                                 }
                                 {data.gif&&data.gif.length>=2&&
@@ -77,7 +77,7 @@ const TalkBodyDataMap = (props) => {
                                 {data.gif&&data.gif[0].voiceRecordname&&
                                     <div className="text-center">
                                       <audio controls style={{width:'250px'}}
-                                        src={`/uploadsVoiceRecodeChat/${data.gif[0].voiceRecordname}`}
+                                        src={data.gif[0].voiceRecordname}
                                       />
                                     </div>
                                 }

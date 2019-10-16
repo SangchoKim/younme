@@ -336,8 +336,8 @@ const _albumRead = (req,res,next) =>{
 module.exports = {
     albumRead: _albumRead,
     setalbum:_setalbum,
-    uploadAlbum:_uploadAlbum,
-    modiAlbum:_modiAlbum,
+    // uploadAlbum:_uploadAlbum,
+    // modiAlbum:_modiAlbum,
     updatealbum:_updatealbum,
 
 }

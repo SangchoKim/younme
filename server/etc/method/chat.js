@@ -8,41 +8,41 @@ const uuids = require('uuid/v1');
 
 const uid = uuids();
 
-const _voiceStorage = multer.diskStorage({
-  destination: "./public/uploadsVoiceRecodeChat/",
-  filename: function(req, file, cb){
-     cb(null,"VoiceRecode-" + Date.now() + path.extname(file.originalname));
-  }
-});
+// const _voiceStorage = multer.diskStorage({
+//   destination: "./public/uploadsVoiceRecodeChat/",
+//   filename: function(req, file, cb){
+//      cb(null,"VoiceRecode-" + Date.now() + path.extname(file.originalname));
+//   }
+// });
 
-const _storageVoiceRecodeChat = multer({
-  storage: _voiceStorage,
-  limits:{fileSize: 1000000},
-});
+// const _storageVoiceRecodeChat = multer({
+//   storage: _voiceStorage,
+//   limits:{fileSize: 1000000},
+// });
 
-const _storage = multer.diskStorage({
-  destination: "./public/uploadsVideoChat/",
-  filename: function(req, file, cb){
-     cb(null,"Video-" + Date.now() + path.extname(file.originalname));
-  }
-});
+// const _storage = multer.diskStorage({
+//   destination: "./public/uploadsVideoChat/",
+//   filename: function(req, file, cb){
+//      cb(null,"Video-" + Date.now() + path.extname(file.originalname));
+//   }
+// });
 
-const _storageVideoChat = multer({
-  storage: _storage,
-  limits:{fileSize: 1000000},
-});
+// const _storageVideoChat = multer({
+//   storage: _storage,
+//   limits:{fileSize: 1000000},
+// });
 
-const s = multer.diskStorage({
-  destination: "./public/uploadsChat/",
-  filename: function(req, file, cb){
-     cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
-  }
-});
+// const s = multer.diskStorage({
+//   destination: "./public/uploadsChat/",
+//   filename: function(req, file, cb){
+//      cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+//   }
+// });
 
-const _storageChat = multer({
-  storage: s,
-  limits:{fileSize: 1000000},
-});
+// const _storageChat = multer({
+//   storage: s,
+//   limits:{fileSize: 1000000},
+// });
 
 const _alertFindOne = async(join_code, req, next) => {
   try {
@@ -125,9 +125,9 @@ const _chatPhoto = async(req,res,next) => {
     console.log("req.file:", req.file);
     const shared_code = req.user._code.codes;
     const {sender,getter} =  req.query;
-    const {size,filename,originalname} = req.file;
-    console.log('chatPhoto 준비',shared_code,originalname,filename,size);
-    const image = {'size':size,'filename':filename,'originalname':originalname};
+    const {size,location,originalname} = req.file;
+    console.log('chatPhoto 준비',shared_code,originalname,location,size);
+    const image = {'size':size,'filename':location,'originalname':originalname};
     const query = {'_code':shared_code};
 
      // Alert 업데이트 
@@ -172,9 +172,9 @@ const _chatCamera = async(req,res,next) => {
     console.log("req.file:", req.file);
     const shared_code = req.user._code.codes;
     const {sender,getter} =  req.query;
-    const {size,filename,originalname} = req.file;
-    console.log('chatPhoto 준비',shared_code,originalname,filename,size);
-    const image = {'size':size,'filename':filename,'originalname':originalname};
+    const {size,location,originalname} = req.file;
+    console.log('chatPhoto 준비',shared_code,originalname,location,size);
+    const image = {'size':size,'filename':location,'originalname':originalname};
     const query = {'_code':shared_code};
 
      // Alert 업데이트 
@@ -264,9 +264,9 @@ const _chatVideo = async(req,res,next) => {
     console.log("req.file:", req.file);
     const shared_code = req.user._code.codes;
     const {sender,getter} =  req.query;
-    const {size,filename,originalname} = req.file;
-    console.log('chatVideo 준비',shared_code,originalname,filename,size);
-    const image = {'size':size,'videoName':filename,'originalname':originalname};
+    const {size,location,originalname} = req.file;
+    console.log('chatVideo 준비',shared_code,originalname,location,size);
+    const image = {'size':size,'videoName':location,'originalname':originalname};
     const query = {'_code':shared_code};
 
      // Alert 업데이트 
@@ -356,9 +356,9 @@ const _chatvoiceRecord = async(req,res,next) => {
     console.log("req.file:", req.file);
     const shared_code = req.user._code.codes;
     const {sender,getter} =  req.query;
-    const {size,filename,originalname} = req.file;
-    console.log('chatVoiceRecord 준비',shared_code,originalname,filename,size);
-    const image = {'size':size,'voiceRecordname':filename,'originalname':originalname};
+    const {size,location,originalname} = req.file;
+    console.log('chatVoiceRecord 준비',shared_code,originalname,location,size);
+    const image = {'size':size,'voiceRecordname':location,'originalname':originalname};
     const query = {'_code':shared_code};
 
     // Alert 업데이트 
@@ -488,11 +488,11 @@ module.exports = {
     initUser: _initUser,
     chatPhoto: _chatPhoto,
     chatCamera: _chatCamera,
-    storageChat: _storageChat,
+    // storageChat: _storageChat,
     chatGif: _chatGif,
     chatVideo:_chatVideo,
-    storageVideoChat:_storageVideoChat,
+    // storageVideoChat:_storageVideoChat,
     chatAlbum:_chatAlbum,
     chatvoiceRecord:_chatvoiceRecord,
-    storageVoiceRecodeChat:_storageVoiceRecodeChat,
+    // storageVoiceRecodeChat:_storageVoiceRecodeChat,
 }
