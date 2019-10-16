@@ -32,6 +32,7 @@ const {isLoggedIn,isNotLoggedIn} = require('./middleware');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
+const path = require('path');
 
 AWS.config.update({
   accessKeyId:process.env.S3_ACCESS_KEY_ID,
