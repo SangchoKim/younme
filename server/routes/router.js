@@ -29,6 +29,13 @@ const readcalendar = require('../etc/method/calendar').readcalendar;
 const deletecalendar = require('../etc/method/calendar').deletecalendar;
 const updatecalendar = require('../etc/method/calendar').updatecalendar;
 const {isLoggedIn,isNotLoggedIn} = require('./middleware');
+const AWS = require('aws-sdk');
+
+AWS.config.loadFromPath({
+  region:'ap-northeast-2',
+  accessKeyId:process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey:process.env.S3_SECRET_ACCESS_KEY,
+}); 
 
 router.get("/home", (req,res,next) => {
   getHome(req,res,next);
