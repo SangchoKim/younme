@@ -162,27 +162,49 @@ const _main = (req,res,next) =>{
             if(result){
               _img = result.wallpaperSchema.src;
             }
+            User.findOne({ 'id' : _oppentEmail })
+            .then((r)=>{
+              if(r){
+                console.log('oppent찾기 성공:',r,_img);
+                _oppentname = r.name;
+                res.json({result:1, 
+                  user_info:{
+                    name: _name,
+                    relDay: _relDay,
+                    img: _img,
+                    oppentname:_oppentname
+                  }
+                });
+              }else{
+                console.log('oppent찾기 실패');
+                res.json({result:0});
+              }
+            }).catch((err) => {
+              console.log(err);
+            });
+          }).catch(()=>{
+            User.findOne({ 'id' : _oppentEmail })
+            .then((r)=>{
+              if(r){
+                console.log('oppent찾기 성공:',r,_img);
+                _oppentname = r.name;
+                res.json({result:1, 
+                  user_info:{
+                    name: _name,
+                    relDay: _relDay,
+                    img: _img,
+                    oppentname:_oppentname
+                  }
+                });
+              }else{
+                console.log('oppent찾기 실패');
+                res.json({result:0});
+              }
+            }).catch((err) => {
+              console.log(err);
+            });
           })
-          User.findOne({ 'id' : _oppentEmail })
-          .then((r)=>{
-            if(r){
-              console.log('oppent찾기 성공:',r,_img);
-              _oppentname = r.name;
-              res.json({result:1, 
-                user_info:{
-                  name: _name,
-                  relDay: _relDay,
-                  img: _img,
-                  oppentname:_oppentname
-                }
-              });
-            }else{
-              console.log('oppent찾기 실패');
-              res.json({result:0});
-            }
-          }).catch((err) => {
-            console.log(err);
-          });
+         
         })
       })  
       }) 
