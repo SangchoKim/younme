@@ -142,11 +142,10 @@ class Album extends PureComponent{
   _imageDelete = async ({target}) => {
     console.log("targetID", target.id);
     let id = target.id;
-    id = id.split('/');
     const order = "DELETE"
     try{
       await window.confirm('정말로 삭제 하시겠습니까?')&&
-      await this._approchServer(id[2],order);
+      await this._approchServer(id,order);
      
     }catch(err){
       console.error("err:",err);
@@ -164,7 +163,7 @@ class Album extends PureComponent{
     console.log("targetID", target.id);
     const id = target.id;
     try{
-    let first = await this.setState({
+    await this.setState({
       imageName:id,
       imageNameShow: !this.state.imageNameShow,
       afters:true,

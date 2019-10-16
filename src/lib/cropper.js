@@ -15,7 +15,7 @@ class cropper extends PureComponent {
   render() {
     return (
       <Cropper
-        ref='cropper'
+        ref={cropper}
         src={this.props.imageName}
         style={{height:"100%"}}
         // Cropper.js options
