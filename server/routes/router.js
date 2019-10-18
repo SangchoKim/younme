@@ -88,8 +88,6 @@ router.post("/home", (req,res,next) => {
   postHome(req,res,next);
 })
 
-
-
 router.post("/first", isNotLoggedIn, (req,res,next) => {  
   first_signUp(req,res,next);
 })

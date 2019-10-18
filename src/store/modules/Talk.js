@@ -1,5 +1,11 @@
 import SocketIo from 'socket.io-client'; // 소켓
-const socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
+const prod = process.env.NODE_ENV === 'production';
+let socket_Chat = null;
+if(prod){
+   socket_Chat = SocketIo.connect(`http://localhost:80/chat`);
+}else{
+   socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
+}
 
 export const TALK_REQUEST = 'TALK_REQUEST';
 export const TALK_FAIL = 'TALK_FAIL';

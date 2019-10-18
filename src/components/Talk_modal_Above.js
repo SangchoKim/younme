@@ -2,12 +2,15 @@ import React, { PureComponent } from 'react';
 import {MDBBtn,MDBModalBody,MDBModal,MDBRow,MDBCol,MDBModalHeader,MDBListGroup,MDBListGroupItem,MDBModalFooter} from 'mdbreact';
 import SocketIo from 'socket.io-client';
 import Peer from 'simple-peer';
-
-const socket_Chat = SocketIo.connect(`http://localhost:5000/videochat`);
+const prod = process.env.NODE_ENV === 'production';
+let socket_Chat = null;
+if(prod){
+   socket_Chat = SocketIo.connect(`http://localhost:80/videochat`);
+}else{
+  socket_Chat = SocketIo.connect(`http://localhost:5000/videochat`);
+}
 
 let client = {};
-
-
 const video_container = {
     width: '500px',
     height: '380px',

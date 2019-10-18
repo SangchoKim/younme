@@ -15,5 +15,5 @@ ReactDOM.render(
      document.getElementById('root')
      
      );
-serviceWorker.unregister();
+serviceWorker.register();
 

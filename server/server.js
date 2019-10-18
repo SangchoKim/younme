@@ -1,6 +1,4 @@
 const express = require('express');
-const os = require('os');
-const cluster = require('cluster');
 const hpp = require('hpp');
 const helmet = require('helmet');
 const app = express();
@@ -21,12 +19,9 @@ const socketEvents = require('./socket/soket'); //
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv'); 
 const ColorHash = require('color-hash');
-
+const path = require('path');
 const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
-const numCPUs = os.cpus().length;
-
-
 
 const sessionMiddleware = session({
   secret: process.env.COOKIE_SECRET,
@@ -40,6 +35,11 @@ const sessionMiddleware = session({
   store: new FileStore()
 });
 
+if(prod){
+  sessionMiddleware.proxy=true;
+  // sessionMiddleware.cookie.secure=true;
+}
+
 dotenv.config();
 passportConfig();
 
@@ -47,11 +47,14 @@ if(prod){
  app.use(hpp());
  app.use(helmet());
  app.use(morgan('combined'));
+ console.log(path.resolve('./build'));
+ app.use(express.static(path.resolve('./build')));
  app.use(cors({
   origin:true,
   credentials:true,    
 }))
 }else{
+  app.use(express.static(path.resolve('./public')));
   app.use(morgan('dev'));
   app.use(cors({
     origin:true,
@@ -81,9 +84,11 @@ db();
 app.use('/api', router);
 app.use('/io', socketIoRouter);
 
-app.get('/',(req, res, next) => { // 404 처리 부분
-  res.status(200).send('YounMe Server');
-});
+if(prod){
+  app.get('/*',(req, res, next) => { 
+    res.sendFile(path.resolve('./build/index.html'));
+  });
+}
 
 app.use((req, res, next) => { // 404 처리 부분
     res.status(404).send('일치하는 주소가 없습니다!');
@@ -94,21 +99,19 @@ app.use((err, req, res, next) => { // 에러 처리 부분
     res.status(500).send('서버 에러!'); // 500 상태 표시 후 에러 메시지 전송
   });
 
-const port = 5000;
+let port = null;
+if(prod){
+  port = 80;
+}else{
+  port = 5000;
+}
 
-// if(cluster.isMaster){
-//   console.log('마스터 프로세스 아이디', process.pid);
-//   for (let i = 0; i < numCPUs; i++) {
-//     cluster.fork();
-//   }
-//   cluster.on('exit',(worker,code,signal)=>{
-//     console.log(worker.process.pid,'워커가 종료되었습니다.');
-//   })
-// }else{
-  console.log(process.pid,'워커 실행');
-  const server = app.listen(prod ==='production'? 5000 : port, () => console.log(`Server started on port ${port}`));
-  const io = SocketIo(server); // socket.io와 서버 연결하는 부분
-  socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
-// } 
+
+
+console.log(process.pid,'워커 실행');
+const server = app.listen(prod ==='production'? 80 : port, () => console.log(`Server started on port ${port}`));
+const io = SocketIo(server); // socket.io와 서버 연결하는 부분
+socketEvents(io, app, sessionMiddleware); // 아까 만든 이벤트 연결 -> 소켓 모듈로 전달
+
 
 

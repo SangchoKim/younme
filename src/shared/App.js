@@ -14,11 +14,14 @@ import { Mypage } from '../pages';
 import { Calendar } from '../pages';
 import { Loading } from '../pages';
 import SocketIo from 'socket.io-client';
-const socket_Alert = SocketIo.connect(`http://localhost:5000/alert`);
-
-
-
-
+const prod = process.env.NODE_ENV === 'production';
+let socket_Alert = null;
+if(prod){
+  socket_Alert = SocketIo.connect(`http://localhost:80/alert`);
+}else{
+  socket_Alert = SocketIo.connect(`http://localhost:5000/alert`);
+}
+ 
 class App extends React.Component {
 
     state = {
