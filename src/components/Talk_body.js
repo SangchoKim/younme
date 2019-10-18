@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 const prod = process.env.NODE_ENV === 'production';
 let socket_Chat = null;
 if(prod){
-   socket_Chat = SocketIo.connect(`http://localhost:80/chat`);
+   socket_Chat = SocketIo.connect(`http://54.180.150.138:80/chat`);
 }else{
    socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
 }

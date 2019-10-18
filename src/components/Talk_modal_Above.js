@@ -5,7 +5,7 @@ import Peer from 'simple-peer';
 const prod = process.env.NODE_ENV === 'production';
 let socket_Chat = null;
 if(prod){
-   socket_Chat = SocketIo.connect(`http://localhost:80/videochat`);
+   socket_Chat = SocketIo.connect(`http://54.180.150.138/videochat`);
 }else{
   socket_Chat = SocketIo.connect(`http://localhost:5000/videochat`);
 }
