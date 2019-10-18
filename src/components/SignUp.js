@@ -69,14 +69,18 @@ class SignUp extends PureComponent {
   }
 
   componentDidUpdate(){
-    const {mainState,result,errMessage,reason} = this.props;
+    let {mainState,result,errMessage,reason} = this.props;
     console.log(mainState,result,reason);
     if(mainState==="isSuccess"){
       if(result === 2){
         alert(reason);
+        result = 10;
       }else if(result === 5){
         alert('상대방이 가입하기 전입니다.');
-      }else{
+        result = 10;
+      }else if(result === 10){
+        console.log('Pending');
+      }else {
         const url = '/main';
         this.props.history.push({
               pathname: url,
