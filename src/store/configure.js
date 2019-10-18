@@ -9,7 +9,7 @@ const configure = () => {
   const sagaMiddleware = createSagaMiddleware(); 
   const middlewares = [sagaMiddleware];
   const devTools = compose(applyMiddleware(...middlewares), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-  const store = prod ? createStore(modules) : createStore(modules, devTools);
+  const store = prod ? createStore(modules, compose(applyMiddleware(...middlewares))) : createStore(modules, devTools);
   sagaMiddleware.run(rootSaga);
   return store;
 }
