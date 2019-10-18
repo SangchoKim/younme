@@ -85,8 +85,8 @@ app.use('/api', router);
 app.use('/io', socketIoRouter);
 
 if(prod){
-  app.get('/*',(req, res, next) => { 
-    res.sendFile(path.resolve('./build/index.html'));
+  app.use('/',(req, res, next) => { 
+    res.status(200).sendFile(path.resolve('./build/index.html'));
   });
 }
 
@@ -105,8 +105,6 @@ if(prod){
 }else{
   port = 5000;
 }
-
-
 
 console.log(process.pid,'워커 실행');
 const server = app.listen(prod ==='production'? 80 : port, () => console.log(`Server started on port ${port}`));

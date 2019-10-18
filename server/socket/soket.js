@@ -30,7 +30,7 @@ module.exports = (io, app, sessionMiddleware) => {
   initAlert.on('connection', async(socket,next) => {
     const join_code = socket.request.user._code.codes;
     const req = socket.request;
-
+    
         if(join_code===initAlert.adapter.rooms){
           console.log('이미 조인되어 있는 룸이 존재합니다.');
         }else{

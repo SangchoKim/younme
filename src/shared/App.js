@@ -17,7 +17,7 @@ import SocketIo from 'socket.io-client';
 const prod = process.env.NODE_ENV === 'production';
 let socket_Alert = null;
 if(prod){
-  socket_Alert = SocketIo.connect(`http://54.180.150.138:80/alert`);
+  socket_Alert = SocketIo.connect(`http://54.180.150.138/alert`);
 }else{
   socket_Alert = SocketIo.connect(`http://localhost:5000/alert`);
 }
