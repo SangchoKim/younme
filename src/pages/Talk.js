@@ -75,8 +75,7 @@ class Talk extends PureComponent{
     )
   }
 }
-    
-// props 값으로 넣어 줄 상태를 정의해줍니다.
+
 const mapStateToProps = (state) => ({
   title: state.Talk.Title.title,
   back: state.Talk.Title.back,
@@ -91,7 +90,6 @@ const mapStateToProps = (state) => ({
   imgUrl: state.Talk.Body.imgUrl
 });
 
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
 
 })

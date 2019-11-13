@@ -162,7 +162,7 @@ SignUp.defaultProps = {
   name: 'You&Me 시작하기'
 };
 
-// props 값으로 넣어 줄 상태를 정의해줍니다.
+
 const mapStateToProps = (state) => ({
   mainState: state.Main.mainState,
   errMessage: state.Main.errMessage,
@@ -170,8 +170,6 @@ const mapStateToProps = (state) => ({
   reason: state.Main.reason,
 });
 
-
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
   mainRequest: (userInfo) => dispatch(MainAction.mainRequest(userInfo)),
   mainOut: () => dispatch(MainAction.mainOut()),

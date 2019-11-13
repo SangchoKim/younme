@@ -211,9 +211,10 @@ const _calendarSkimaHaveOrNot = async(r,req,res,next) => {
             'memo':memo,
             'category':parseInt(category),
           }}},{upsert:true, new: true},(err,result)=>{
-        if(err) throw new Error();
-        else {
+        if(result.ok){
           _calendarRead(req.user._code,res,next);
+        } else {
+          console.error(err);
         }
         })
   }else{

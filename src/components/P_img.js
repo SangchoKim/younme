@@ -353,9 +353,6 @@ class P_img extends PureComponent{
 }
 }
 
-
-
-// props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
   mypageState: state.Mypage.mypageState,
   title: state.Mypage.Title.title,
@@ -382,7 +379,6 @@ const mapStateToProps = (state) => ({
   oppentEmail:state.Mypage.user_info.oppentEmail
 });
   
-  // props 값으로 넣어 줄 액션 함수들을 정의해줍니다
   const mapDispatchToProps = (dispatch) => ({
     mypageIntroRequest: (ex) => dispatch(MypageAction.mypageIntroRequest(ex)),
     mypageBirtdayRequest: (day) => dispatch(MypageAction.mypageBirtdayRequest(day)),

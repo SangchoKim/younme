@@ -89,10 +89,6 @@ class Calendar_modal extends PureComponent{
                                 <hr color="black" style={{borderBlockColor:"30"}}></hr>
                                 <MDBListGroup className=" border-dark" >
                                   <MDBListGroupItem style={this.props.list1}>
-                                      <span>하루 종일</span>
-                                      <Switch onChange={this.handleChanged} checked={this.state.checked} />
-                                  </MDBListGroupItem>
-                                  <MDBListGroupItem style={this.props.list1}>
                                       <span>날짜</span>
                                     <DataRangePicker
                                       dateChange={this._dateChange}
@@ -128,7 +124,7 @@ class Calendar_modal extends PureComponent{
                         </MDBModalBody>    
                   <MDBModalFooter>
                     <MDBBtn color="secondary" onClick={this.props.t}>닫기</MDBBtn>
-                    <MDBBtn type="submit" color="primary" onClick={this.onClick}>등록</MDBBtn>
+                    <MDBBtn type="submit" color="primary">등록</MDBBtn>
                 </MDBModalFooter>
             </MDBModal>      
             </React.Fragment>
@@ -136,12 +132,10 @@ class Calendar_modal extends PureComponent{
     }
 }
 
-// props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
  
 });
 
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
   setCalendarData: (startDate,endDate) => dispatch(calendarAction.setCalendarData(startDate,endDate)),
   setCalendarTime: (name,val) => dispatch(calendarAction.setCalendarTime(name,val)),

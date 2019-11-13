@@ -38,12 +38,11 @@ class croppers extends PureComponent {
   }
 }
 
-// props 값으로 넣어 줄 상태를 정의해줍니다.
+
 const mapStateToProps = (state) => ({
  
 });
 
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
 
 })

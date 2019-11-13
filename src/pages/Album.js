@@ -388,8 +388,7 @@ class Album extends PureComponent{
     )
   }
 }
-    
-// props 값으로 넣어 줄 상태를 정의해줍니다.
+
 const mapStateToProps = (state) => ({
   title: state.Album.Title.title,
   back: state.Album.Title.back,
@@ -403,7 +402,7 @@ const mapStateToProps = (state) => ({
   imgUrl: state.Album.Body.imgUrl,
 });
 
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
+
 const mapDispatchToProps = (dispatch) => ({
   _setAlbum: (setAlbumInfo) => dispatch(AlbumAction.setAlbum(setAlbumInfo))
 })

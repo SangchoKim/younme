@@ -29,6 +29,31 @@ class Calendar extends PureComponent{
   _onsubmit = (e) => {
     e.preventDefault();
       const {startDate,endDate,startTime,endTime,sub,memo,insertCalendar,category} = this.props;
+      if(!sub){
+        alert('제목을 입력해주세요.');
+        return;
+      }
+
+      if(!category){
+        alert('유형을 선택해주세요.');
+        return;
+      }
+      
+      if(!startDate){
+        alert('날짜를 선택해주세요.');
+        return;
+      }
+
+      if(!startTime){
+        alert('시작시간을 선택해주세요.');
+        return;
+      }
+
+      if(!endTime){
+        alert('종료시간을 선택해주세요.');
+        return;
+      }
+
       const data = {
         startDate:startDate,
         endDate:endDate,
@@ -86,7 +111,6 @@ class Calendar extends PureComponent{
   }
 }
     
-// props 값으로 넣어 줄 상태를 정의해줍니다.
 const mapStateToProps = (state) => ({
   title: state.Calendar.Title.title,
   back: state.Calendar.Title.back,
@@ -111,7 +135,6 @@ const mapStateToProps = (state) => ({
   errMessage: state.Calendar.errMessage,
 });
 
-// props 값으로 넣어 줄 액션 함수들을 정의해줍니다
 const mapDispatchToProps = (dispatch) => ({
   setCalendarReads: () => dispatch(calendarAction.setCalendarReads()),
   insertCalendar: (data) => dispatch(calendarAction.insertCalendar(data)),
