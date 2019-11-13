@@ -15,9 +15,6 @@ import React,{PureComponent} from 'react';
   }
 
   onChange = (e) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
-    console.log(e.target.checked);
     if(e.target.name==="man"||e.target.name==="women"){
       this.setState({[e.target.name]: e.target.checked});   
     }else{
@@ -32,18 +29,12 @@ import React,{PureComponent} from 'react';
     const d =_day.format('YYYY-MM-DD');
     const _name = name;
     this.setState({[_name]:d});
-    console.log(name,d);
   }
 
   getdata = (e) => {
     e.preventDefault();
     const url = '/';
     const { man, women, name, birthday, relday } = this.state;
-    console.log("man:",man);
-    console.log("women:",women);
-    console.log("name:",name);
-    console.log("birthday:",birthday);
-    console.log("relday:",relday);
     if(!man&&!women){
       alert('성별을 체크해주세요');
       return;
@@ -77,16 +68,14 @@ import React,{PureComponent} from 'react';
                                               })})
     .then(res => res.json())
     .then((res) =>{
-      console.log(res.result);
       if(res.result===1){
-      console.log('move to main');
       alert('회원가입이 완료되었습니다. 로그인을 해주세요');
       this.props.history.push({
         pathname: url,
         state: { DonotBacktoPage: true}
       });
       }else{
-        console.log(res.error);
+        console.error(res.error);
       }
      });
   }
@@ -101,17 +90,14 @@ import React,{PureComponent} from 'react';
                         body: JSON.stringify({'order':'readmyCode'})})
     .then(res => res.json())
     .then((res) =>{
-      console.log(res);
       if(res.result===1){
-      console.log('read myCode');
       const mycode = res.mycode;
-      console.log(mycode);
       this.props.history.push({
         pathname: url,
         state: { mycode: mycode}
         });
       }else{
-        console.log(res.error);
+        console.error(res.error);
       }
      }); 
   }

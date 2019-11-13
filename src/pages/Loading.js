@@ -15,7 +15,6 @@ class Loading extends PureComponent{
     componentDidMount = () => {
     const url = '/main'; 
     this.lodings = setTimeout( () => {
-      console.log("animation done");
       this.props.history.push({
         pathname: url
       });    

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 const prod = process.env.NODE_ENV === 'production';
 let socket_Chat = null;
 if(prod){
-   socket_Chat = SocketIo.connect(`http://54.180.150.138/chat`);
+   socket_Chat = SocketIo.connect(`http://13.125.221.14/chat`);
 }else{
    socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
 }
@@ -73,8 +73,6 @@ class Talk_body extends PureComponent{
       e.preventDefault();
       const name = e.target.name;
       const val = e.target.value;
-      console.log('_onchange_setMessage',name,val);
-
       await this.setState((pre)=>({
           ...pre,
           [name]: val
@@ -85,7 +83,6 @@ class Talk_body extends PureComponent{
       const {chatDataRequest} = this.props;
       if( limit===10){
         document.documentElement.scrollTop = parseInt( document.documentElement.scrollHeight) - parseInt(document.documentElement.clientHeight);
-        console.log( document.documentElement.scrollTop);
       } 
       chatDataRequest(limit);   
     }
@@ -95,7 +92,6 @@ class Talk_body extends PureComponent{
       // window.scrollY = 페이지의 가장 위쪽에 위치
       // document.documentElement.clientHeight = 페이지 위쪽부터 페이지 밑쪽까지
       // document.documentElement.scrollHeight = 페이지 가장 위쪽에서 가장 밑쪽까지
-      console.log(parseInt(window.scrollY) , document.documentElement.clientHeight, document.documentElement.scrollHeight);
       if(parseInt(window.scrollY)===0){
         let {num,length} = this.props;
         if(length>=num){

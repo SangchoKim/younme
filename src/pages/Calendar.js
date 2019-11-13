@@ -38,7 +38,6 @@ class Calendar extends PureComponent{
         memo:memo,
         category:category,
       }
-      console.log(data);
       insertCalendar(data);
       this.setState({
         modal:!this.state.modal

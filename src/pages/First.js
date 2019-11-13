@@ -12,8 +12,6 @@ class First extends PureComponent{
   }
 
   onChange = (e) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
     this.setState({[e.target.name]:e.target.value});
   }
 
@@ -21,7 +19,6 @@ class First extends PureComponent{
     e.preventDefault();
     const url = '/second';
     const { password, email } = this.state;
-    console.log("email:",email,"password:",password);
     if(!email){
       alert('이메일을 입력해주세요');
       return;
@@ -38,9 +35,7 @@ class First extends PureComponent{
                         body: JSON.stringify({'password':password,'email':email})})
     .then(res => res.json())
     .then((res) =>{
-      console.log(res);
       if(res.result===1){
-      console.log('move to second')
       const _mycode = res.mycode;
         if(_mycode)
           this.props.history.push({
@@ -52,7 +47,7 @@ class First extends PureComponent{
             pathname: url
           });
       }else{
-        console.log(res.error);
+        console.error(res.error);
       }
      });
   }
@@ -71,12 +66,10 @@ class First extends PureComponent{
                         body: JSON.stringify({'order':'deleteSession'})})
     .then(res => res.json())
     .then((res) =>{
-      console.log(res);
       if(res.result===1){
-      console.log('delete to session')
       this.props.history.push(url);
       }else{
-        console.log(res.error);
+        console.error(res.error);
       }
      }); 
   }

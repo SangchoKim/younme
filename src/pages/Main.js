@@ -65,7 +65,7 @@ class Main extends PureComponent{
           })
           return console.log('back');
         default:
-          console.log('디폴트')
+          console.log('default')
     }
   }
 
@@ -81,8 +81,6 @@ class Main extends PureComponent{
     e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
-    console.log(name);
-    console.log(value);
     this.setState(prevState => ({
       camera:{
         ...prevState.camera,
@@ -98,7 +96,6 @@ class Main extends PureComponent{
       const formData = new FormData();
       let file = this.state.realfile;
       formData.append('myImage',file);
-      console.log('Album 구역입니다.');
       if(!file){
         alert('사진을 선택해주세요');
         return;
@@ -107,7 +104,6 @@ class Main extends PureComponent{
       this.setState({modal:!this.state.modal});
       
     }else{
-      console.log('Camera 구역입니다.');
       const {myImage,imageData} = this.state.camera;
       const {mainUpdateCameraRequest} = this.props;
       if(!imageData){

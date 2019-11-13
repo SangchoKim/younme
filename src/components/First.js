@@ -14,13 +14,11 @@ import'./App.css';
   class First extends PureComponent {
 
     componentDidMount() {
-        console.log("props.location:", this.props.location);
         if (this.props.location.state) {
             const _email = this.props.location.state.email;
             this
                 .props
                 ._setState(_email);
-            console.log("reloadEmail:", _email);
         }
     }
 

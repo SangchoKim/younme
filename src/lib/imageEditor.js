@@ -2,7 +2,7 @@ import ImageEditor from '@toast-ui/react-image-editor'
 import React from 'react';
 
 const _imageName = () => {
-  console.log(this.refs.imageEditor.toDataURL());
+  
 }
 
 

@@ -22,7 +22,6 @@ const TalkBodyDataMap = (props) => {
                   props.log.map(data => {
                     let paths = null;
                     if(data.gif&&data.gif[0].gifname){
-                      console.log("data.gif[0].gifname",data.gif[0].gifname);
                       if(data.gif[0].gifname==="annimation1"){
                         paths = animation1;
                       }else if(data.gif[0].gifname==="annimation2"){

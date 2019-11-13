@@ -1,8 +1,8 @@
-import SocketIo from 'socket.io-client'; // 소켓
+import SocketIo from 'socket.io-client'; 
 const prod = process.env.NODE_ENV === 'production';
 let socket_Chat = null;
 if(prod){
-   socket_Chat = SocketIo.connect(`http://54.180.150.138/chat`);
+   socket_Chat = SocketIo.connect(`http://13.125.221.14/chat`);
 }else{
    socket_Chat = SocketIo.connect(`http://localhost:5000/chat`);
 }
@@ -101,10 +101,7 @@ const initialState = {
     errMessage:null,
   };
 
-// 리듀서를 만들어서 내보내줍니다.
 export default function reducer(state = initialState, action) {
-    // 리듀서 함수에서는 액션의 타입에 따라 변화된 상태를 정의하여 반환합니다.
-    // state = initialState 이렇게 하면 initialState 가 기본 값으로 사용됩니다.
     switch(action.type) {
       case TALK_REQUEST:
         return {
@@ -285,6 +282,6 @@ export default function reducer(state = initialState, action) {
           talkState:'isReady',
         };
       default:
-        return state; // 아무 일도 일어나지 않으면 현재 상태를 그대로 반환합니다.
+        return state; 
     }
   }

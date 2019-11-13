@@ -131,7 +131,7 @@ class Talk_modal_bottom extends PureComponent{
           })
           return console.log('back');
       default:
-          console.log('디폴트')
+          console.log('default')
     }
   }
 
@@ -144,19 +144,15 @@ class Talk_modal_bottom extends PureComponent{
                         })
     .then(res => res.json())
     .then(res => {
-      console.log(res);
       if(res.result===1){
       let _img = res.img;
       if(_img){
-        console.log("img:",_img);
         const r = _img.map((_img)=>{return _img.src});
-        console.log("_setAlbume:",r);
         this.setState(prev=>({
           ...prev,
           image: r
         }));
       }else{
-        console.log("공유앨범 없음 -> default 이미지 출력");
       }
       
     }else if(res.result===5){

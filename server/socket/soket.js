@@ -23,6 +23,7 @@ module.exports = (io, app, sessionMiddleware) => {
   
   app.use((socket,next) => { // 익스프레스 미들웨어를 소켓IO에서 쓰는 방법
     sessionMiddleware(socket.request, socket.request.res, next);
+    next();
   });
 
   

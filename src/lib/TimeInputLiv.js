@@ -12,11 +12,9 @@ class TimeInputLiv extends PureComponent{
      }
 
      componentDidUpdate(){
-        console.log("componentDidUpdate_TimeInputLiv");
         const {timeChange,timeName}=this.props;
         const {timeVal} = this.state;
         timeChange(timeName,timeArrange(timeVal));
-        console.log(timeName,timeArrange(timeVal));
     }
 
     handleChange = (time) =>{

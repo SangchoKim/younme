@@ -65,20 +65,17 @@ export default function reducer(state = initialState, action) {
     
     switch(action.type) {
       case SETCALENDARDATA:
-        console.log(SETCALENDARDATA);
         return {
               ...state,
               startDate:action.payload.startDate,
               endDate:action.payload.endDate,
         };
       case SETCALENDARTIME:
-          console.log(SETCALENDARTIME);
         return {
           ...state,
           [action.payload.name]:action.payload.val,
         };
         case SETSUBMEMO:
-            console.log(SETSUBMEMO,state);
           return {
             ...state,
             sub: action.payload.sub,

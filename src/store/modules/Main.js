@@ -25,7 +25,6 @@ export const mainUpdateCameraRequest = (file) => ({ type: MAIN_UPDATECAMERA_REQU
 
 export const mainOut = () => ({ type: MAIN_OUT,data:null});
 
-// 모듈의 초기 상태를 정의합니다.
 const initialState = {
       mainState:'isReady',
       comment:'',
@@ -40,8 +39,6 @@ const initialState = {
       }, 
   };
 
-  
-// 리듀서를 만들어서 내보내줍니다.
 export default function reducer(state = initialState, action) {
   
     switch(action.type) {

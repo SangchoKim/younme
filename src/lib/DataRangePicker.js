@@ -13,7 +13,6 @@ class DataRangePicker extends PureComponent{
     }
 
     componentDidUpdate(){
-        console.log("componentDidUpdate_DataRangePicker");
         const {startDate,endDate} = this.state;
         const data = dataArrange(startDate,endDate);
         this.props.dateChange(data.startDate,data.endDate);

@@ -42,8 +42,6 @@ class SignUp extends PureComponent {
    }
 
    onChange = (e) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
     this.setState({[e.target.name]:e.target.value});
   }
 
@@ -70,7 +68,6 @@ class SignUp extends PureComponent {
 
   componentDidUpdate(){
     let {mainState,result,errMessage,reason} = this.props;
-    console.log(mainState,result,reason);
     if(mainState==="isSuccess"){
       if(result === 2){
         alert(reason);
@@ -79,7 +76,6 @@ class SignUp extends PureComponent {
         alert('상대방이 가입하기 전입니다.');
         result = 10;
       }else if(result === 10){
-        console.log('Pending');
       }else {
         const url = '/main';
         this.props.history.push({
@@ -87,7 +83,6 @@ class SignUp extends PureComponent {
         });
       }
     }else if("isFail"){
-      console.log(errMessage);
     }
   }
 

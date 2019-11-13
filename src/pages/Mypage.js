@@ -29,7 +29,6 @@ class Mypage extends PureComponent{
   }
 
   _onChangePage = (word) => {
-    console.log(word);
     if(word === 'stateMessage')
     this.props.stateMessage();
     else if(word === 'gender')
@@ -40,7 +39,6 @@ class Mypage extends PureComponent{
 
   render(){
     const {mypageState} = this.props;
-    console.log(mypageState);
     let _title , _comment = null;
 
     if(this.props.modes ==='stateMessage'){

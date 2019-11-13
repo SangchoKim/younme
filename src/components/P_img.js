@@ -79,7 +79,6 @@ class P_img extends PureComponent{
     }
   
   toggle = (e) => {
-    console.log(e.target.id);
     let _mode = e.target.id;
     this.props.onChangePage(_mode);
     this.setState({
@@ -91,8 +90,6 @@ class P_img extends PureComponent{
   _onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(name);
-    console.log(value);
     this.setState(prevState => ({
       user_info: {
           ...prevState.user_info,
@@ -105,7 +102,6 @@ class P_img extends PureComponent{
     e.preventDefault();
     const _gender = e.target.name;
     const {mypageGenderRequest} = this.props;
-    console.log("gender",_gender);
     mypageGenderRequest(_gender);
     this.setState({modal:!this.state.modal});
   }
@@ -114,7 +110,6 @@ class P_img extends PureComponent{
     e.preventDefault();
     const ex = this.state.user_info.intro;
     const {mypageIntroRequest} = this.props;
-    console.log("자기소개",ex);
     mypageIntroRequest(ex);
     this.setState({modal:!this.state.modal});
   }
@@ -122,7 +117,6 @@ class P_img extends PureComponent{
   onChangebirth = (e) => {
     e.preventDefault();
     const birthday = this.state.user_info.birthday;
-    console.log("생일:", birthday);
     const {mypageBirtdayRequest} = this.props;
     mypageBirtdayRequest(birthday);
     this.setState({modal:!this.state.modal});
@@ -130,7 +124,6 @@ class P_img extends PureComponent{
 
   logout = (e) => {
     e.preventDefault();
-    console.log("logout");
     const url = '/';
     e.preventDefault();
       window.confirm('정말로 로그아웃 하시겠습니까?')&&
@@ -142,14 +135,12 @@ class P_img extends PureComponent{
                           })
       .then(res => res.json())
       .then((res) =>{
-        console.log(res);
         if(res.result===1){
-        console.log('move to home')
         this.props.history.push({
               pathname: url,
         });
         }else{
-          console.log(res.error);
+          console.error(res.error);
         }
        })
   }

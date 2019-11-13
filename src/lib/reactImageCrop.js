@@ -16,8 +16,6 @@ class reactImageCrop extends PureComponent {
   }
 
   _crop = (crop) =>{
-    // image in dataUrl
-    console.log(crop);
     this.setState({crop:crop});
     this.props.onChange(crop, this.imageRef);
   }

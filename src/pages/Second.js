@@ -13,16 +13,12 @@ class Second extends PureComponent{
   }
 
   onChange = (e) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
     this.setState({[e.target.name]: e.target.value});
   }
 
   getdata = (e) => {
     e.preventDefault();
     const { invecode, mycode, oppentEmail } = this.state;
-    console.log("mycode:",mycode);
-    console.log("invecode:",invecode);
     if(!invecode){
       alert('전달받은 초대코드를 먼저 입력해주세요');
       return;
@@ -39,9 +35,7 @@ class Second extends PureComponent{
                         body: JSON.stringify({'invecode':invecode,'mycode':mycode,'oppentEmail':oppentEmail})})
     .then(res => res.json())
     .then((res) =>{
-      console.log(res.result);
       if(res.result===1){
-      console.log('move to thired')
       this.props.history.push('/third');
       }else if(res.result===10){
         alert('전달받은 초대코드를 다시 한번 확인해주세요.');
@@ -70,17 +64,14 @@ class Second extends PureComponent{
                         body: JSON.stringify({'order':'readEmail'})})
     .then(res => res.json())
     .then((res) =>{
-      console.log(res);
       if(res.result===1){
-      console.log('read email');
       const email = res.email;
-      console.log(email);
       this.props.history.push({
         pathname: url,
         state: { email: email}
         });
       }else{
-        console.log(res.error);
+        console.error(res.error);
       }
      }); 
   }
@@ -92,7 +83,6 @@ class Second extends PureComponent{
   }
 
   _changeCode = (code) =>{
-    console.log("_changeCode:",code);
     this.setState({
       mycode:code
     })

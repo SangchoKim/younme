@@ -19,7 +19,6 @@ class DataPicker extends PureComponent{
     _renderDay = (day) => {
         const {datas} = this.props;
         const _date = datas.map((d)=>{return d.s_date});
-        console.log("_renderDay_DataPicker",_date);
         return _date.some(_date => isSameDay(moment(_date),moment(day))); 
     }
 
@@ -29,7 +28,6 @@ class DataPicker extends PureComponent{
       const {date}= this.state;
       const {datas}= this.props;
       const clickedDates = moment(date).format("YYYY-MM-DD");
-      console.log("_read_clickedDates",clickedDates,datas);
       this._readData(datas,clickedDates).then((result)=>{
           if(result.length!==0){
               this._set(true, result);
@@ -43,7 +41,6 @@ class DataPicker extends PureComponent{
   }
 
     _set = async(c, result) => {
-      console.log("result",c,result);
       if(await c){
            this.setState({
               isOpen : true,
@@ -61,7 +58,6 @@ class DataPicker extends PureComponent{
       const result = await data.filter(data=>{
           return data.s_date === clickedDates ? data : null;
       });
-      console.log("_readDatasss",result);
       return result;  
   }
 

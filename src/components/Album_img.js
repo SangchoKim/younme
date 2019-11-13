@@ -29,7 +29,6 @@ class Album_img extends PureComponent{
                       <React.Fragment>
                       <MDBRow style={font}> 
                       {this.props.imgUrls.map((image,index) => {
-                      console.log("_imgUrls:",image);
                       return <MDBCol md="4" key={index+image}>
                               <div className="view overlay">
                               <img src={image}  onClick={() => this.setState({ isOpen: true })} 

@@ -33,13 +33,11 @@ class Calendar_modal extends PureComponent{
   }
 
   _dateChange = (startDate,endDate) => {
-    console.log('_dataChange_Calendar',startDate,endDate);
     const {setCalendarData} = this.props;
     setCalendarData(startDate,endDate);
   }
 
   _timeChange = (key,val) => {
-    console.log('_timeChange_Calendar',key,val);
     const {setCalendarTime} = this.props;
     setCalendarTime(key,val);
   }
@@ -60,8 +58,6 @@ class Calendar_modal extends PureComponent{
     e.preventDefault();
     const name = e.target.name;
     const val = e.target.value;
-   
-    console.log('_onchange_calendar',name,val); 
     await this.setState((pre)=>({
         ...pre,
         [name]: val

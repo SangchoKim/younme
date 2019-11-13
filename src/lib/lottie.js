@@ -1,7 +1,6 @@
 import lottie from 'lottie-web';
 
 const _lottie = (element) =>{
-    console.log(element);
     if(element==='animation1'){
         _gifForth(element);
     }else if(element==='animation2'){
@@ -14,7 +13,6 @@ const _lottie = (element) =>{
 }
 
 const _gifForth = (element) => {
-    console.log("_gifForth",element);
     lottie.loadAnimation({
         container: document.getElementById(element), // the dom element that will contain the animation
         renderer: 'svg',
@@ -25,7 +23,6 @@ const _gifForth = (element) => {
 }
 
 const _gifFirst = (element) =>{
-    console.log("_gifFirst",element);
     lottie.loadAnimation({
         container: document.getElementById(element), // the dom element that will contain the animation
         renderer: 'svg',
@@ -36,7 +33,6 @@ const _gifFirst = (element) =>{
 }
 
 const _gifSecond = (element) =>{
-    console.log("_gifSecond",element);
     lottie.loadAnimation({
         container: document.getElementById(element), // the dom element that will contain the animation
         renderer: 'svg',
@@ -47,7 +43,6 @@ const _gifSecond = (element) =>{
 }
 
 const _gifThird = (element) =>{
-    console.log("_gifThird",element);
     lottie.loadAnimation({
         container: document.getElementById(element), // the dom element that will contain the animation
         renderer: 'svg',

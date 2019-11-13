@@ -87,6 +87,7 @@ app.use('/io', socketIoRouter);
 if(prod){
   app.use('/',(req, res, next) => { 
     res.status(200).sendFile(path.resolve('./build/index.html'));
+    next();
   });
 }
 

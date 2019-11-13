@@ -13,7 +13,6 @@ const font = {
 class Second extends PureComponent{ 
 
   componentDidMount (){      
-      console.log("mycode:",this.props.code);
       fetch("/api/secondCodeSave",{method: "POST",
       headers: {
         'Accept': 'application/json',
@@ -22,14 +21,12 @@ class Second extends PureComponent{
       body: JSON.stringify({'mycode':this.props.code})})
       .then(res => res.json())
       .then((res)=>{
-      console.log(res);
       if(res.result===1){
         if(res.code)
         this.props._setState(res.code,true);
         else
         this.props._setState(this.props.code,false);
         }else{
-          console.log("code 아직 저장 안됨");
           this.props._setState(this.props.code,false);
         } 
       })

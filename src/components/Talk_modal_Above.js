@@ -5,7 +5,7 @@ import Peer from 'simple-peer';
 const prod = process.env.NODE_ENV === 'production';
 let socket_Chat = null;
 if(prod){
-   socket_Chat = SocketIo.connect(`http://54.180.150.138/videochat`);
+   socket_Chat = SocketIo.connect(`http://13.125.221.14/videochat`);
 }else{
   socket_Chat = SocketIo.connect(`http://localhost:5000/videochat`);
 }
@@ -52,12 +52,10 @@ class Talk_modal_Above extends PureComponent{
         let peer = new Peer({initiator:(type === 'init')?true:false,stream:stream, trickle:false});
     
         peer.on('stream', (stream) => {
-          console.log('streamStart',stream);
           CreateVideo(stream);
         })
     
         peer.on('close', () => {
-          console.log('close');
           peer.destroy();
         })
       return peer
@@ -65,12 +63,10 @@ class Talk_modal_Above extends PureComponent{
 
       // for peer of type init
       const MakePeer = () => {
-        console.log('MakePeer');
         client.gotAnswer = false;
         let peer = InitPeer('init');
         peer.on('signal', (data) => {
           if(!client.gotAnswer){
-            console.log('MakePeer_signal');
             socket_Chat.emit('Offer', data);
           }
         })
@@ -80,9 +76,7 @@ class Talk_modal_Above extends PureComponent{
        // for peer of type not init
        const FrontAnswer = (offer) => {
           let peer = InitPeer('notInit');
-          console.log('FrontAnswer');
           peer.on('signal', (data) => {
-            console.log('FrontAnswer_signal',data);
             socket_Chat.emit('Answer', data);
           })
           
@@ -93,12 +87,10 @@ class Talk_modal_Above extends PureComponent{
           
           client.gotAnswer = true;
            let peer = await client.peer;
-           await console.log('SignalAnswer',answer,peer);
            await peer.signal(answer);
         }
 
         const CreateVideo = (stream) => {
-          console.log('CreateVideo',stream);
           
             try {
               this.userVideo.srcObject = stream;
@@ -110,7 +102,7 @@ class Talk_modal_Above extends PureComponent{
         }
 
         const SessionActive = () => {
-          console.log('Session Active');
+
         }
 
         socket_Chat.on('BackOffer',FrontAnswer);
@@ -143,7 +135,6 @@ class Talk_modal_Above extends PureComponent{
 
   _onVideoChat = (e) => {
     e.preventDefault();
-    console.log('_onVideoChat');
     socket_Chat.emit('NewClient');
   } 
 

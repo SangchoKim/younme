@@ -91,7 +91,6 @@ function* watchMessage() {
 
 // 채팅 사진 보내기 
 function PhotoAPI(data) {
-  console.log(data);
   return fetch(`/io/chat_photo?sender=${data.email}&getter=${data.oppentEmail}`, 
                           {method: "PATCH",
                             headers: {

@@ -1,4 +1,4 @@
-// 액션 타입을 정의해줍니다.
+
 const STATEMESSAGE = 'counter/STATEMESSAGE';
 const GENDER = 'counter/GENDER';
 const BIRTHDAY = 'counter/BIRTHDAT';
@@ -22,8 +22,7 @@ export const MYPAGE_GENDER_SUCCESS = 'MYPAGE_GENDER_SUCCESS';
 
 
 export const MYPAGE_OUT = 'MYPAGE_OUT';
-// 액션 생성 함수를 만듭니다.
-// 이 함수들은 나중에 다른 파일에서 불러와야 하므로 내보내줍니다.
+
 export const mypageRequest = () => ({ type: MYPAGE_REQUEST,data:null});
 export const mypageIntroRequest = (intro) => ({ type: MYPAGE_INTRO_REQUEST, data:intro});
 export const mypageBirtdayRequest = (day) => ({ type: MYPAGE_BIRTHDAY_REQUEST, data:day});
@@ -35,8 +34,6 @@ export const popUpstateMessage = (_email,_name,_birthday,_gender) => ({ type: ST
 export const popUpGender = (_email,_name,_birthday,_gender) => ({ type: GENDER ,payload:{_email,_name,_birthday,_gender }});
 export const popUpBirthday = (_email,_name,_birthday,_gender) => ({ type: BIRTHDAY,payload:{_email,_name,_birthday,_gender } });
 
-
-// 모듈의 초기 상태를 정의합니다.
 const initialState = {
       Title:{
         title:"마이페이지",
@@ -56,19 +53,13 @@ const initialState = {
   };
 
   
-
-// 리듀서를 만들어서 내보내줍니다.
 export default function reducer(state = initialState, action) {
-    // 리듀서 함수에서는 액션의 타입에 따라 변화된 상태를 정의하여 반환합니다.
-    // state = initialState 이렇게 하면 initialState 가 기본 값으로 사용됩니다.
-    // console.log(action.type);
     switch(action.type) {
       case MYPAGE_REQUEST:
         return state;
 
       case MYPAGE_SUCCESS:
         let {email,name,birthday,gender,intro,oppentEmail} = action.data;
-        console.log(gender);
         if(intro==='0'){
           intro = '상태메시지를 입력해주세요';
         }

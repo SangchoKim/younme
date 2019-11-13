@@ -58,7 +58,6 @@ class Album extends PureComponent{
   _approchServer = async(img,order) => {
     const _img = img;
     const _order = order;
-    console.log(_img,_order);
     fetch(`/api/album?image=${_img}&order=${_order}`,{method: "get",
                         headers: {
                           'Accept': 'application/json',
@@ -67,19 +66,14 @@ class Album extends PureComponent{
                         })
     .then(res => res.json())
     .then(res => {
-      console.log(res);
       if(res.result===1){
       let _img = res.img;
       if(_img){
-        console.log("img:",_img);
         const r = _img.map((_img)=>{return _img.src});
-        console.log("src:", r);
         const setAlbumInfo = {image:r};
-        console.log("setAlbumInfo:",setAlbumInfo);
         this.setState({image: r});
         this.pre(setAlbumInfo)
         .then((r)=>{
-          console.log("rL",r); 
           this.setState({
             afters:true
           })
@@ -88,7 +82,6 @@ class Album extends PureComponent{
         this.setState({
           defautImgeHave:true
         })
-        console.log("공유앨범 없음 -> default 이미지 출력");
       }
       
     }else if(res.result===5){
@@ -135,12 +128,11 @@ class Album extends PureComponent{
           this._imageDelete(e);
           return console.log('delete');
       default:
-          console.log('디폴트')
+          console.log('default')
     }
   }
 
   _imageDelete = async ({target}) => {
-    console.log("targetID", target.id);
     let id = target.id;
     const order = "DELETE"
     try{
@@ -160,7 +152,6 @@ class Album extends PureComponent{
     })  
   }
   _imageNameSet = async ({target}) => {
-    console.log("targetID", target.id);
     const id = target.id;
     try{
     await this.setState({
@@ -187,8 +178,6 @@ class Album extends PureComponent{
     e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
-    console.log(name);
-    console.log(value);
     this.setState(prevState => ({
       camera:{
         ...prevState.camera,
@@ -203,8 +192,6 @@ class Album extends PureComponent{
       const formData = new FormData();
       let file = this.state.realfile;
       formData.append('myImages',file);
-      console.log('Album 구역입니다.');
-      console.log("file:",file);
       const config = {
         headers: {
             'content-type': 'multipart/form-data'
@@ -220,19 +207,13 @@ class Album extends PureComponent{
                           })
       .then(res => res.json())
       .then((res) =>{
-        console.log(res);
         if(res.result===1){
-        console.log('set sharedAlbum');
         let _img = res.img;
           if(_img){
-            console.log("img:",_img);
             const r = _img.map((_img)=>{return _img.src});
-            console.log("src:", r);
             const setAlbumInfo = {image:r};
-            console.log("setAlbumInfo:",setAlbumInfo);
             this.pre(setAlbumInfo)
           .then((r)=>{
-            console.log("rL",r); 
             this.setState({
               afters:true
             })
@@ -241,7 +222,6 @@ class Album extends PureComponent{
             this.setState({
               defautImgeHave:true
             })
-          console.log("공유앨범 없음 -> default 이미지 출력");
         }
         this.setState({modal8:!this.state.modal8});
         }else if(res.result===5){
@@ -251,13 +231,10 @@ class Album extends PureComponent{
         }
       });
     }else if(this.state.setting ==='camera'){
-      console.log('Camera 구역입니다.');
       const _imageName = this.state.camera.myImage;
       const _imageData = this.state.camera.imageData;
       const myBlob = imageEncodeToBase64(_imageData,'image/jpeg');
       let formData = new FormData();
-      console.log("myImage",_imageData);
-      console.log("imageName",_imageName);
       formData.append('myImages',myBlob,_imageName);
       const config = {
         headers: {
@@ -270,9 +247,7 @@ class Album extends PureComponent{
                           })
       .then(res => res.json())
       .then((res) =>{
-        console.log(res);
         if(res.result===1){
-        console.log('set background');
         const img = res.img;
         this.setState({
           MainBody:{
@@ -281,16 +256,12 @@ class Album extends PureComponent{
         })
         this.setState({modal:!this.state.modal});
         }else{
-          console.log('set background err');
         }
       }); 
     }else if(this.state.setting ==='modify'){
-      console.log('앨범 수정 구역입니다.');
-      console.log('modifyImgVal',document.getElementById('data').value);
       const _modifyImgVal = document.getElementById('data').value;
       const myBlob = imageEncodeToBase64(_modifyImgVal,'image/jpeg');
       let id = this.state.imageName;
-      console.log("targetID", id);
       let data = new FormData();
       data.append('myImage', myBlob, id);
       // const config = {
@@ -304,19 +275,13 @@ class Album extends PureComponent{
                           })
       .then(res => res.json())
       .then((res) =>{                  
-        console.log(res);
         if(res.result===1){
-        console.log('modifyied sharedAlbum');
         let _img = res.img;
           if(_img){
-            console.log("img:",_img);
             const r = _img.map((_img)=>{return _img.src});
-            console.log("src:", r);
             const setAlbumInfo = {image:r};
-            console.log("setAlbumInfo:",setAlbumInfo);
             this.pre(setAlbumInfo)
           .then((r)=>{
-            console.log("rL",r); 
             this.setState({
               afters:true,
               defautImgeHave:false,
@@ -328,7 +293,6 @@ class Album extends PureComponent{
             this.setState({
               defautImgeHave:true
             })
-          console.log("공유앨범 없음 -> default 이미지 출력");
         }
         }else if(res.result===5){
           alert('공유앨범이 아직 없습니다.');
@@ -371,7 +335,7 @@ class Album extends PureComponent{
   }
 
   _imageEditor = async () => {
-    console.log(this.state.imageNameCheck);
+  
   }
 
   

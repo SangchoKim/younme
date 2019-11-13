@@ -11,12 +11,9 @@ class UpadteTimeInputLiv extends PureComponent{
      }
 
      componentDidUpdate(){ 
-        
         const {timeChange,timeName,s_time,e_time}=this.props;
-        console.log("componentDidUpdate_UpadteTimeInputLiv",s_time,e_time);
         const {timeVal} = this.state;
         timeChange(timeName,timeArrange(timeVal));
-        console.log(timeName,timeArrange(timeVal));
     }
 
     handleChange = (time) =>{

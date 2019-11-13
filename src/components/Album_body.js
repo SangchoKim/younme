@@ -21,7 +21,6 @@ class Album_body extends PureComponent{
   }
 
   _onChange = (_data) =>{
-    console.log("modifiyedData",_data);
     this.setState({
        data:_data,
     })

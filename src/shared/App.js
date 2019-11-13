@@ -17,7 +17,7 @@ import SocketIo from 'socket.io-client';
 const prod = process.env.NODE_ENV === 'production';
 let socket_Alert = null;
 if(prod){
-  socket_Alert = SocketIo.connect(`http://54.180.150.138/alert`);
+  socket_Alert = SocketIo.connect(`http://13.125.221.14/alert`);
 }else{
   socket_Alert = SocketIo.connect(`http://localhost:5000/alert`);
 }
@@ -35,7 +35,6 @@ class App extends React.Component {
          });
 
          socket_Alert.on('Alert_send', async(data) => { // 서버로부터 photo 파일 들어옴
-            console.log('AlertFromServer',data);
             const WALLPAPER = 1;
             const SHAREDALBUM = 2;
             const CALENDER = 3;

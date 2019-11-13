@@ -68,7 +68,6 @@ class Calendar_dateInfo extends PureComponent{
             }
 
             const datas ={id,startDate,endDate,startTime,endTime,sub,memo,category};
-            console.log(datas);
             updateCalendar(datas);
             this.setState((pre)=>({
                 ...pre,
@@ -82,7 +81,6 @@ class Calendar_dateInfo extends PureComponent{
         }else if(name==="ready"){
             const {data} = this.props;
             const result = data.filter(data => data._id===id && data);
-            console.log('_updateReady_Calendar_dateInfo',result);
             const cate = result[0].category;
             this.setState(prev=>({
                 ...prev,
@@ -92,7 +90,6 @@ class Calendar_dateInfo extends PureComponent{
             
         }else if(name==="delete"){
             const {deleteCalendar} = this.props;
-            console.log('_delete_Calendar_dateInfo',id);
             if(window.confirm('정말로 삭제 하시겠습니까?'))
             deleteCalendar(id);
             else
@@ -104,7 +101,6 @@ class Calendar_dateInfo extends PureComponent{
         e.preventDefault();
         const name = e.target.name;
         const val = e.target.value;
-        console.log('_onchange_calendar_modify',name,val);
         if(name==="sub"){
             await this.setState((pre)=>({
                 ...pre,
@@ -131,7 +127,6 @@ class Calendar_dateInfo extends PureComponent{
       }
 
       _dateChange = async(startDate,endDate) => {
-        console.log('_dataChange_Calendar',startDate,endDate);
         await this.setState((pre)=>({
             ...pre,
             startDate:startDate,
@@ -140,7 +135,6 @@ class Calendar_dateInfo extends PureComponent{
       }
 
       _timeChange = async(key,val) => {
-        console.log('_timeChange_Calendar',key,val);
         await this.setState((pre)=>({
             ...pre,
             [key]: val

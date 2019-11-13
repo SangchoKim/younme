@@ -22,7 +22,6 @@ class TalkModalGif extends PureComponent {
 
     render() {
         const gif = this.state.gif;
-        console.log(gif);
         const animation = gif.map((data, index) => {
             return (
                 <MDBCol key={index + Date()} md="2">

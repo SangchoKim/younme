@@ -62,7 +62,6 @@ function* UpdateIntro(action) {
   
   try {
     const data = yield call(UpdateIntroAPI, action.data); 
-    console.log(data.intro,'data.intro'); 
     yield put({
       type: MYPAGE_INTRO_SUCCESS,
       data:data.intro,
@@ -95,7 +94,6 @@ function UpdateBirthdayAPI(birthday) {
 function* UpdateBirthday(action) {
 try {
   const data = yield call(UpdateBirthdayAPI, action.data); 
-  console.log(data.birthday,'data.birthday'); 
   yield put({
     type: MYPAGE_BIRTHDAY_SUCCESS,
     data:data.birthday,
@@ -127,7 +125,6 @@ function UpdateGenderAPI(gender) {
 function* UpdateGender(action) {
 try {
   const data = yield call(UpdateGenderAPI, action.data); 
-  console.log(data.gender,'data.gender'); 
   yield put({
     type: MYPAGE_GENDER_SUCCESS,
     data:data.gender,
