@@ -23,7 +23,6 @@ const ColorHash = require('color-hash');
 const path = require('path');
 const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
-const {lex} = require('../https');
 
 const sessionMiddleware = session({
   secret: process.env.COOKIE_SECRET,
