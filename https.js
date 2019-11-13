@@ -14,4 +14,8 @@ const lex = require('greenlock-express').create({
     renewWithin: 81 * 24 * 60 * 60 * 1000,
     renewBy: 80 * 24 * 60 * 60 * 1000,
   });
-export default lex;
+
+module.exports = {
+    lex
+};
+
