@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import {MDBBtn,MDBModalBody,MDBModal,MDBRow,MDBCol,MDBModalHeader,MDBListGroup,MDBListGroupItem,MDBModalFooter} from 'mdbreact';
+import {MDBBtn,MDBModalBody,MDBModal,MDBRow,MDBCol,MDBModalHeader,MDBModalFooter} from 'mdbreact';
 import SocketIo from 'socket.io-client';
 import Peer from 'simple-peer';
 const prod = process.env.NODE_ENV === 'production';

@@ -106,6 +106,10 @@ class Main extends PureComponent{
     }else{
       const {myImage,imageData} = this.state.camera;
       const {mainUpdateCameraRequest} = this.props;
+      if(!myImage){
+        alert('사진의 제목을 입력해주세요');
+        return;
+      }
       if(!imageData){
         alert('사진을 찍어주세요');
         return;

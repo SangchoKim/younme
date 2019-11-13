@@ -233,6 +233,14 @@ class Album extends PureComponent{
     }else if(this.state.setting ==='camera'){
       const _imageName = this.state.camera.myImage;
       const _imageData = this.state.camera.imageData;
+      if(!_imageName){
+        alert('사진의 제목을 입력해주세요');
+        return;
+      }
+      if(!_imageData){
+        alert('사진을 찍어주세요');
+        return;
+      }
       const myBlob = imageEncodeToBase64(_imageData,'image/jpeg');
       let formData = new FormData();
       formData.append('myImages',myBlob,_imageName);

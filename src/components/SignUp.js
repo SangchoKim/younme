@@ -67,7 +67,7 @@ class SignUp extends PureComponent {
   }
 
   componentDidUpdate(){
-    let {mainState,result,errMessage,reason} = this.props;
+    let {mainState,result,reason} = this.props;
     if(mainState==="isSuccess"){
       if(result === 2){
         alert(reason);

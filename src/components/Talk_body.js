@@ -130,12 +130,6 @@ class Talk_body extends PureComponent{
           }
         });
         
-          
-          // 소켓 IO 페이지에 접근했을때 
-          const {log} = this.state;
-         
-         
-          
           // 문자일때
           socket_Chat.on('message', (data) => { // 클라이언트에서 newScoreToServer 이벤트 요청 시
             console.log('messageFromServer',data);
@@ -257,8 +251,10 @@ class Talk_body extends PureComponent{
       e.preventDefault();
       const {message} = this.state;
       const {email,oppentEmail,sendMessage} = this.props;
-      console.log('_onClick_setMessage',message);
-      
+      if(!message){
+        alert('메시지를 입력해주세요');
+        return;
+      }
       const _message={
                       _id:uid,
                       comment:message,
@@ -285,7 +281,6 @@ class Talk_body extends PureComponent{
     _setData = (e) => {
       e.preventDefault();
       const {email,oppentEmail,sendPhoto} = this.props;
-      console.log('TalkModalPhoto 구역입니다.');
       let file = this.state.photo.realfile;
       if(!file){
         alert('사진을 선택해주세요');
@@ -339,9 +334,16 @@ class Talk_body extends PureComponent{
 
     _setCameraData = (e) => {
       e.preventDefault();
-      console.log('TalkModalCamera 구역입니다.');
       const {imageData,imageName} = this.state.camera;
       const {email,oppentEmail,sendCamera} = this.props;
+      if(!imageName){
+        alert('사진의 제목을 입력해주세요');
+        return;
+      }
+      if(!imageData){
+        alert('사진을 찍어주세요');
+        return;
+      }
       const myBlob = imageEncodeToBase64(imageData,'image/jpeg');
       let formData = new FormData();
       formData.append('myImages',myBlob,imageName);
@@ -371,12 +373,15 @@ class Talk_body extends PureComponent{
       _setGifData = (e) => {
         e.preventDefault();
         const {email,oppentEmail,sendGif} = this.props;
+        if(!e.target.name){
+          alert('이모티콘을 선택해주세요');
+          return;
+        }
         const gifKey = {
                         gifKey:e.target.name,
                         sender:email,
                         getter:oppentEmail,
                         };
-        console.log('TalkModalGif 구역입니다.',gifKey);
         sendGif(gifKey);
         this.setState(prev => ({
           ...prev,
@@ -400,7 +405,6 @@ class Talk_body extends PureComponent{
       _setVideoData = (e) => {
         e.preventDefault();
         const {email,oppentEmail,sendVideo} = this.props;
-        console.log('TalkModalVideo 구역입니다.');
         let file = this.state.video.realfile;
         if(!file){
           alert('동영상을 선택해주세요');
@@ -456,7 +460,6 @@ class Talk_body extends PureComponent{
         e.preventDefault();
         const {email,oppentEmail} = this.props;
         const imagePath = this.state.album.file; // imagePath, imageName
-        console.log('TalkModalAlbum 구역입니다.',imagePath);
         if(!imagePath){
           alert('공유사진을 선택해주세요');
           return;
@@ -497,7 +500,6 @@ class Talk_body extends PureComponent{
       }
     
       _onData = (recordedBlob) => {
-        console.log('chunk of real-time data is: ', recordedBlob);
         this.setState(prev=> ({
           ...prev,
           voicerRecord:{
@@ -522,7 +524,6 @@ class Talk_body extends PureComponent{
         e.preventDefault();
         const {email,oppentEmail} = this.props;
         let file = this.state.voicerRecord.recordedBlob;
-        console.log('TalkModalRecord 구역입니다.',file);
         if(!file){
           alert('음성녹음을 해주세요');
           return;
