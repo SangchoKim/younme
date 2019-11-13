@@ -1,3 +1,4 @@
+import color from "@material-ui/core/colors/amber";
 
 export const MEMORIALDAY_REQUEST = 'MEMORIALDAY_REQUEST';
 export const MEMORIALDAY_FAIL = 'MEMORIALDAY_FAIL';
@@ -18,10 +19,10 @@ const initialState = {
         icon:{main:"american-sign-language-interpreting fa-3x", update:"pen-nib fa-2x", back:"arrow-circle-left fa-2x"}
       },
       MemorialBody:{
-        firstSpace:{firstSpaceDay:"1200일",firstSpaceLeftDay:"89일 남음"},
-        secondSpace:{secondSpaceDay:"1300일",secondSpaceLeftDay:"189일 남음"},
-        thirdSpace:{thirdSpaceDay:"1400일",thirdSpaceLeftDay:"289일 남음"},
-        forthSpace:{forthSpaceDay:"4년",forthSpaceLeftDay:"351일 남음"},
+        firstSpace:{firstSpaceDay:"",firstSpaceLeftDay:"89일 남음"},
+        secondSpace:{secondSpaceDay:"",secondSpaceLeftDay:"189일 남음"},
+        thirdSpace:{thirdSpaceDay:"",thirdSpaceLeftDay:"289일 남음"},
+        forthSpace:{forthSpaceDay:"",forthSpaceLeftDay:"351일 남음"},
         firstDay:{firstDay:"처음 만난날",SeeingDay:"1111일 째"},
         guy:{name:"김철수 생일", birthday:"76일 째",},
         girl:{name:"이영희 생일", birthday:"57일 째",}
@@ -30,6 +31,22 @@ const initialState = {
       comment:'',
       errMessage:null,
   };
+
+  const cal = (relDay) => {
+    return new Promise((resolve, reject) => {
+      let num = 500;
+      while (true) {
+        if(num>=relDay){
+          resolve(num);
+          break;
+        }
+        if(num<=relDay){
+          num = num + 500;
+        }
+      }
+    });
+
+  }
 
 
 export default function reducer(state = initialState, action) {
@@ -47,17 +64,19 @@ export default function reducer(state = initialState, action) {
             const {name,oppentname,birth,oppenetbirthday,
                     relDay} = action.data.user_info;
              const {first,second,third,forth,
-                    } = action.data.user_info.calDay;        
+                    } = action.data.user_info.calDay;
+             const num = 0;
+
             return (
               {...state,
                 MemorialBody:{
-                  firstSpace:{...state.MemorialBody.firstSpace ,firstSpaceLeftDay:`${first}일 남음`},
-                  secondSpace:{...state.MemorialBody.secondSpace, secondSpaceLeftDay:`${second}일 남음`},
-                  thirdSpace:{...state.MemorialBody.thirdSpace, thirdSpaceLeftDay:`${third}일 남음`},
-                  forthSpace:{...state.MemorialBody.forthSpace, forthSpaceLeftDay:`${forth}일 남음`},
-                  firstDay:{...state.MemorialBody.firstDay ,SeeingDay:`${relDay}일 째`},
-                  guy:{name:`${name} 생일`, birthday:`${birth}일`},
-                  girl:{name:`${oppentname} 생일`, birthday:`${oppenetbirthday}일`,}
+                  firstSpace:{firstSpaceDay:`${first} 일` ,firstSpaceLeftDay:`${first-relDay}일 남음`},
+                  secondSpace:{secondSpaceDay:`${first+500} 일`, secondSpaceLeftDay:`${(first+500)-relDay}일 남음`},
+                  thirdSpace:{thirdSpaceDay:`${first+(500*2)} 일`, thirdSpaceLeftDay:`${(first+(500*2))-relDay}일 남음`},
+                  forthSpace:{forthSpaceDay:`${first+(500*3)} 일`, forthSpaceLeftDay:`${(first+(500*3))-relDay}일 남음`},
+                  firstDay:{...state.MemorialBody.firstDay ,SeeingDay:`${relDay}`},
+                  guy:{name:`${name} 생일`, birthday:`${birth}`},
+                  girl:{name:`${oppentname} 생일`, birthday:`${oppenetbirthday}`,}
                 },
                 mainState:'isSuccess'
               }

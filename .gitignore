@@ -23,7 +23,7 @@
 .env
 
 #.vscode
-.vscode
+/vscode
 
 npm-debug.log*
 yarn-debug.log*

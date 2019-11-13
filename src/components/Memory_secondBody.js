@@ -36,7 +36,7 @@ class Memory_secondBody extends PureComponent{
                       </MDBListGroupItem>
                       <MDBListGroupItem style={list1}>
                         <div className="ml-2"><MDBIcon fab icon="gratipay fa-2x" className="mr-2"/>{this.props.firstDay}</div>
-                        <div className="ml-2">{this.props.SeeingDay}</div>
+                        <div className="ml-2">{this.props.SeeingDay} 일</div>
                       </MDBListGroupItem>
                       <MDBListGroupItem style={list1}>
                         <div className="ml-2"><MDBIcon icon="birthday-cake fa-2x" className="mr-2"/>{this.props.guyName}</div>

@@ -1,5 +1,4 @@
-const dateCal = require('../../../src/lib/moment').dateCal;
-const datediff = require('../../../src/lib/moment').datediff;
+const {_dateCal,_dateDiff,cal} = require('../../../src/lib/moment');
 const User = require('../../model/user');
 
 
@@ -15,8 +14,8 @@ const User = require('../../model/user');
         const _birth = result.birth;
         const _name = result.name;
         let _relDay = result.relday;
-        _relDay = datediff(_relDay);
-        _calDay = dateCal(_relDay);
+        _relDay = _dateDiff(_relDay);
+        _calDay = cal(_relDay);
         console.log("codes:",result._code.oppentEmail);
         User.findOne({ 'id' : result._code.oppentEmail })
         .then((r)=>{
@@ -28,10 +27,7 @@ const User = require('../../model/user');
               user_info:{
                 name: _name,
                 relDay: _relDay,
-                calDay: {first:_calDay[0],
-                        second:_calDay[1],
-                        third:_calDay[2],
-                        forth:_calDay[3]
+                calDay: {first:_calDay,
                         },
                 birth: _birth,
                 oppenetbirthday: _oppenetbirthday,

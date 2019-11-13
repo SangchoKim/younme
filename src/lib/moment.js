@@ -21,6 +21,21 @@ const _dateCal = (_relDay) =>{
     return result;
 }
 
+const cal = (relDay) => {
+    // return new Promise((resolve, reject) => {
+      let num = 500;
+      while (true) {
+        if(num>=relDay){
+          return num;
+        //   break;
+        }
+        if(num<=relDay){
+          num = num + 500;
+        }
+      }
+    // });
+  }
+
 const _timeArrange = (time) =>{
    return moment(time).format('h:mm a');
 }
@@ -32,8 +47,9 @@ const _dataArrange = (startDate,endDate) =>{
     return result
 }
 module.exports = {
-    datediff:_dateDiff,
-    dateCal:_dateCal,
+    _dateDiff,
+    _dateCal,
     timeArrange:_timeArrange,
     dataArrange:_dataArrange,
+    cal,
 }

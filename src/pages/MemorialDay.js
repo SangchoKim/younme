@@ -48,7 +48,7 @@ componentWillUnmount(){
           <MemorialHeader 
             userName={this.props.name}
             oppenetName={this.props.oppenetName}
-            relDay={this.props.relDay}
+            relDay={this.props.SeeingDay}
           />
           <MemoryfirstBody 
             firstSpaceDay={this.props.firstSpaceDay}
