@@ -1,4 +1,4 @@
-const datediff = require('../../../src/lib/moment').datediff;
+const {_dateDiff} = require('../../../src/lib/moment');
 const User = require('../../model/user');
 const Album = require('../../model/album');
 const Calendar = require('../../model/calendar');
@@ -156,7 +156,7 @@ const _main = (req,res,next) =>{
           console.log("codes:",_oppentEmail);
           _name = result.name;
           _relDay = result.relday;
-          _relDay = datediff(_relDay);
+          _relDay = _dateDiff(_relDay);
           Album.findOne({ '_code' : _code })
           .then((result)=>{
             if(result){

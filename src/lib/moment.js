@@ -22,7 +22,6 @@ const _dateCal = (_relDay) =>{
 }
 
 const cal = (relDay) => {
-    // return new Promise((resolve, reject) => {
       let num = 500;
       while (true) {
         if(num>=relDay){
@@ -33,7 +32,6 @@ const cal = (relDay) => {
           num = num + 500;
         }
       }
-    // });
   }
 
 const _timeArrange = (time) =>{

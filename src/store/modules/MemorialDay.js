@@ -32,23 +32,6 @@ const initialState = {
       errMessage:null,
   };
 
-  const cal = (relDay) => {
-    return new Promise((resolve, reject) => {
-      let num = 500;
-      while (true) {
-        if(num>=relDay){
-          resolve(num);
-          break;
-        }
-        if(num<=relDay){
-          num = num + 500;
-        }
-      }
-    });
-
-  }
-
-
 export default function reducer(state = initialState, action) {
    
     switch(action.type) {
@@ -61,11 +44,8 @@ export default function reducer(state = initialState, action) {
             };
     
           case MEMORIALDAY_SUCCESS:
-            const {name,oppentname,birth,oppenetbirthday,
-                    relDay} = action.data.user_info;
-             const {first,second,third,forth,
-                    } = action.data.user_info.calDay;
-             const num = 0;
+            const {name,oppentname,birth,oppenetbirthday,relDay} = action.data.user_info;
+            const {first} = action.data.user_info.calDay;
 
             return (
               {...state,
