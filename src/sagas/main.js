@@ -6,6 +6,9 @@ import {
   MAIN_GETDATA_REQUEST,
   MAIN_GETDATA_FAIL,
   MAIN_GETDATA_SUCCESS,
+  MAIN_UPDATERELDAY_REQUEST,
+  MAIN_UPDATERELDAY_FAIL,
+  MAIN_UPDATERELDAY_SUCCESS,
   MAIN_UPDATEALBUM_REQUEST,
   MAIN_UPDATEALBUM_FAIL,
   MAIN_UPDATEALBUM_SUCCESS,
@@ -75,6 +78,37 @@ function* mainGetData() {
 
 function* watchMainGetData() {
   yield takeLatest(MAIN_GETDATA_REQUEST, mainGetData);
+}
+
+function mainUpdateReldayAPI(data) {
+  return fetch("/api/updatedrelday",{method: "PATCH",
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json'
+                        },
+                        body:JSON.stringify({'data':data})
+                        })
+                        .then(res => res.json())
+}
+
+function* mainUpdateRelday(action) {
+  try {
+    yield delays;
+    const data = yield call(mainUpdateReldayAPI, action.data);
+    yield put({
+      type: MAIN_GETDATA_SUCCESS,
+      data:data,
+    });
+  } catch (e) {
+    yield put({
+      type: MAIN_GETDATA_FAIL,
+      error: e,
+    });
+  }
+}
+
+function* watchUpdateRelday() {
+  yield takeLatest(MAIN_UPDATERELDAY_REQUEST, mainUpdateRelday);
 }
 
 // 배경화면 변경하기 with 앨범
@@ -149,6 +183,7 @@ export default function* mainSaga() {
   yield all([
     fork(watchMoveMain),
     fork(watchMainGetData),
+    fork(watchUpdateRelday),
     fork(watchUpdateAlbum),
     fork(watchUpdateCamera),
   ]);

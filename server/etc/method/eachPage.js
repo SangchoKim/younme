@@ -183,14 +183,22 @@ const _main = (req,res,next) =>{
             User.findOne({ 'id' : _oppentEmail })
             .then((r)=>{
               if(r){
+                let check = '';
+                let partnerRelday = '';
+                if(r.relday!==req.user.relday){
+                  check = 'DIF';
+                  partnerRelday = req.user.relday
+                }
                 console.log('oppent찾기 성공:',r,_img);
                 _oppentname = r.name;
-                res.json({result:1, 
+                res.json({result:1,
+                  check:check, 
                   user_info:{
                     name: _name,
                     relDay: _relDay,
                     img: _img,
-                    oppentname:_oppentname
+                    oppentname:_oppentname,
+                    partnerRelday:partnerRelday,
                   }
                 });
               }else{
@@ -204,14 +212,22 @@ const _main = (req,res,next) =>{
             User.findOne({ 'id' : _oppentEmail })
             .then((r)=>{
               if(r){
+                let check = '';
+                let partnerRelday = '';
+                if(r.relday!==req.user.relday){
+                  check = 'DIF';
+                  partnerRelday = req.user.relday
+                }
                 console.log('oppent찾기 성공:',r,_img);
                 _oppentname = r.name;
-                res.json({result:1, 
+                res.json({result:1,
+                  check:check, 
                   user_info:{
                     name: _name,
                     relDay: _relDay,
                     img: _img,
-                    oppentname:_oppentname
+                    oppentname:_oppentname,
+                    partnerRelday:partnerRelday,
                   }
                 });
               }else{
@@ -272,6 +288,25 @@ const _main = (req,res,next) =>{
     }
     
   }
+
+const updateRelday = async(req,res,next) => {
+  try {
+    console.log(req.body.data.order,'들어오나?');
+    // if(req.body.order==="CHANGEMINE"){
+    //   const query = {'id':req.user.id};
+    //   await User.updateOne(query,{$set:{'relday':req.body.partnerRelday}});
+    //   await _main(req,res,next);
+    // }else if(req.body.order==="CHANGEPARTNERS"){
+    //   const query = {'id':req.user._code.oppentEmail};
+    //   await User.updateOne(query,{$set:{'relday':req.user.relday}});
+    //   await _main(req,res,next);
+    // }
+  } catch (error) {
+    console.error(error);
+    next();
+  }
+}
+
 
 const _setbackground =(req,res,next) => {
   try {
@@ -361,5 +396,6 @@ module.exports = {
     getHome:_getHome,
     postHome:_postHome,
     setbackground:_setbackground,
-    checkLogin:_checkLogin
+    checkLogin:_checkLogin,
+    updateRelday:updateRelday,
 }

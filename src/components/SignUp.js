@@ -87,7 +87,7 @@ class SignUp extends PureComponent {
         });
       }
     }else if("isFail"){
-      console.error(errMessage);
+      // console.error(errMessage);
     }
   }
 

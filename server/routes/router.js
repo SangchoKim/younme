@@ -5,6 +5,7 @@ const mainMethod = require('../etc/method/eachPage').mainMethod;
 const menorialMethod = require('../etc/method/memorialDay').menorialMethod;
 const getHome = require('../etc/method/eachPage').getHome;
 const postHome = require('../etc/method/eachPage').postHome;
+const updateRelday = require('../etc/method/eachPage').updateRelday;
 const first_signUp = require('../etc/method/signUp').first_signUp;
 const second_signUp = require('../etc/method/signUp').second_signUp;
 const backtofirst = require('../etc/method/signUp').backtofirst;
@@ -130,7 +131,11 @@ router.post('/login', passport.authenticate('local', {
     }else{
       mainMethod(req,res,next);
     }
-  }) 
+  })
+  
+  router.patch("/updatedrelday", isLoggedIn,(req,res,next) => {
+    updateRelday(req,res,next);
+  })
 
   router.patch("/updatealbum", isLoggedIn, modiAlbum.single("myImage") , (req,res,next) => {
     updatealbum(req,res,next);

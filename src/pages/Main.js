@@ -39,6 +39,23 @@ class Main extends PureComponent{
     mainGetDataRequest();
   }
 
+  // componentDidUpdate(){
+  //   const {check, mainUpdateRelday,partnerRelday, inintRequest} = this.props;
+  //   if(check==='DIF'){
+  //     setTimeout(() => {
+  //       if(window.confirm(`상대방이 입력한 처음만난 날은 ${partnerRelday} 입니다. 이대로 적용하시겠습니까?`)){
+  //         const order = 'CHANGEMINE';
+  //         mainUpdateRelday({partnerRelday,order});
+  //       }else{
+  //         const order = 'CHANGEPARTNERS';
+  //         inintRequest();
+  //         mainUpdateRelday({partnerRelday,order});
+  //       }
+  //     }, 5000);
+      
+  //   }
+  // }
+
   componentWillUnmount(){
     const {mainOut} = this.props;
     mainOut();
@@ -204,14 +221,18 @@ const mapStateToProps = (state) => ({
     name: state.Main.User_info.userName,
     oppenetName: state.Main.User_info.oppenetName,
     relDay: state.Main.User_info.relDay,
+    partnerRelday: state.Main.User_info.partnerRelday,
     image: state.Main.User_info.image,
     comment: state.Main.comment,
+    check: state.Main.check,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   mainGetDataRequest: () => dispatch(MainsAction.mainGetDataRequest()),
   mainUpdateAlbumRequest: (file) => dispatch(MainsAction.mainUpdateAlbumRequest(file)),
   mainUpdateCameraRequest: (file) => dispatch(MainsAction.mainUpdateCameraRequest(file)),
+  inintRequest: () => dispatch(MainsAction.inintRequest()),
+  mainUpdateRelday: (data) => dispatch(MainsAction.mainUpdateRelday(data)),
   mainOut: () => dispatch(MainsAction.mainOut()),
 })
 export default connect(mapStateToProps, mapDispatchToProps) (Main);
