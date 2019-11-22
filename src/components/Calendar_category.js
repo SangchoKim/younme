@@ -1,15 +1,12 @@
 import React, {PureComponent} from 'react';
 
 class Calendar_category extends PureComponent {
-
-
-
     render() {
         return (
             <React.Fragment>
-                <div className="black-text">
-                    <select className="browser-default custom-select" onClick={this.props.setCalendarCategory}>
-                        <option>유형 선택</option>
+                <div>
+                    <select className="browser-default custom-select" onChange={this.props.setCalendarCategory}>
+                        <option value="0">유형 선택</option>
                         <option value="1">데이트</option>
                         <option value="2">여행</option>
                         <option value="3">문화생활</option>
