@@ -1,5 +1,7 @@
 import defautImge from '../../img/main_default.jpg';
 
+export const MAIN_INITALIZE = 'MAIN_INITALIZE';
+
 export const MAIN_REQUEST = 'MAIN_REQUEST';
 export const MAIN_FAIL = 'MAIN_FAIL';
 export const MAIN_SUCCESS = 'MAIN_SUCCESS';
@@ -18,6 +20,7 @@ export const MAIN_UPDATECAMERA_SUCCESS = 'MAIN_UPDATECAMERA_SUCCESS';
 
 export const MAIN_OUT = 'MAIN_OUT';
 
+export const mainInitailize = () => ({ type: MAIN_INITALIZE});
 export const mainRequest = (userInfo) => ({ type: MAIN_REQUEST,data:userInfo});
 export const mainGetDataRequest = () => ({ type: MAIN_GETDATA_REQUEST,data:null});
 export const mainUpdateAlbumRequest = (file) => ({ type: MAIN_UPDATEALBUM_REQUEST,data:file});
@@ -42,21 +45,28 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   
     switch(action.type) {
+      case MAIN_INITALIZE:
+        return {
+          ...state,
+          result:'',
+        };
       case MAIN_REQUEST:
         return {
           ...state,
           comment:'로딩중입니다.',
           mainState:'isReady',
         };
-
       case MAIN_SUCCESS:
-        return (
-          {...state,
+        let status = '';
+        if(action.data.result===1){
+          status='isSuccess'; 
+        }
+        return {
+            ...state,
             result:action.data.result,
             reason:action.data.fMsg,
-            mainState:'isSuccess'
-          }
-        );
+            mainState:status
+          };
 
       case MAIN_FAIL:
         return {

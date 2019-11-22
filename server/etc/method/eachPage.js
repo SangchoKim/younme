@@ -3,6 +3,7 @@ const User = require('../../model/user');
 const Album = require('../../model/album');
 const Calendar = require('../../model/calendar');
 const Alert = require('../../model/alert');
+const Tempcodes = require('../../model/code');
 
 const _alertFindOne = async(join_code, req, next) => {
   try {
@@ -45,14 +46,31 @@ const _checkLogin = (req, res, next) => {
         User.findOne({id:oppentEmail})
         .then((result) => {
           if(result){
-            console.log('커플 아이디가 존재합니다.');
-            res.json({result:1});
+            Tempcodes.deleteOne({userMail1:req.user.id})
+            .then((results)=>{
+              if(results.ok===1){
+                console.log('커플 아이디가 존재합니다.');
+                res.json({result:1});
+              }else{
+                console.log('커플 아이디가 존재하지 않습니다.');
+                res.json({result:5});
+              }
+            }).catch((e)=>{
+              console.error(e);
+              next(e);
+            })
           }else{
             console.log('커플 아이디가 존재하지 않습니다.');
             res.json({result:5});
           }
+        }).catch((e)=>{
+          console.error(e);
+          next(e);
         }) 
       }
+    }).catch((e) => {
+      console.error(e);
+      next(e);
     })
   }
   } catch (error) {

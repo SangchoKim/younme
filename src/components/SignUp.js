@@ -67,22 +67,27 @@ class SignUp extends PureComponent {
   }
 
   componentDidUpdate(){
-    let {mainState,result,reason} = this.props;
+    let {mainState,result, reason, mainInitailize,errMessage} = this.props;
+    if(result === 2){
+      alert(reason);
+      mainInitailize();
+      return;
+    }else if(result === 5){
+      alert('상대방이 가입하기 전입니다.');
+      mainInitailize();
+      return;
+    }
+
     if(mainState==="isSuccess"){
-      if(result === 2){
-        alert(reason);
-        result = 10;
-      }else if(result === 5){
-        alert('상대방이 가입하기 전입니다.');
-        result = 10;
-      }else if(result === 10){
-      }else {
+      if(result === 1) {
+        alert('메인 창으로 이동 합니다.');
         const url = '/main';
         this.props.history.push({
               pathname: url,
         });
       }
     }else if("isFail"){
+      console.error(errMessage);
     }
   }
 
@@ -172,6 +177,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   mainRequest: (userInfo) => dispatch(MainAction.mainRequest(userInfo)),
+  mainInitailize: () => dispatch(MainAction.mainInitailize()),
   mainOut: () => dispatch(MainAction.mainOut()),
 })
 

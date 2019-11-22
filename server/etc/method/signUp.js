@@ -2,13 +2,7 @@ const tempCode = require('../../model/code');
 const User = require('../../model/user');
 const crypto = require('crypto');
 
-const _first_signUp =(req,res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  let _mycode = '';
-  req.session.email = email;
-  req.session.password = password;
-
+const firstSignUp_step = (req,res,next,email,_mycode) => {
   tempCode.findOne({ userMail1: email })
   .then(result=>{
     if(result){
@@ -17,27 +11,63 @@ const _first_signUp =(req,res) => {
       }
       console.log(req.session);
       res.json({result:1,mycode:_mycode});
-      return;
-    }
-  })
-
-  const _tempCode = new tempCode({
-    userMail1:email
-  });
-  _tempCode.save((err)=>{
-    if(err){
-      console.error(err);
-      res.json({result: 0});
-      return;
     }else{
-      console.log('temp_code insert 성공');
-      if(req.session.mycode){
-        _mycode = req.session.mycode;
-      }
-      console.log(req.session);
-      res.json({result:1,mycode:_mycode});
+      const TempCode = new tempCode({
+        userMail1:email
+      });
+      
+      TempCode.save((err)=>{
+        if(err){
+          console.error(err);
+          res.json({result:5, reason:'에러 발생'});
+        }else{
+          console.log('temp_code insert 성공');
+          if(req.session.mycode){
+            _mycode = req.session.mycode;
+          }
+          console.log(req.session);
+          res.json({result:1,mycode:_mycode});
+        }
+      })
     }
+  }).catch((e)=>{
+    console.error(e);
+    next(e);
+  })  
+}
+
+const firstSignUp_del = (req,next,email,password) => {
+  tempCode.deleteOne({userMail1:req.session.email})
+  .then((result)=>{
+    if(result.ok){
+      req.session.email = email;
+      req.session.password = password;
+      console.log('firstSignUp_del 삭제완료');
+    }else{
+      console.error('에러발생');
+      next();
+    }
+  }).catch((e)=>{
+    console.error(e);
+    next(e);
   })
+}
+
+const _first_signUp =async (req,res,next) => {
+  const {email, password} = req.body;
+  let _mycode = '';
+  if(email!==req.session.email){
+    // 이메일이 같지 않은 경우
+    console.log('이메일이 같지 않습니다.');
+    await firstSignUp_del(req,next,email,password);
+    await firstSignUp_step(req,res,next,email,_mycode);
+  }else{
+    // 이메일이 같은 경우
+    console.log('이메일이 같습니다.');
+    req.session.email = email;
+    req.session.password = password;
+    await firstSignUp_step(req,res,next,email,_mycode);
+  }
   }
 
   const _backtofirst =(req,res) => {
@@ -70,12 +100,10 @@ const _first_signUp =(req,res) => {
     
   }
 
-  const _second_signUp =(req,res) => {
+  const _second_signUp =(req,res,next) => {
+
     const email = req.session.email;
-    console.log(email);
-    const invecode = req.body.invecode;
-    const mycode = req.body.mycode;
-    const oppentEmail = req.body.oppentEmail;
+    const {invecode,mycode,oppentEmail} = req.body;
     const query = {userMail1:email};
     tempCode.updateOne(query,{$set:{code: mycode}},(err,result)=>{  
       if(result.ok===1){
@@ -83,6 +111,12 @@ const _first_signUp =(req,res) => {
         .then(result=>{
           if(result){
             const compareCode = result.code;
+            if(!compareCode){
+              console.log("상대방이 초대코드를 입력하기 전임");
+              res.json({result: 15});
+              return;
+            }
+
             if(Number(compareCode)===Number(invecode)){  // 상대방 초대코드가 맞는지 확인
               console.log("모든 조건 비교 완료");
               req.session.userMail1 = email;
@@ -98,21 +132,25 @@ const _first_signUp =(req,res) => {
             console.log("상대방이 이메일이 등록되어 있지 않음");
             res.json({result: 5});
           }
+        }).catch((e)=>{
+          console.error(e);
+          next();
         })
       } 
     })
   }
 
-  const _backtosecond =(req,res) => {
+  const _backtosecond = async(req,res,next) => {
     console.log(req.session);
     const ORDER = "readmyCode"
     const order = req.body.order;
+    const email = req.session.email;
     if(ORDER === order){
-      const _mycode = req.session.mycode;
-      console.log("backtosecond:",_mycode);  
-      res.json({result:1,mycode:_mycode});
+      const result = await tempCode.findOne({ userMail1: email });
+      console.log("backtosecond:",result.code);  
+      res.json({result:1,mycode:result.code});
     }else{
-      res.json({result:0});
+      res.json({result:0,reason:'에러발생'});
     }
   }
 

@@ -66,7 +66,7 @@ class Second extends PureComponent{
                         />
                         <MDBInput
                           name="invecode"
-                          label="전달받은 초대코드 입력"
+                          label="상대방의 초대코드를 입력해주세요"
                           group
                           type="text"
                           validate
@@ -78,7 +78,7 @@ class Second extends PureComponent{
 
                         <MDBInput
                           name="oppentEmail"
-                          label="상대방이 등록한 이메일 입력"
+                          label="상대방의 이메일을 입력해주세요"
                           group
                           type="text"
                           validate

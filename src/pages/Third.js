@@ -97,7 +97,7 @@ import React,{PureComponent} from 'react';
         state: { mycode: mycode}
         });
       }else{
-        console.error(res.error);
+        alert(res.reason);
       }
      }); 
   }

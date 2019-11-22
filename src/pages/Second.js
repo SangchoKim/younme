@@ -20,11 +20,11 @@ class Second extends PureComponent{
     e.preventDefault();
     const { invecode, mycode, oppentEmail } = this.state;
     if(!invecode){
-      alert('전달받은 초대코드를 먼저 입력해주세요');
+      alert('상대방의 초대코드를 입력해주세요');
       return;
     }
     if(!oppentEmail){
-      alert('상대방이 등록한 이메일을 입력해주세요');
+      alert('상대방의 이메일을 입력해주세요');
       return;
     }
     fetch("/api/second",{method: "POST",
@@ -38,9 +38,11 @@ class Second extends PureComponent{
       if(res.result===1){
       this.props.history.push('/third');
       }else if(res.result===10){
-        alert('전달받은 초대코드를 다시 한번 확인해주세요.');
+        alert('상대방의 초대코드를 다시 한번 확인해주세요.');
       }else if(res.result===5){
-        alert('상대방이 아직 등록 하지 않았습니다.');
+        alert('등록되지 않은 이메일입니다.');
+      }else if(res.result===15){
+        alert('상대방이 초대코드를 입력하지 않았습니다.');
       }else{
         alert('오류발생');
       }

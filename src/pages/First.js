@@ -46,8 +46,8 @@ class First extends PureComponent{
           this.props.history.push({
             pathname: url
           });
-      }else{
-        console.error(res.error);
+      }else if(res.result===5){
+        alert(res.reason);
       }
      });
   }
