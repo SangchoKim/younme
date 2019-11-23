@@ -50,7 +50,6 @@ class Calendar_modal extends PureComponent{
 
   _setCalendarCategory = (e) => {
     const category = e.target.value;
-    console.log(category);
     const {setCategory} = this.props;
     setCategory(category);
   }
