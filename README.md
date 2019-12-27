@@ -148,9 +148,9 @@
 
 MIT © LICENSE를 준수하며 ``MITLICENSE``에서 자세한 정보를 확인할 수 있습니다.
 
-Github - [https://github.com/SangchoKim/hicamper]
+Github - [https://github.com/SangchoKim/younme]
 
-Page - 릴리즈 예정
+Page - http://13.125.221.14/ *현재 보수중에 있습니다.
 
 ## 기여 방법
 
